@@ -1,10 +1,11 @@
 
+
 import { Text } from 'react-native';
 
-export default function SettingsPage(){
+export default function OrgsPage() {
   return (
     <Text>
-      User settings.
+        Explore organizations.
     </Text>
   );
 }

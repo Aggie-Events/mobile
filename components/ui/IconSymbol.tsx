@@ -13,6 +13,8 @@ const MAPPING = {
   'paperplane.fill': 'send',
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
+  'drop.fill' : 'groups', // TODO: figure how these weird naming restrictions got imposed
+  'gear': 'settings',
 } as Partial<
   Record<
     import('expo-symbols').SymbolViewProps['name'],

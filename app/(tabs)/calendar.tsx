@@ -1,10 +1,9 @@
-
 import { Text } from 'react-native';
 
-export default function SettingsPage(){
+export default function CalendarPage() {
   return (
     <Text>
-      User settings.
+      Calendar page.
     </Text>
   );
 }
