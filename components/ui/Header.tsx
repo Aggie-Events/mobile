@@ -1,8 +1,8 @@
-import { Text, View } from 'react-native';
+import { Text, SafeAreaView } from 'react-native';
 
 export default function Header(){
     return (
-        <View
+        <SafeAreaView
             style={{
                 backgroundColor: 'purple',
                 padding: 10,
@@ -15,6 +15,6 @@ export default function Header(){
           <Text>
             Search
           </Text>
-        </View>
+        </SafeAreaView>
     );
 }
