@@ -1,6 +1,7 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
+import "../../global.css";
 
 // import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
@@ -13,7 +14,7 @@ export default function TabLayout() {
 
   return (
     <Tabs
-      initialRouteName='explore' // TODO rebuild and see if this works
+      initialRouteName="explore" // TODO rebuild and see if this works
       screenOptions={{
         header: () => <Header />,
       }}
