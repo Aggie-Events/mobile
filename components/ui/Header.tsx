@@ -4,7 +4,7 @@ export default function Header(){
     return (
         <View
             style={{
-                backgroundColor: 'red',
+                backgroundColor: 'purple',
                 padding: 10,
                 flexDirection: 'row',
                 justifyContent: 'space-between',
