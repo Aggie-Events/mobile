@@ -25,14 +25,6 @@ export default function TabLayout() {
           height: Platform.OS == "ios" ? 60 + 10 : 60,
           paddingBottom: 8,
         },
-        tabBarBackground: () => (
-          Platform.OS === 'ios' ? 
-          <BlurView
-            tint="light"
-            intensity={95}
-            style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
-          /> : null
-        ),
       }}
     >
       <Tabs.Screen
