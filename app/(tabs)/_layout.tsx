@@ -11,6 +11,8 @@ import Header from "@/components/ui/Header";
 // import { Colors } from '@/constants/Colors';
 // import { useColorScheme } from '@/hooks/useColorScheme';
 
+export const tabBarHeight = Platform.OS == "ios" ? 60 + 10 : 60;
+
 export default function TabLayout() {
   return (
     <Tabs
@@ -22,7 +24,7 @@ export default function TabLayout() {
           backgroundColor: '#ffffff',
           borderTopWidth: 0,
           elevation: 0,
-          height: Platform.OS == "ios" ? 60 + 10 : 60,
+          height: tabBarHeight,
           paddingBottom: 8,
         },
       }}

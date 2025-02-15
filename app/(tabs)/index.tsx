@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { View, Text, Pressable, ScrollView } from "react-native";
 import EventCard from '../../components/EventCard';
 import { mockEvents } from '@/api/fakedb';
+import { tabBarHeight } from './_layout';
 
 type Tab = 'for you' | 'following';
 
@@ -34,6 +35,7 @@ export default function ExplorePage() {
         {mockEvents.map((event) => (
           <EventCard key={event.id} event={event} />
         ))}
+        <View style = {{ height: tabBarHeight }} />
       </ScrollView>
     </View>
   );
