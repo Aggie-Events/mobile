@@ -1,7 +1,7 @@
 import { Tabs } from "expo-router";
 import React from "react";
 import { BlurView } from "expo-blur";
-import { Platform, SafeAreaView } from "react-native";
+import { Platform } from "react-native";
 import "../../global.css";
 
 // import { HapticTab } from '@/components/HapticTab';
