@@ -14,16 +14,15 @@ export default function TabLayout() {
 
   return (
     <Tabs
-      initialRouteName="explore" // TODO rebuild and see if this works
-      screenOptions={{
-        header: () => <Header />,
-      }}
+      initialRouteName="index"
+
     >
       <Tabs.Screen
-        name="explore"
+        name="index"
         options={{
           title: 'Explore',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          headerShown: false,
         }}
       />
       <Tabs.Screen
@@ -31,6 +30,7 @@ export default function TabLayout() {
         options={{
           title: 'Calendar',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="calendar" color={color} />,
+          headerShown: false,
         }}
       />
       <Tabs.Screen 
@@ -38,6 +38,7 @@ export default function TabLayout() {
         options={{
           title: 'Publish',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="plus" color={color} />,
+          headerShown: false,
         }}
       />
       <Tabs.Screen
@@ -45,6 +46,7 @@ export default function TabLayout() {
         options={{
           title: 'Organizations',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="drop.fill" color={color} />,
+          headerShown: false,
         }}
       />
       <Tabs.Screen
@@ -52,6 +54,7 @@ export default function TabLayout() {
         options={{
           title: 'User Settings',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="gear" color={color} />,
+          headerShown: false,
         }}
       />
     </Tabs>
