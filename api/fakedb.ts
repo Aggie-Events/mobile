@@ -1,4 +1,4 @@
-export const mockEvents: Event[] = [
+let mockE: Event[] = [
   {
     id: '1',
     title: 'Campus Fair',
@@ -96,6 +96,10 @@ export const mockEvents: Event[] = [
     location: 'Innovation Lab',
   },
 ];
+mockE.reverse();
+
+
+export const mockEvents = mockE;
 
 // Make sure to import the Event type
 import { Event } from '../types/event';
