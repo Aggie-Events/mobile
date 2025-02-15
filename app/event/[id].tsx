@@ -16,7 +16,7 @@ const mockEvents = [
   {
     id: '2',
     title: 'MSC Open House',
-    description: 'Discover student organizations and get involved on campus...',
+    description: 'Discover student organizations and get involved on campus. Free event and highly recommended for new students! This message is longer than the cuttoff so that it auto cutoffs. So cool!',
     imageUrl: 'https://www.tamu.edu/_files/images/traditions/msc-building-sign.jpg',
     date: 'March 25, 2024',
     location: 'Memorial Student Center'
