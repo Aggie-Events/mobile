@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, Pressable, ScrollView } from "react-native";
+import { View, Text, Pressable, FlatList } from "react-native";
 import EventCard from '../../components/EventCard';
 import { mockEvents } from '@/api/fakedb';
 import { tabBarHeight } from './_layout';
@@ -31,12 +31,15 @@ export default function ExplorePage() {
         ))}
       </View>
 
-      <ScrollView className="flex-1 px-4 pt-4">
-        {mockEvents.map((event) => (
-          <EventCard key={event.id} event={event} />
-        ))}
-        <View style = {{ height: tabBarHeight }} />
-      </ScrollView>
+      <FlatList 
+        data = {mockEvents}
+        keyExtractor = {(event) => event.id}
+        renderItem = {({ item }) => (
+          <EventCard key={item.id} event={item} />
+        )}
+        ListHeaderComponent={<View className='pt-4' />}
+        ListFooterComponent={<View style = {{ height: tabBarHeight }} />}
+      />
     </View>
   );
 }
