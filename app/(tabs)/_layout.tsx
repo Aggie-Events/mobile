@@ -1,9 +1,8 @@
 import { Tabs } from "expo-router";
 import React from "react";
+import { BlurView } from "expo-blur";
 import { Platform } from "react-native";
 import "../../global.css";
-import { BlurView } from "expo-blur";
-import MenuBlur from "@/components/MenuBlur";
 
 // import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from "@/components/ui/IconSymbol";
@@ -17,20 +16,24 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: "#800000",
-        tabBarBackground: () => <MenuBlur />,
+        tabBarInactiveTintColor: "#666666",
         tabBarStyle: {
-          margin: 10,
-          padding: 10,
-          borderRadius: 20,
-          backgroundColor: "rgba(255, 255, 255, 0.7)",
-          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-          position: "absolute",
-          bottom: 10,
-          left: 10,
-          right: 10,
+          position: 'absolute',
+          backgroundColor: Platform.OS === 'ios' ? 'transparent' : '#ffffff',
+          borderTopWidth: 0,
+          elevation: 0,
+          height: 60,
+          paddingBottom: 8,
         },
+        tabBarBackground: () => (
+          Platform.OS === 'ios' ? 
+          <BlurView
+            tint="light"
+            intensity={95}
+            style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+          /> : null
+        ),
       }}
-      initialRouteName="index"
     >
       <Tabs.Screen
         name="index"
@@ -50,6 +53,10 @@ export default function TabLayout() {
             <IconSymbol size={28} name="calendar" color={color} />
           ),
           headerShown: false,
+          headerStyle: {
+            backgroundColor: '#ffffff',
+          },
+          headerShadowVisible: false,
         }}
       />
       <Tabs.Screen
@@ -57,29 +64,41 @@ export default function TabLayout() {
         options={{
           title: "Publish",
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="plus" color={color} />
+            <IconSymbol size={28} name="plus.circle.fill" color={color} />
           ),
           headerShown: false,
+          headerStyle: {
+            backgroundColor: '#ffffff',
+          },
+          headerShadowVisible: false,
         }}
       />
       <Tabs.Screen
         name="orgs"
         options={{
-          title: "Organizations",
+          title: "Orgs",
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="drop.fill" color={color} />
+            <IconSymbol size={28} name="building.2" color={color} />
           ),
           headerShown: false,
+          headerStyle: {
+            backgroundColor: '#ffffff',
+          },
+          headerShadowVisible: false,
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
-          title: "User Settings",
+          title: "Settings",
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="gear" color={color} />
+            <IconSymbol size={28} name="gearshape.fill" color={color} />
           ),
           headerShown: false,
+          headerStyle: {
+            backgroundColor: '#ffffff',
+          },
+          headerShadowVisible: false,
         }}
       />
     </Tabs>

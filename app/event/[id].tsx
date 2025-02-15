@@ -2,27 +2,7 @@ import { View, Text, Image, ScrollView } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { Stack } from 'expo-router';
 import Header from '../../components/ui/Header';
-
-// In a real app, you would fetch the event data based on the ID
-const mockEvents = [
-  {
-    id: '1',
-    title: 'Aggie Ring Day',
-    description: 'Join us for the traditional Aggie Ring Day ceremony! This momentous occasion celebrates...',
-    imageUrl: 'https://www.aggienetwork.com/Content/f1/images/building2.jpg',
-    date: 'April 12, 2024',
-    location: 'Clayton W. Williams, Jr. Alumni Center'
-  },
-  {
-    id: '2',
-    title: 'MSC Open House',
-    description: 'Discover student organizations and get involved on campus. Free event and highly recommended for new students! This message is longer than the cuttoff so that it auto cutoffs. So cool!',
-    imageUrl: 'https://www.tamu.edu/_files/images/traditions/msc-building-sign.jpg',
-    date: 'March 25, 2024',
-    location: 'Memorial Student Center'
-  },
-  // Add more mock events as needed
-];
+import { mockEvents } from '@/api/fakedb';
 
 export default function EventPage() {
   const { id } = useLocalSearchParams();
