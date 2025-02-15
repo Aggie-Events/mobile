@@ -1,7 +1,7 @@
 import { Tabs } from "expo-router";
 import React from "react";
 import { BlurView } from "expo-blur";
-import { Platform } from "react-native";
+import { Platform, SafeAreaView } from "react-native";
 import "../../global.css";
 
 // import { HapticTab } from '@/components/HapticTab';
@@ -19,10 +19,10 @@ export default function TabLayout() {
         tabBarInactiveTintColor: "#666666",
         tabBarStyle: {
           position: 'absolute',
-          backgroundColor: Platform.OS === 'ios' ? 'transparent' : '#ffffff',
+          backgroundColor: '#ffffff',
           borderTopWidth: 0,
           elevation: 0,
-          height: 60,
+          height: Platform.OS == "ios" ? 60 + 10 : 60,
           paddingBottom: 8,
         },
         tabBarBackground: () => (
