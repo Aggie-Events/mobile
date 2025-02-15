@@ -1,6 +1,7 @@
 import { fetchUtil } from "@/api/fetch";
 import { Event } from "@/config/dbtypes";
 import { EventCreate, EventPageInformation } from "@/config/query-types";
+import { API_URL } from "@/config/api-url";
 
 export interface SearchEventsReturn {
   event_id: number;
@@ -34,7 +35,7 @@ export const searchEvents = async (
       resultSize: resultSize,
       pageSize: pageSize,
     } = await fetchUtil(
-      `${process.env.NEXT_PUBLIC_API_URL}` + `/search?${queryString}`,
+      `${API_URL}` + `/search?${queryString}`,
       {
         method: "GET",
       },
@@ -63,7 +64,7 @@ export const searchEvents = async (
 export const fetchEvents = async (): Promise<Event[]> => {
   try {
     const response = await fetchUtil(
-      `${process.env.NEXT_PUBLIC_API_URL}/events`,
+      `${API_URL}/events`,
       {
         method: "GET",
       },
@@ -79,7 +80,7 @@ export const fetchEventById = async (
 ): Promise<EventPageInformation> => {
   try {
     const response = await fetchUtil(
-      `${process.env.NEXT_PUBLIC_API_URL}/events/${eventID}`,
+      `${API_URL}/events/${eventID}`,
       {
         method: "GET",
       },
@@ -93,7 +94,7 @@ export const fetchEventById = async (
 export const createEvent = async (event: EventCreate) => {
   try {
     const response = await fetchUtil(
-      `${process.env.NEXT_PUBLIC_API_URL}/events`,
+      `${API_URL}/events`,
       {
         method: "POST",
         body: event,

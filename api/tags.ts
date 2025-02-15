@@ -1,7 +1,9 @@
+import { API_URL } from "@/config/api-url";
+
 export const fetchTags = async (query: string) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/tags/search?query=${query}`,
+      `${API_URL}/tags/search?query=${query}`,
       {
         method: "GET",
       },

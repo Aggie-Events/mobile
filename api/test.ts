@@ -1,12 +1,13 @@
 import { fetchUtil } from "@/api/fetch";
 import ToastManager from "@/components/toast/ToastManager";
+import { API_URL } from "@/config/api-url";
 
 // Won't throw an error if the user is not authenticated
 export const testApi = async () => {
     console.log("Testing api route");
-    console.log(`${process.env.NEXT_PUBLIC_API_URL}/test`);
+    console.log(`${API_URL}/test`);
     const response = await fetchUtil(
-        `${process.env.NEXT_PUBLIC_API_URL}/test`,
+        `${API_URL}/test`,
         {
             method: "GET",
         },

@@ -1,4 +1,5 @@
 import ToastManager from "@/components/toast/ToastManager";
+import { API_URL } from "@/config/api-url";
 
 interface FetchOptions extends RequestInit {
   body?: any;

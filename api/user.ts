@@ -1,6 +1,7 @@
 import ToastManager from "@/components/toast/ToastManager";
 import { fetchUtil } from "@/api/fetch";
 import Toast from "@/components/toast/Toast";
+import { API_URL } from "@/config/api-url";
 
 export interface User {
     user_email: string;
@@ -12,7 +13,7 @@ export interface User {
 export const addUser = async (username: string, email: string) => {
     try {
         const response = await fetchUtil(
-            `${process.env.NEXT_PUBLIC_API_URL}/users`,
+            `${API_URL}/users`,
             {
                 method: "POST",
                 body: { username, email },
@@ -27,7 +28,7 @@ export const addUser = async (username: string, email: string) => {
 export const fetchUsernames = async (): Promise<User[]> => {
     try {
         const response = await fetchUtil(
-            `${process.env.NEXT_PUBLIC_API_URL}/users`,
+            `${API_URL}/users`,
             {
                 method: "GET",
             },
@@ -41,7 +42,7 @@ export const fetchUsernames = async (): Promise<User[]> => {
 export const deleteUser = async () => {
     try {
         const response = await fetchUtil(
-            `${process.env.NEXT_PUBLIC_API_URL}/users`,
+            `${API_URL}/users`,
             {
                 method: "DELETE",
             },
@@ -54,7 +55,7 @@ export const deleteUser = async () => {
 export const updateUser = async (username: string, email: string) => {
     try {
         const response = await fetchUtil(
-            `${process.env.NEXT_PUBLIC_API_URL}/users`,
+            `${API_URL}/users`,
             {
                 method: "PUT",
                 body: { username, email },
@@ -69,9 +70,9 @@ export const updateUser = async (username: string, email: string) => {
 // TODO: wait until update is finished then check or keep checking asynchronously for a bit then return error. Make loading animation while updating backend
 // updateResponse is the response from the updateUser function to verify that the user has been updated
 export const verifyUserUpdate = async (username: string) => {
-    console.log(`${process.env.NEXT_PUBLIC_API_URL}/users`);
+    console.log(`${API_URL}/users`);
     const response = await fetchUtil(
-        `${process.env.NEXT_PUBLIC_API_URL}/users`,
+        `${API_URL}/users`,
         {
             method: "GET",
         },
