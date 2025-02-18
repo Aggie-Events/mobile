@@ -2,6 +2,8 @@ import { Stack } from "expo-router";
 import "../global.css";
 import Header from "@/components/ui/Header";
 import { verifyInstallation } from 'nativewind';
+import Toast from 'react-native-toast-message';
+
 
 
 
@@ -12,6 +14,7 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: true, header: () => <Header /> }}  />
       </Stack>
+      <Toast />
     </>
 
   );

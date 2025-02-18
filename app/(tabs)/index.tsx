@@ -1,16 +1,37 @@
-import { useState } from 'react';
-import { View, Text, Pressable, FlatList, Keyboard, TouchableWithoutFeedback } from "react-native";
+import { useState, useEffect } from 'react';
+import { View, Text, Pressable, FlatList, Keyboard, ScrollView, TouchableWithoutFeedback } from "react-native";
 import EventCard from '../../components/EventCard';
 import { mockEvents } from '@/api/fakedb';
+import { fetchEvents, searchEvents } from '@/api/event';
+import { Event } from '@/config/dbtypes';
 import { tabBarHeight } from './_layout';
+import { testApi } from '@/api/test';
 
 type Tab = 'for you' | 'following';
 
 export default function ExplorePage() {
   const [activeTab, setActiveTab] = useState<Tab>('for you');
+  const [events, setEvents] = useState<Event[]>([]);
+
+  useEffect(() => {
+    const getEvents = async () => {
+      try {
+        const result = await fetchEvents();
+        setEvents(result);
+      } catch (error) {
+        console.error("Error calling testApi:", error);
+      }
+    };
+
+    getEvents();
+  }, [activeTab]); // refresh when tab is changed
 
   return (
     <View className="flex-1 bg-gray-50">
+      <View>
+        <Text>Test Area:</Text>
+
+      </View>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View className="flex-row justify-center bg-white border-b border-gray-200">
           {(['for you', 'following'] as Tab[]).map((tab) => (
