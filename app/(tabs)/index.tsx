@@ -17,6 +17,7 @@ export default function ExplorePage() {
     const getEvents = async () => {
       try {
         const result = await fetchEvents();
+        console.log(result);
         setEvents(result);
       } catch (error) {
         console.error("Error calling testApi:", error);
@@ -55,10 +56,10 @@ export default function ExplorePage() {
       </TouchableWithoutFeedback>
 
       <FlatList 
-        data = {mockEvents}
-        keyExtractor = {(event) => event.id}
+        data = {events}
+        keyExtractor = {(event) => event.event_id.toString()}
         renderItem = {({ item }) => (
-          <EventCard key={item.id} event={item} />
+          <EventCard key={item.event_id} event={item} />
         )}
         ListHeaderComponent={<View className='pt-4' />}
         ListFooterComponent={<View style = {{ height: tabBarHeight }} />}
