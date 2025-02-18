@@ -29,10 +29,6 @@ export default function ExplorePage() {
 
   return (
     <View className="flex-1 bg-gray-50">
-      <View>
-        <Text>Test Area:</Text>
-
-      </View>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View className="flex-row justify-center bg-white border-b border-gray-200">
           {(['for you', 'following'] as Tab[]).map((tab) => (
