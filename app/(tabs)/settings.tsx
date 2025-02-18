@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Switch, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { IconSymbol, IconSymbolName } from '@/components/ui/IconSymbol';
+import { tabBarHeight } from './_layout';
 
 interface SettingsSectionProps {
   title: string;
@@ -145,6 +146,7 @@ export default function SettingsPage() {
       <TouchableOpacity style={styles.signOutButton}>
         <Text style={styles.signOutButtonText}>Sign Out</Text>
       </TouchableOpacity>
+      <View style = {{ height: tabBarHeight }} />
     </ScrollView>
   );
 }

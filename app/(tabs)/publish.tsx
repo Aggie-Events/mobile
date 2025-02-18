@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { tabBarHeight } from './_layout';
 
 export default function PublishPage() {
   const [formData, setFormData] = useState({
@@ -116,6 +117,7 @@ export default function PublishPage() {
           <Text style={styles.submitButtonText}>Publish</Text>
         </TouchableOpacity>
       </View>
+      <View style = {{ height: tabBarHeight }} />
     </ScrollView>
   );
 }

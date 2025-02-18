@@ -14,10 +14,10 @@ export default function EventCard({ event }: EventCardProps) {
 
   return (
     <Link href={`/event/${event.id}`} asChild>
-      <Pressable className="bg-white rounded-xl shadow-sm mb-4 overflow-hidden">
+      <Pressable className="bg-white rounded-xl shadow-sm mb-4 overflow-hidden px-4">
         <Image
           source={{ uri: event.imageUrl }}
-          className="w-full h-48"
+          className="w-full h-48 rounded-xl"
           resizeMode="cover"
         />
         <View className="p-4">

@@ -11,6 +11,8 @@ import Header from "@/components/ui/Header";
 // import { Colors } from '@/constants/Colors';
 // import { useColorScheme } from '@/hooks/useColorScheme';
 
+export const tabBarHeight = Platform.OS == "ios" ? 60 + 10 : 60;
+
 export default function TabLayout() {
   return (
     <Tabs
@@ -22,17 +24,9 @@ export default function TabLayout() {
           backgroundColor: '#ffffff',
           borderTopWidth: 0,
           elevation: 0,
-          height: Platform.OS == "ios" ? 60 + 10 : 60,
+          height: tabBarHeight,
           paddingBottom: 8,
         },
-        tabBarBackground: () => (
-          Platform.OS === 'ios' ? 
-          <BlurView
-            tint="light"
-            intensity={95}
-            style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
-          /> : null
-        ),
       }}
     >
       <Tabs.Screen
