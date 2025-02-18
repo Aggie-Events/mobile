@@ -11,6 +11,7 @@ export interface SearchEventsReturn {
   contributor_name: string;
   event_name: string;
   event_description: string;
+  event_img: string;
   event_likes: number;
   start_time: Date;
   end_time: Date;

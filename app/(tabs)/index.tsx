@@ -17,6 +17,7 @@ export default function ExplorePage() {
     const getEvents = async () => {
       try {
         const result = await fetchEvents();
+        console.log(result);
         setEvents(result);
       } catch (error) {
         console.error("Error calling testApi:", error);
@@ -28,10 +29,6 @@ export default function ExplorePage() {
 
   return (
     <View className="flex-1 bg-gray-50">
-      <View>
-        <Text>Test Area:</Text>
-
-      </View>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View className="flex-row justify-center bg-white border-b border-gray-200">
           {(['for you', 'following'] as Tab[]).map((tab) => (
@@ -55,10 +52,10 @@ export default function ExplorePage() {
       </TouchableWithoutFeedback>
 
       <FlatList 
-        data = {mockEvents}
-        keyExtractor = {(event) => event.id}
+        data = {events}
+        keyExtractor = {(event) => event.event_id.toString()}
         renderItem = {({ item }) => (
-          <EventCard key={item.id} event={item} />
+          <EventCard key={item.event_id} event={item} />
         )}
         ListHeaderComponent={<View className='pt-4' />}
         ListFooterComponent={<View style = {{ height: tabBarHeight }} />}
