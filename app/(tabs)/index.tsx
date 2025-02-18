@@ -17,7 +17,6 @@ export default function ExplorePage() {
     const getEvents = async () => {
       try {
         const result = await fetchEvents();
-        console.log(result);
         setEvents(result);
       } catch (error) {
         console.error("Error calling testApi:", error);

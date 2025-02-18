@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Switch, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { IconSymbol, IconSymbolName } from '@/components/ui/IconSymbol';
 import { tabBarHeight } from './_layout';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 interface SettingsSectionProps {
   title: string;
@@ -79,6 +80,24 @@ export default function SettingsPage() {
           </View>
         </View>
       </View>
+
+      <SettingsSection title="Sign In">
+        <SettingsItem
+          icon="globe"
+          title="Sign In with Google"
+          description="Use your Google account to sign in"
+          type="button"
+          onPress={async () => {
+            try {
+              await GoogleSignin.hasPlayServices();
+              const userInfo = await GoogleSignin.signIn();
+              console.log(userInfo);
+            } catch (error) {
+              console.error(error);
+            }
+          }}
+        />
+      </SettingsSection>
 
       <SettingsSection title="Preferences">
         <SettingsItem
