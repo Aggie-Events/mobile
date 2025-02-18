@@ -29,7 +29,7 @@ export default function EventCard({ event }: EventCardProps) {
             {truncateDescription(event.event_description)}
           </Text>
           <View className="flex-row mt-2 items-center">
-            <Text className="text-gray-500 text-sm">{event.start_time.toString()}</Text> {/* TODO: properly handle the date*/}
+            <Text className="text-gray-500 text-sm">{event.start_time.toString()}</Text>
             <Text className="text-gray-500 text-sm mx-2">•</Text>
             <Text className="text-gray-500 text-sm">{event.event_location}</Text>
           </View>
