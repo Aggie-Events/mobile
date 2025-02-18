@@ -6,12 +6,17 @@ import { fetchEvents, searchEvents } from '@/api/event';
 import { Event } from '@/config/dbtypes';
 import { tabBarHeight } from './_layout';
 import { testApi } from '@/api/test';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 type Tab = 'for you' | 'following';
 
 export default function ExplorePage() {
   const [activeTab, setActiveTab] = useState<Tab>('for you');
   const [events, setEvents] = useState<Event[]>([]);
+
+  useEffect(() => {
+    GoogleSignin.configure();
+  }, []);
 
   useEffect(() => {
     const getEvents = async () => {
