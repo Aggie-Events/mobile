@@ -1,5 +1,5 @@
 import { fetchUtil } from "@/api/fetch";
-import ToastManager from "@/components/toast/ToastManager";
+import Toast from "react-native-toast-message";
 import { API_URL } from "@/config/api-url";
 
 // Won't throw an error if the user is not authenticated
@@ -19,7 +19,7 @@ export const testApi = async () => {
         return data.message;
     });
     console.log("API Tested: " + message);
-    ToastManager.addToast("API Message: " + message, "success", 1000);
+    Toast.show({text1: "API Message: " + message, type: "success"});
 
     return response.status === 200;
 };

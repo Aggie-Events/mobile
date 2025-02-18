@@ -1,6 +1,5 @@
-import ToastManager from "@/components/toast/ToastManager";
+import Toast from "react-native-toast-message";
 import { fetchUtil } from "@/api/fetch";
-import Toast from "@/components/toast/Toast";
 import { API_URL } from "@/config/api-url";
 
 export interface User {
@@ -90,7 +89,7 @@ export const verifyUserUpdate = async (username: string) => {
     });
 
     console.log("API Tested: " + message);
-    ToastManager.addToast("API Message: " + message, "success", 1000);
+    Toast.show({text1: "API Message: " + message, type: "success"});
 
     return response.status === 200;
 };

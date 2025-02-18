@@ -1,5 +1,4 @@
-import ToastManager from "@/components/toast/ToastManager";
-import { API_URL } from "@/config/api-url";
+import Toast from "react-native-toast-message";
 
 interface FetchOptions extends RequestInit {
   body?: any;
@@ -21,24 +20,20 @@ export const fetchUtil = async (
     credentials: "include",
     body: body ? JSON.stringify(body) : undefined,
   }).catch((error) => {
-    ToastManager.addToast("Fetch Error", "error", 1000);
+    Toast.show({text1: "Fetch Error", type: "error"});
     console.error("Fetch error:", error);
     throw error;
   });
 
   if (!response.ok && response.status !== 401) {
-    ToastManager.addToast(
-      `Server Error ${response.status}: ${(await response.json()).message}`,
-      "error",
-      1000,
-    );
+    Toast.show({text1: `Server Error ${response.status}: ${(await response.json()).message}`, type: "error"});
     throw new Error(response.statusText);
   }
 
   if (response.status === 401 && throwErrOnUnauthorized) {
     const errorText = response.text();
     console.error("Unauthorized:", errorText);
-    ToastManager.addToast("Unauthorized", "error", 1000);
+    Toast.show({text1: "Unauthorized", type: "error"});
     throw new Error("Unauthorized resource");
   }
 
