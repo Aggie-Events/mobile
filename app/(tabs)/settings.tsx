@@ -14,7 +14,6 @@ interface SettingsItemProps {
   description?: string;
   type?: 'toggle' | 'button';
   value?: boolean;
-  onPress?: () => void;
   onValueChange?: (value: boolean) => void;
 }
 
@@ -31,7 +30,6 @@ const SettingsItem: React.FC<SettingsItemProps> = ({
   description,
   type = 'button',
   value,
-  onPress,
   onValueChange,
 }) => (
   <View    
