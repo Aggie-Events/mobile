@@ -34,9 +34,8 @@ const SettingsItem: React.FC<SettingsItemProps> = ({
   onPress,
   onValueChange,
 }) => (
-  <TouchableOpacity
+  <View    
     style={styles.settingsItem}
-    onPress={type === 'button' ? onPress : undefined}
   >
     <View style={styles.settingsItemIcon}>
       <IconSymbol name={icon} size={24} color="#666666" />
@@ -58,7 +57,7 @@ const SettingsItem: React.FC<SettingsItemProps> = ({
     {type === 'button' && (
       <IconSymbol name="chevron.right" size={20} color="#666666" />
     )}
-  </TouchableOpacity>
+  </View>
 );
 
 export default function SettingsPage() {
