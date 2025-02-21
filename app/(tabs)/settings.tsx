@@ -115,6 +115,11 @@ export default function SettingsPage() {
         />
         <SettingsItem
           icon="gear"
+          title="Analytics"
+          description="Check on your posts and growth"
+        />
+        <SettingsItem
+          icon="gear"
           title="Privacy"
           description="Manage your privacy settings"
         />
