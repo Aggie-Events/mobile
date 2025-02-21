@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Switch, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { IconSymbol, IconSymbolName } from '@/components/ui/IconSymbol';
 import { tabBarHeight } from './_layout';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 
 interface SettingsSectionProps {
   title: string;
