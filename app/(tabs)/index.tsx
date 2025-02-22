@@ -16,7 +16,9 @@ export default function ExplorePage() {
 
   useEffect(() => {
     GoogleSignin.configure({
-      iosClientId: '19658597217-enl8en0fnhsvilikd14gl260705m2e9o.apps.googleusercontent.com'
+      iosClientId: '19658597217-enl8en0fnhsvilikd14gl260705m2e9o.apps.googleusercontent.com', // TODO: update this
+      webClientId: '1042536253999-jovkq2bj6jgcjjac1tsamgvqeuttvgo3.apps.googleusercontent.com', // TODO: update this
+      offlineAccess: true,
     });
   }, []);
 

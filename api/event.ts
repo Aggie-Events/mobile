@@ -3,6 +3,18 @@ import { Event } from "@/config/dbtypes";
 import { EventCreate, EventPageInformation } from "@/config/query-types";
 import { API_URL } from "@/config/api-url";
 
+export type EventStatus = 'draft' | 'published' | 'cancelled';
+
+export interface CreateEventData {
+  event_name: string;
+  event_description: string | null;
+  event_location: string | null;
+  start_time: Date;
+  end_time: Date;
+  event_status: EventStatus;
+  tags: string[];
+}
+
 export interface SearchEventsReturn {
   event_id: number;
   org_id?: number;
@@ -92,10 +104,17 @@ export const fetchEventById = async (
   }
 };
 
-export const createEvent = async (event: EventCreate) => {
+/**
+ * Create an event
+ * @param {EventCreate} event - The event to create
+ * @returns {Promise<number>} The created event ID
+ */
+export const createEvent = async (event: CreateEventData) => {
   try {
+    console.log("Formatted event: ", event);
+
     const response = await fetchUtil(
-      `${API_URL}/events`,
+      `${API_URL}}/events`,
       {
         method: "POST",
         body: event,

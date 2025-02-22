@@ -3,15 +3,36 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 
 import { BlurView } from 'expo-blur';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { tabBarHeight } from './_layout';
+import { createEvent, CreateEventData } from '@/api/event';
 
 export default function PublishPage() {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    date: '',
-    time: '',
+    start_time: '',
+    end_time: '',
     type: 'event',
   });
+
+  const handlePublish = async () => {
+    const eventData: CreateEventData = {
+      event_name: formData.title,
+      event_description: formData.description,
+      event_location: null,
+      start_time: new Date(formData.start_time),
+      end_time: new Date(formData.end_time),
+      event_status: 'published',
+      tags: [],
+    };
+
+    const createdEvent = await createEvent(eventData);
+
+    if (createdEvent) {
+      console.log('Event created successfully:', createdEvent);
+    } else {
+      console.error('Failed to create event');
+    }
+  };
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
@@ -51,7 +72,7 @@ export default function PublishPage() {
             <TouchableOpacity style={styles.input}>
               <View style={styles.iconInput}>
                 <IconSymbol name="calendar" size={20} color="#666666" />
-                <Text style={styles.inputText}>{formData.date || 'Select date'}</Text>
+                <Text style={styles.inputText}>{formData.start_time || 'Select date'}</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -61,7 +82,7 @@ export default function PublishPage() {
             <TouchableOpacity style={styles.input}>
               <View style={styles.iconInput}>
                 <IconSymbol name="clock" size={20} color="#666666" />
-                <Text style={styles.inputText}>{formData.time || 'Select time'}</Text>
+                <Text style={styles.inputText}>{formData.start_time || 'Select time'}</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -113,8 +134,19 @@ export default function PublishPage() {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.submitButton}>
+        <TouchableOpacity style={styles.submitButton} onPress={handlePublish}>
           <Text style={styles.submitButtonText}>Publish</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.submitButton} onPress={() => {
+          setFormData({
+            title: 'Test Event',
+            description: 'This is a test event',
+            start_time: '2025-01-01',
+            end_time: '2025-01-01',
+            type: 'event',
+          });
+          handlePublish(); }}>
+          <Text style={styles.submitButtonText}>Publish Test Event</Text>
         </TouchableOpacity>
       </View>
       <View style = {{ height: tabBarHeight }} />

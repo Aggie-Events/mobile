@@ -20,7 +20,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.aggieeventsdev.mobile"
+      "package": "com.aggieeventsdeveloper.mobile"
     },
     "web": {
       "bundler": "metro",
