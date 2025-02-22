@@ -15,7 +15,9 @@ export default function ExplorePage() {
   const [events, setEvents] = useState<Event[]>([]);
 
   useEffect(() => {
-    GoogleSignin.configure();
+    GoogleSignin.configure({
+      iosClientId: '19658597217-enl8en0fnhsvilikd14gl260705m2e9o.apps.googleusercontent.com'
+    });
   }, []);
 
   useEffect(() => {
