@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Text, Pressable, FlatList, Keyboard, Image, TouchableWithoutFeedback } from "react-native";
+import { View, Text, Pressable, FlatList, Keyboard, Image, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
 import EventCard from '../../components/EventCard';
 import { mockEvents } from '@/api/fakedb';
 import { fetchEvents, searchEvents } from '@/api/event';
@@ -16,6 +16,7 @@ type Tab = 'for you' | 'following';
 export default function ExplorePage() {
   const [activeTab, setActiveTab] = useState<Tab>('for you');
   const [events, setEvents] = useState<Event[]>([]);
+  const {width, height} = useWindowDimensions();
 
   useEffect(() => {
     const getEvents = async () => {
@@ -34,7 +35,7 @@ export default function ExplorePage() {
   return (
     <>
       <Header>
-        <View style = {{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
+        <View style = {{ width: width, height: height / 14, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
           <Image 
             source={require('../../assets/images/logo.png')} 
             style = {{ width: 40, height: 40, marginLeft: 20 }}
