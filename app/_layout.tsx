@@ -11,7 +11,7 @@ export default function RootLayout() {
     <>
       {/* <Header /> TODO: decide if we want the header to always show */}
       <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: true, header: () => <Header /> }}  />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }}  />
       </Stack>
       <Toast />
     </>
