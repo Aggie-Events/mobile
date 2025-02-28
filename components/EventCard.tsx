@@ -1,4 +1,4 @@
-import { View, Text, Image, Pressable } from 'react-native';
+import { View, Text, Image, Pressable, useWindowDimensions } from 'react-native';
 import { Link } from 'expo-router';
 import type { Event } from '../config/dbtypes';
 
@@ -7,6 +7,7 @@ interface EventCardProps {
 }
 
 export default function EventCard({ event }: EventCardProps) {
+  const {width, height} = useWindowDimensions();
   const truncateDescription = (text: string | null, maxLength: number = 150) => {
     if (!text) return "no description.";
     if (text.length <= maxLength) return text;
@@ -15,7 +16,8 @@ export default function EventCard({ event }: EventCardProps) {
 
   return (
     <Link href={`/event/${event.event_id}`} asChild>
-      <Pressable className="bg-white rounded-xl shadow-sm mb-4 overflow-hidden px-4">
+      {/* <Pressable className="bg-white rounded-xl shadow-sm mr-4 overflow-hidden py-4 h-80"> */}
+      <Pressable style = {{ width: width, height: 270, backgroundColor: 'white', borderRadius: 20, marginHorizontal: 4 }}>
         <Image
           source={{ uri: event.event_img }}
           className="w-full h-48 rounded-xl"

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Text, Pressable, FlatList, Keyboard, Image, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
+import { View, Text, Pressable, FlatList, Keyboard, Image, TouchableWithoutFeedback, useWindowDimensions, ScrollView, StyleSheet } from "react-native";
 import EventCard from '../../components/EventCard';
 import { mockEvents } from '@/api/fakedb';
 import { fetchEvents, searchEvents } from '@/api/event';
@@ -17,6 +17,22 @@ export default function ExplorePage() {
   const [activeTab, setActiveTab] = useState<Tab>('for you');
   const [events, setEvents] = useState<Event[]>([]);
   const {width, height} = useWindowDimensions();
+
+  const styles = StyleSheet.create({
+    recentlyAddedButton: {
+      width: width / 1.1,
+      height: 50,
+      backgroundColor: 'rgb(220, 220, 220)',
+      borderRadius: 12,
+      alignSelf: 'center'
+    }
+  });
+
+  const recentlyAdded = [
+    {eventName: "Event 1", key: 1},
+    {eventName: "Event 2", key: 2},
+    {eventName: "Event 3", key: 3}
+  ]
 
   useEffect(() => {
     const getEvents = async () => {
@@ -77,16 +93,40 @@ export default function ExplorePage() {
             ))}
           </View>
         </TouchableWithoutFeedback>
+        <ScrollView>
+          <Text style = {{ color: '#9B1818', fontWeight: "bold", fontSize: 22, marginLeft: 25, marginVertical: 15, fontFamily: "inter" }}>
+            TRENDING
+          </Text>
 
-        <FlatList 
-          data = {events}
-          keyExtractor = {(event) => event.event_id.toString()}
-          renderItem = {({ item }) => (
-            <EventCard key={item.event_id} event={item} />
-          )}
-          ListHeaderComponent={<View className='pt-4' />}
-          ListFooterComponent={<View style = {{ height: tabBarHeight }} />}
-        />
+          <View style = {{width: width, height: 270}}>
+            <FlatList 
+              data = {events}
+              keyExtractor = {(event) => event.event_id.toString()}
+              horizontal = {true}
+              showsHorizontalScrollIndicator = {false}
+              renderItem = {({ item }) => ( <EventCard key={item.event_id} event={item} /> )}
+              ListHeaderComponent={<View className='pt-4' />}
+              ListFooterComponent={<View style = {{ height: tabBarHeight }} />}
+            />
+          </View>
+
+          <Text style = {{ color: '#9B1818', fontWeight: "bold", fontSize: 22, marginLeft: 25, marginVertical: 15 }}>
+            RECENTLY ADDED
+          </Text>
+          {recentlyAdded.map((item, index) => (
+            index == recentlyAdded.length - 1 ? (
+              <Pressable style = {styles.recentlyAddedButton}>
+              </Pressable>
+            ) : (
+              <Pressable style = {[styles.recentlyAddedButton, {marginBottom: 7}]}>
+              </Pressable>
+            )
+          ))}
+
+          <Text style = {{ color: '#9B1818', fontWeight: "bold", fontSize: 22, marginLeft: 25, marginVertical: 15 }}>
+            UPCOMING
+          </Text>
+        </ScrollView>
       </View>
     </>
   );
