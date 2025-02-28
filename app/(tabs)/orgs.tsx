@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import Header from "@/components/ui/Header";
 
 interface Organization {
   id: string;
@@ -62,56 +63,59 @@ export default function OrganizationsPage() {
   );
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.searchContainer}>
-          <IconSymbol name="paperplane.fill" size={20} color="#666666" />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search organizations"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            placeholderTextColor="#999999"
+    <>
+      <Header />
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.searchContainer}>
+            <IconSymbol name="paperplane.fill" size={20} color="#666666" />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search organizations"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              placeholderTextColor="#999999"
+            />
+          </View>
+        </View>
+
+        <View style={styles.categoriesContainer}>
+          <FlatList
+            data={CATEGORIES}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={[
+                  styles.categoryChip,
+                  selectedCategory === item && styles.categoryChipSelected,
+                ]}
+                onPress={() => setSelectedCategory(item)}
+              >
+                <Text
+                  style={[
+                    styles.categoryText,
+                    selectedCategory === item && styles.categoryTextSelected,
+                  ]}
+                >
+                  {item}
+                </Text>
+              </TouchableOpacity>
+            )}
+            keyExtractor={(item) => item}
+            contentContainerStyle={styles.categoriesList}
           />
         </View>
-      </View>
 
-      <View style={styles.categoriesContainer}>
         <FlatList
-          data={CATEGORIES}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={[
-                styles.categoryChip,
-                selectedCategory === item && styles.categoryChipSelected,
-              ]}
-              onPress={() => setSelectedCategory(item)}
-            >
-              <Text
-                style={[
-                  styles.categoryText,
-                  selectedCategory === item && styles.categoryTextSelected,
-                ]}
-              >
-                {item}
-              </Text>
-            </TouchableOpacity>
-          )}
-          keyExtractor={(item) => item}
-          contentContainerStyle={styles.categoriesList}
+          data={SAMPLE_ORGANIZATIONS}
+          renderItem={renderOrganizationCard}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.orgList}
+          showsVerticalScrollIndicator={false}
         />
       </View>
-
-      <FlatList
-        data={SAMPLE_ORGANIZATIONS}
-        renderItem={renderOrganizationCard}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.orgList}
-        showsVerticalScrollIndicator={false}
-      />
-    </View>
+    </>
   );
 }
 

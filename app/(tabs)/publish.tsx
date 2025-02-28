@@ -6,6 +6,7 @@ import { tabBarHeight } from './_layout';
 import * as ImagePicker from 'expo-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 // import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import Header from "@/components/ui/Header";
 
 const SUGGESTED_TAGS = [
   'Music',
@@ -218,207 +219,210 @@ export default function PublishPage() {
   // };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Create New Event</Text>
-        <Text style={styles.subtitle}>Share your next event with the community</Text>
-      </View>
-
-      <View style={styles.form}>
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Event Title</Text>
-          <TextInput
-            style={styles.input}
-            value={formData.title}
-            onChangeText={(text) => setFormData({ ...formData, title: text })}
-            placeholder="Enter event title"
-            placeholderTextColor="#999"
-          />
+    <>
+      <Header />
+      <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Create New Event</Text>
+          <Text style={styles.subtitle}>Share your next event with the community</Text>
         </View>
 
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Tags</Text>
-          <View style={styles.tagInputContainer}>
-            <View style={styles.tagScrollContent}>
-              {formData.tags.map((tag, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.tagChip}
-                  onPress={() => handleRemoveTag(tag)}
-                >
-                  <Text style={styles.tagChipText}>{tag}</Text>
-                  <IconSymbol name="xmark" size={16} color="#666666" />
-                </TouchableOpacity>
-              ))}
-              <TextInput
-                style={styles.tagInput}
-                value={tagInput}
-                onChangeText={handleTagInputChange}
-                placeholder={formData.tags.length ? "" : "Add tags"}
-                placeholderTextColor="#999"
-                onSubmitEditing={() => handleAddTag(tagInput)}
-              />
-            </View>
+        <View style={styles.form}>
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Event Title</Text>
+            <TextInput
+              style={styles.input}
+              value={formData.title}
+              onChangeText={(text) => setFormData({ ...formData, title: text })}
+              placeholder="Enter event title"
+              placeholderTextColor="#999"
+            />
           </View>
-          {showSuggestions && suggestedTags.length > 0 && (
-            <View style={styles.suggestionsContainer}>
-              <FlatList
-                data={suggestedTags}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => (
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Tags</Text>
+            <View style={styles.tagInputContainer}>
+              <View style={styles.tagScrollContent}>
+                {formData.tags.map((tag, index) => (
                   <TouchableOpacity
-                    style={styles.suggestionItem}
-                    onPress={() => handleAddTag(item)}
+                    key={index}
+                    style={styles.tagChip}
+                    onPress={() => handleRemoveTag(tag)}
                   >
-                    <Text style={styles.suggestionText}>{item}</Text>
+                    <Text style={styles.tagChipText}>{tag}</Text>
+                    <IconSymbol name="xmark" size={16} color="#666666" />
                   </TouchableOpacity>
-                )}
-                style={styles.suggestionsList}
-                nestedScrollEnabled
-              />
+                ))}
+                <TextInput
+                  style={styles.tagInput}
+                  value={tagInput}
+                  onChangeText={handleTagInputChange}
+                  placeholder={formData.tags.length ? "" : "Add tags"}
+                  placeholderTextColor="#999"
+                  onSubmitEditing={() => handleAddTag(tagInput)}
+                />
+              </View>
             </View>
-          )}
-        </View>
+            {showSuggestions && suggestedTags.length > 0 && (
+              <View style={styles.suggestionsContainer}>
+                <FlatList
+                  data={suggestedTags}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity
+                      style={styles.suggestionItem}
+                      onPress={() => handleAddTag(item)}
+                    >
+                      <Text style={styles.suggestionText}>{item}</Text>
+                    </TouchableOpacity>
+                  )}
+                  style={styles.suggestionsList}
+                  nestedScrollEnabled
+                />
+              </View>
+            )}
+          </View>
 
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Description</Text>
-          <TextInput
-            style={[styles.input, styles.textArea]}
-            value={formData.description}
-            onChangeText={(text) => setFormData({ ...formData, description: text })}
-            placeholder="Describe your event"
-            placeholderTextColor="#999"
-            multiline
-            numberOfLines={4}
-          />
-        </View>
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Description</Text>
+            <TextInput
+              style={[styles.input, styles.textArea]}
+              value={formData.description}
+              onChangeText={(text) => setFormData({ ...formData, description: text })}
+              placeholder="Describe your event"
+              placeholderTextColor="#999"
+              multiline
+              numberOfLines={4}
+            />
+          </View>
 
-        <View style={styles.row}>
-          <View style={[styles.inputGroup, { flex: 1, marginRight: 8 }]}>
-            <Text style={styles.label}>Start Date</Text>
-            <TouchableOpacity 
+          <View style={styles.row}>
+            <View style={[styles.inputGroup, { flex: 1, marginRight: 8 }]}>
+              <Text style={styles.label}>Start Date</Text>
+              <TouchableOpacity 
+                style={styles.input}
+                onPress={() => setShowPicker({ ...showPicker, startDate: true })}
+              >
+                <View style={styles.iconInput}>
+                  <IconSymbol name="calendar" size={20} color="#666666" />
+                  <Text style={styles.inputText}>{formatDate(formData.startDate)}</Text>
+                </View>
+              </TouchableOpacity>
+              {showPicker.startDate && (
+                <DateTimePicker
+                  value={formData.startDate}
+                  mode="date"
+                  display="default"
+                  onChange={(event, date) => handleDateChange(event, date, 'startDate')}
+                />
+              )}
+            </View>
+
+            <View style={[styles.inputGroup, { flex: 1, marginLeft: 8 }]}>
+              <Text style={styles.label}>Start Time</Text>
+              <TouchableOpacity 
+                style={styles.input}
+                onPress={() => setShowPicker({ ...showPicker, startTime: true })}
+              >
+                <View style={styles.iconInput}>
+                  <IconSymbol name="clock" size={20} color="#666666" />
+                  <Text style={styles.inputText}>{formatTime(formData.startTime)}</Text>
+                </View>
+              </TouchableOpacity>
+              {showPicker.startTime && (
+                <DateTimePicker
+                  value={formData.startTime}
+                  mode="time"
+                  display="default"
+                  onChange={(event, time) => handleTimeChange(event, time, 'startTime')}
+                />
+              )}
+            </View>
+          </View>
+
+          <View style={styles.row}>
+            <View style={[styles.inputGroup, { flex: 1, marginRight: 8 }]}>
+              <Text style={styles.label}>End Date</Text>
+              <TouchableOpacity 
+                style={styles.input}
+                onPress={() => setShowPicker({ ...showPicker, endDate: true })}
+              >
+                <View style={styles.iconInput}>
+                  <IconSymbol name="calendar" size={20} color="#666666" />
+                  <Text style={styles.inputText}>{formatDate(formData.endDate)}</Text>
+                </View>
+              </TouchableOpacity>
+              {showPicker.endDate && (
+                <DateTimePicker
+                  value={formData.endDate}
+                  mode="date"
+                  display="default"
+                  onChange={(event, date) => handleDateChange(event, date, 'endDate')}
+                />
+              )}
+            </View>
+
+            <View style={[styles.inputGroup, { flex: 1, marginLeft: 8 }]}>
+              <Text style={styles.label}>End Time</Text>
+              <TouchableOpacity 
+                style={styles.input}
+                onPress={() => setShowPicker({ ...showPicker, endTime: true })}
+              >
+                <View style={styles.iconInput}>
+                  <IconSymbol name="clock" size={20} color="#666666" />
+                  <Text style={styles.inputText}>{formatTime(formData.endTime)}</Text>
+                </View>
+              </TouchableOpacity>
+              {showPicker.endTime && (
+                <DateTimePicker
+                  value={formData.endTime}
+                  mode="time"
+                  display="default"
+                  onChange={(event, time) => handleTimeChange(event, time, 'endTime')}
+                />
+              )}
+            </View>
+          </View>
+
+          <View style={styles.inputGroup}>
+            <View style={styles.labelRow}>
+              <Text style={styles.label}>Location</Text>
+              <TouchableOpacity onPress={toggleLocationInput}>
+                <Text style={styles.toggleText}>
+                  {isCustomLocation ? 'Use Autocomplete' : 'Enter Custom'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <TextInput
               style={styles.input}
-              onPress={() => setShowPicker({ ...showPicker, startDate: true })}
-            >
-              <View style={styles.iconInput}>
-                <IconSymbol name="calendar" size={20} color="#666666" />
-                <Text style={styles.inputText}>{formatDate(formData.startDate)}</Text>
-              </View>
-            </TouchableOpacity>
-            {showPicker.startDate && (
-              <DateTimePicker
-                value={formData.startDate}
-                mode="date"
-                display="default"
-                onChange={(event, date) => handleDateChange(event, date, 'startDate')}
-              />
-            )}
+              value={formData.location}
+              onChangeText={(text) => setFormData({ ...formData, location: text })}
+              placeholder="Enter event location"
+              placeholderTextColor="#999"
+            />
           </View>
 
-          <View style={[styles.inputGroup, { flex: 1, marginLeft: 8 }]}>
-            <Text style={styles.label}>Start Time</Text>
-            <TouchableOpacity 
-              style={styles.input}
-              onPress={() => setShowPicker({ ...showPicker, startTime: true })}
-            >
-              <View style={styles.iconInput}>
-                <IconSymbol name="clock" size={20} color="#666666" />
-                <Text style={styles.inputText}>{formatTime(formData.startTime)}</Text>
-              </View>
-            </TouchableOpacity>
-            {showPicker.startTime && (
-              <DateTimePicker
-                value={formData.startTime}
-                mode="time"
-                display="default"
-                onChange={(event, time) => handleTimeChange(event, time, 'startTime')}
-              />
-            )}
-          </View>
-        </View>
-
-        <View style={styles.row}>
-          <View style={[styles.inputGroup, { flex: 1, marginRight: 8 }]}>
-            <Text style={styles.label}>End Date</Text>
-            <TouchableOpacity 
-              style={styles.input}
-              onPress={() => setShowPicker({ ...showPicker, endDate: true })}
-            >
-              <View style={styles.iconInput}>
-                <IconSymbol name="calendar" size={20} color="#666666" />
-                <Text style={styles.inputText}>{formatDate(formData.endDate)}</Text>
-              </View>
-            </TouchableOpacity>
-            {showPicker.endDate && (
-              <DateTimePicker
-                value={formData.endDate}
-                mode="date"
-                display="default"
-                onChange={(event, date) => handleDateChange(event, date, 'endDate')}
-              />
-            )}
-          </View>
-
-          <View style={[styles.inputGroup, { flex: 1, marginLeft: 8 }]}>
-            <Text style={styles.label}>End Time</Text>
-            <TouchableOpacity 
-              style={styles.input}
-              onPress={() => setShowPicker({ ...showPicker, endTime: true })}
-            >
-              <View style={styles.iconInput}>
-                <IconSymbol name="clock" size={20} color="#666666" />
-                <Text style={styles.inputText}>{formatTime(formData.endTime)}</Text>
-              </View>
-            </TouchableOpacity>
-            {showPicker.endTime && (
-              <DateTimePicker
-                value={formData.endTime}
-                mode="time"
-                display="default"
-                onChange={(event, time) => handleTimeChange(event, time, 'endTime')}
-              />
-            )}
-          </View>
-        </View>
-
-        <View style={styles.inputGroup}>
-          <View style={styles.labelRow}>
-            <Text style={styles.label}>Location</Text>
-            <TouchableOpacity onPress={toggleLocationInput}>
-              <Text style={styles.toggleText}>
-                {isCustomLocation ? 'Use Autocomplete' : 'Enter Custom'}
-              </Text>
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Event Image</Text>
+            <TouchableOpacity style={styles.imageUpload} onPress={pickImage}>
+              {formData.image ? (
+                <Image source={{ uri: formData.image }} style={styles.previewImage} />
+              ) : (
+                <View style={styles.uploadPlaceholder}>
+                  <IconSymbol name="photo" size={24} color="#666666" />
+                  <Text style={styles.uploadText}>Upload Image</Text>
+                </View>
+              )}
             </TouchableOpacity>
           </View>
-          <TextInput
-            style={styles.input}
-            value={formData.location}
-            onChangeText={(text) => setFormData({ ...formData, location: text })}
-            placeholder="Enter event location"
-            placeholderTextColor="#999"
-          />
-        </View>
 
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Event Image</Text>
-          <TouchableOpacity style={styles.imageUpload} onPress={pickImage}>
-            {formData.image ? (
-              <Image source={{ uri: formData.image }} style={styles.previewImage} />
-            ) : (
-              <View style={styles.uploadPlaceholder}>
-                <IconSymbol name="photo" size={24} color="#666666" />
-                <Text style={styles.uploadText}>Upload Image</Text>
-              </View>
-            )}
+          <TouchableOpacity style={styles.submitButton}>
+            <Text style={styles.submitButtonText}>Publish</Text>
           </TouchableOpacity>
         </View>
-
-        <TouchableOpacity style={styles.submitButton}>
-          <Text style={styles.submitButtonText}>Publish</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={{ height: tabBarHeight }} />
-    </ScrollView>
+        <View style={{ height: tabBarHeight }} />
+      </ScrollView>
+    </>
   );
 }
 

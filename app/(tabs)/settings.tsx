@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Switch, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { IconSymbol, IconSymbolName } from '@/components/ui/IconSymbol';
 import { tabBarHeight } from './_layout';
+import Header from "@/components/ui/Header";
 
 interface SettingsSectionProps {
   title: string;
@@ -64,87 +65,90 @@ export default function SettingsPage() {
   const [emailUpdates, setEmailUpdates] = useState(true);
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.profileSection}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>JD</Text>
-          </View>
-          <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>John Doe</Text>
-            <Text style={styles.profileEmail}>john.doe@example.com</Text>
+    <>
+      <Header />
+      <ScrollView style={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.profileSection}>
+            <View style={styles.avatar}>
+              <Text style={styles.avatarText}>JD</Text>
+            </View>
+            <View style={styles.profileInfo}>
+              <Text style={styles.profileName}>John Doe</Text>
+              <Text style={styles.profileEmail}>john.doe@example.com</Text>
+            </View>
           </View>
         </View>
-      </View>
 
-      <SettingsSection title="Preferences">
-        <SettingsItem
-          icon="gear"
-          title="Notifications"
-          description="Receive push notifications"
-          type="toggle"
-          value={notifications}
-          onValueChange={setNotifications}
-        />
-        <SettingsItem
-          icon="gear"
-          title="Dark Mode"
-          description="Switch to dark theme"
-          type="toggle"
-          value={darkMode}
-          onValueChange={setDarkMode}
-        />
-        <SettingsItem
-          icon="gear"
-          title="Email Updates"
-          description="Receive email notifications"
-          type="toggle"
-          value={emailUpdates}
-          onValueChange={setEmailUpdates}
-        />
-      </SettingsSection>
+        <SettingsSection title="Preferences">
+          <SettingsItem
+            icon="gear"
+            title="Notifications"
+            description="Receive push notifications"
+            type="toggle"
+            value={notifications}
+            onValueChange={setNotifications}
+          />
+          <SettingsItem
+            icon="gear"
+            title="Dark Mode"
+            description="Switch to dark theme"
+            type="toggle"
+            value={darkMode}
+            onValueChange={setDarkMode}
+          />
+          <SettingsItem
+            icon="gear"
+            title="Email Updates"
+            description="Receive email notifications"
+            type="toggle"
+            value={emailUpdates}
+            onValueChange={setEmailUpdates}
+          />
+        </SettingsSection>
 
-      <SettingsSection title="Account">
-        <SettingsItem
-          icon="gear"
-          title="Edit Profile"
-          description="Update your personal information"
-        />
-        <SettingsItem
-          icon="gear"
-          title="Privacy"
-          description="Manage your privacy settings"
-        />
-        <SettingsItem
-          icon="gear"
-          title="Security"
-          description="Configure security options"
-        />
-      </SettingsSection>
+        <SettingsSection title="Account">
+          <SettingsItem
+            icon="gear"
+            title="Edit Profile"
+            description="Update your personal information"
+          />
+          <SettingsItem
+            icon="gear"
+            title="Privacy"
+            description="Manage your privacy settings"
+          />
+          <SettingsItem
+            icon="gear"
+            title="Security"
+            description="Configure security options"
+          />
+        </SettingsSection>
 
-      <SettingsSection title="Support">
-        <SettingsItem
-          icon="gear"
-          title="Help Center"
-          description="Get help and support"
-        />
-        <SettingsItem
-          icon="gear"
-          title="Terms of Service"
-          description="Read our terms and conditions"
-        />
-        <SettingsItem
-          icon="gear"
-          title="Privacy Policy"
-          description="Read our privacy policy"
-        />
-      </SettingsSection>
+        <SettingsSection title="Support">
+          <SettingsItem
+            icon="gear"
+            title="Help Center"
+            description="Get help and support"
+          />
+          <SettingsItem
+            icon="gear"
+            title="Terms of Service"
+            description="Read our terms and conditions"
+          />
+          <SettingsItem
+            icon="gear"
+            title="Privacy Policy"
+            description="Read our privacy policy"
+          />
+        </SettingsSection>
 
-      <TouchableOpacity style={styles.signOutButton}>
-        <Text style={styles.signOutButtonText}>Sign Out</Text>
-      </TouchableOpacity>
-      <View style = {{ height: tabBarHeight }} />
-    </ScrollView>
+        <TouchableOpacity style={styles.signOutButton}>
+          <Text style={styles.signOutButtonText}>Sign Out</Text>
+        </TouchableOpacity>
+        <View style = {{ height: tabBarHeight }} />
+      </ScrollView>
+    </>
   );
 }
 

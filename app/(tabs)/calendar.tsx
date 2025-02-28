@@ -3,6 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-nati
 import { Calendar, DateData } from 'react-native-calendars';
 import { BlurView } from 'expo-blur';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import Header from "@/components/ui/Header";
 
 interface Event {
   id: number;
@@ -21,42 +22,45 @@ export default function CalendarPage() {
   ];
 
   return (
-    <View style={styles.container}>
-      <Calendar
-        onDayPress={(day: DateData) => setSelected(day.dateString)}
-        markedDates={{
-          [selected]: { selected: true, selectedColor: '#800000' },
-        }}
-        theme={{
-          todayTextColor: '#800000',
-          selectedDayBackgroundColor: '#800000',
-          arrowColor: '#800000',
-        }}
-        style={styles.calendar}
-      />
-      
-      <View style={styles.eventsContainer}>
-        <Text style={styles.eventsTitle}>Today's Events</Text>
-        <ScrollView style={styles.eventsList}>
-          {events.map(event => (
-            <TouchableOpacity key={event.id} style={styles.eventCard}>
-              <BlurView intensity={90} tint="light" style={styles.eventCardInner}>
-                <View style={styles.eventTimeContainer}>
-                  <IconSymbol name="gear" size={16} color="#666666" />
-                  <Text style={styles.eventTime}>{event.time}</Text>
-                </View>
-                <Text style={styles.eventTitle}>{event.title}</Text>
-                <View style={[styles.eventType, { backgroundColor: event.type === 'work' ? '#E8F0FE' : '#FCE8E8' }]}>
-                  <Text style={[styles.eventTypeText, { color: event.type === 'work' ? '#1967D2' : '#D93025' }]}>
-                    {event.type.charAt(0).toUpperCase() + event.type.slice(1)}
-                  </Text>
-                </View>
-              </BlurView>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+    <>
+      <Header />
+      <View style={styles.container}>
+        <Calendar
+          onDayPress={(day: DateData) => setSelected(day.dateString)}
+          markedDates={{
+            [selected]: { selected: true, selectedColor: '#800000' },
+          }}
+          theme={{
+            todayTextColor: '#800000',
+            selectedDayBackgroundColor: '#800000',
+            arrowColor: '#800000',
+          }}
+          style={styles.calendar}
+        />
+        
+        <View style={styles.eventsContainer}>
+          <Text style={styles.eventsTitle}>Today's Events</Text>
+          <ScrollView style={styles.eventsList}>
+            {events.map(event => (
+              <TouchableOpacity key={event.id} style={styles.eventCard}>
+                <BlurView intensity={90} tint="light" style={styles.eventCardInner}>
+                  <View style={styles.eventTimeContainer}>
+                    <IconSymbol name="gear" size={16} color="#666666" />
+                    <Text style={styles.eventTime}>{event.time}</Text>
+                  </View>
+                  <Text style={styles.eventTitle}>{event.title}</Text>
+                  <View style={[styles.eventType, { backgroundColor: event.type === 'work' ? '#E8F0FE' : '#FCE8E8' }]}>
+                    <Text style={[styles.eventTypeText, { color: event.type === 'work' ? '#1967D2' : '#D93025' }]}>
+                      {event.type.charAt(0).toUpperCase() + event.type.slice(1)}
+                    </Text>
+                  </View>
+                </BlurView>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
       </View>
-    </View>
+    </>
   );
 }
 
