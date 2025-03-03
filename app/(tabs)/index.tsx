@@ -24,14 +24,24 @@ export default function ExplorePage() {
       height: 50,
       backgroundColor: 'rgb(220, 220, 220)',
       borderRadius: 12,
-      alignSelf: 'center'
+      alignSelf: 'center',
+      alignItems: 'center',
+      flexDirection: 'row',
+      justifyContent: "space-between",
+      marginBottom: 7
     }
   });
 
   const recentlyAdded = [
-    {eventName: "Event 1", key: 1},
-    {eventName: "Event 2", key: 2},
-    {eventName: "Event 3", key: 3}
+    {eventName: "Event 1", imageAddress: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 1},
+    {eventName: "Event 2", imageAddress: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 2},
+    {eventName: "Event 3", imageAddress: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 3}
+  ]
+
+  const upcoming = [
+    {eventName: "Event 1", orgName: "Organization 1", imageAddress: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 1},
+    {eventName: "Event 2", orgName: "Organization 2", imageAddress: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 2},
+    {eventName: "Event 3", orgName: "Organization 3", imageAddress: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 3}
   ]
 
   useEffect(() => {
@@ -105,27 +115,45 @@ export default function ExplorePage() {
               horizontal = {true}
               showsHorizontalScrollIndicator = {false}
               renderItem = {({ item }) => ( <EventCard key={item.event_id} event={item} /> )}
-              ListHeaderComponent={<View className='pt-4' />}
-              ListFooterComponent={<View style = {{ height: tabBarHeight }} />}
             />
           </View>
 
           <Text style = {{ color: '#9B1818', fontWeight: "bold", fontSize: 22, marginLeft: 25, marginVertical: 15 }}>
             RECENTLY ADDED
           </Text>
-          {recentlyAdded.map((item, index) => (
-            index == recentlyAdded.length - 1 ? (
-              <Pressable style = {styles.recentlyAddedButton}>
-              </Pressable>
-            ) : (
-              <Pressable style = {[styles.recentlyAddedButton, {marginBottom: 7}]}>
-              </Pressable>
-            )
+          {recentlyAdded.map((item) => (
+            <Pressable style = {styles.recentlyAddedButton} key = {item.key}>
+              <View style = {{ width: 32, height: 32, backgroundColor: 'black', marginLeft: 15 }} />
+              <Text style = {{ color: '#101623', fontSize: 17, marginLeft: 20, fontWeight: '500', flex: 1 }}>{item.eventName}</Text>
+              <Ionicons name='arrow-forward-outline' size={20} style = {{ marginRight: 15 }} />
+            </Pressable>
           ))}
 
           <Text style = {{ color: '#9B1818', fontWeight: "bold", fontSize: 22, marginLeft: 25, marginVertical: 15 }}>
             UPCOMING
           </Text>
+          <View style = {{ width: width / 1.1, height: height / 5.5, backgroundColor: 'rgb(220, 220, 220)', borderRadius: 15, alignSelf: 'center', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+            {upcoming.map((item) => (
+              <View style = {{flexDirection: 'column'}}>
+                <Image
+                  src = {item.imageAddress}
+                  style = {{ width: 120, height: 120, padding: 15 }}
+                />
+                <Text style = {{fontWeight: 'bold', textAlign: 'center', marginTop: -10}}>
+                  {item.eventName}
+                </Text>
+                <Text style = {{fontWeight: '300', textAlign: 'center', fontSize: 12}}>
+                  {item.orgName}
+                </Text>
+              </View>
+            ))}
+          </View>
+
+          <Text style = {{ color: '#9B1818', fontWeight: "bold", fontSize: 22, marginLeft: 25, marginVertical: 15 }}>
+            EXPLORE SOMETHING NEW
+          </Text>
+          <Text style = {{marginLeft: 25}}>:(</Text>
+          <View style = {{ height: tabBarHeight + 10 }} />
         </ScrollView>
       </View>
     </>
