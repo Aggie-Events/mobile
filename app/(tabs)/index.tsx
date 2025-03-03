@@ -29,6 +29,14 @@ export default function ExplorePage() {
       flexDirection: 'row',
       justifyContent: "space-between",
       marginBottom: 7
+    },
+    sectionTitle: { 
+      color: '#500000', 
+      fontWeight: "600", 
+      fontSize: 17, 
+      marginLeft: 25, 
+      marginVertical: 15, 
+      fontFamily: "inter"
     }
   });
 
@@ -101,7 +109,7 @@ export default function ExplorePage() {
           </View>
         </TouchableWithoutFeedback>
         <ScrollView>
-          <Text style = {{ color: '#9B1818', fontWeight: "bold", fontSize: 22, marginLeft: 25, marginVertical: 15, fontFamily: "inter" }}>
+          <Text style = {styles.sectionTitle}>
             TRENDING
           </Text>
 
@@ -115,7 +123,7 @@ export default function ExplorePage() {
             />
           </View>
 
-          <Text style = {{ color: '#9B1818', fontWeight: "bold", fontSize: 22, marginLeft: 25, marginVertical: 15 }}>
+          <Text style = {styles.sectionTitle}>
             RECENTLY ADDED
           </Text>
           {recentlyAdded.map((item) => (
@@ -126,7 +134,7 @@ export default function ExplorePage() {
             </Pressable>
           ))}
 
-          <Text style = {{ color: '#9B1818', fontWeight: "bold", fontSize: 22, marginLeft: 25, marginVertical: 15 }}>
+          <Text style = {styles.sectionTitle}>
             UPCOMING
           </Text>
           <View style = {{ width: width / 1.1, height: height / 5.5, backgroundColor: 'rgb(220, 220, 220)', borderRadius: 15, alignSelf: 'center', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
@@ -146,7 +154,7 @@ export default function ExplorePage() {
             ))}
           </View>
 
-          <Text style = {{ color: '#9B1818', fontWeight: "bold", fontSize: 22, marginLeft: 25, marginVertical: 15 }}>
+          <Text style = {styles.sectionTitle}>
             EXPLORE SOMETHING NEW
           </Text>
           <Text style = {{marginLeft: 25}}>:(</Text>

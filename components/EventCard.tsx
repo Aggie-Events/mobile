@@ -16,25 +16,27 @@ export default function EventCard({ event }: EventCardProps) {
 
   return (
     <Link href={`/event/${event.event_id}`} asChild>
-      {/* <Pressable className="bg-white rounded-xl shadow-sm mr-4 overflow-hidden py-4 h-80"> */}
-      <Pressable style = {{ width: width, height: 270, backgroundColor: 'white', borderRadius: 20, marginHorizontal: 4 }}>
-        <Image
+      <Pressable style = {{ width: width / 1.5, marginHorizontal: 16 }}>
+        {/* <Image
           source={{ uri: event.event_img }}
           className="w-full h-48 rounded-xl"
           resizeMode="cover"
-        />
-        <View className="p-4">
-          <Text className="text-xl font-bold text-gray-900 mb-2">
-            {event.event_name}
-          </Text>
-          <Text className="text-gray-600">
-            {truncateDescription(event.event_description)}
-          </Text>
-          <View className="flex-row mt-2 items-center">
-            <Text className="text-gray-500 text-sm">{event.start_time.toString()}</Text>
-            <Text className="text-gray-500 text-sm mx-2">•</Text>
-            <Text className="text-gray-500 text-sm">{event.event_location}</Text>
+        /> */}
+        <View style = {{ width: width / 1.5, height: 160, backgroundColor: '#500000', borderRadius: 8 }}>
+            <Text className="text-white font-bold text-xl px-3">
+              Org Name Here?
+            </Text>
+        </View>
+        <View style = {{ width: width / 1.5, height: 60, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+          <View style = {{ flexDirection: 'column', width: width / 1.7}}>
+            <Text className="text-sm font-bold text-gray-900">
+              {event.event_name}
+            </Text>
+            <Text className="text-gray-600">
+              {truncateDescription(event.event_description)}
+            </Text>
           </View>
+          <View style = {{ width: 10 }} />
         </View>
       </Pressable>
     </Link>
