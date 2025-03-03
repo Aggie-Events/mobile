@@ -11,10 +11,10 @@ import { Ionicons } from "@expo/vector-icons"
 import MaskedView from "@react-native-masked-view/masked-view";
 import { LinearGradient } from 'expo-linear-gradient';
 
-type Tab = 'for you' | 'following';
+type Tab = 'Featured' | 'Following';
 
 export default function ExplorePage() {
-  const [activeTab, setActiveTab] = useState<Tab>('for you');
+  const [activeTab, setActiveTab] = useState<Tab>('Featured');
   const [events, setEvents] = useState<Event[]>([]);
   const {width, height} = useWindowDimensions();
 
@@ -84,19 +84,16 @@ export default function ExplorePage() {
       <View className="flex-1 bg-gray-50">
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
           <View className="flex-row justify-center bg-gray-50 border-b border-gray-200">
-            {(['for you', 'following'] as Tab[]).map((tab) => (
+            {(['Featured', 'Following'] as Tab[]).map((tab) => (
               <Pressable
                 key={tab}
                 onPress={() => setActiveTab(tab)}
-                className={`px-6 py-4 ${
-                  activeTab === tab ? 'border-b-2 border-maroon-600' : ''
-                }`}
+                // className={`px-6 py-4 ${
+                //   activeTab === tab ? 'border-b-2 border-maroon-600' : ''
+                // }`}
+                style = {[{width: width / 2, height: 40, justifyContent: 'center'}, activeTab === tab ? {borderBottomColor: '#520D0D', borderBottomWidth: 2} : {}]}
               >
-                <Text
-                  className={`text-lg capitalize ${
-                    activeTab === tab ? 'text-maroon-600 font-semibold' : 'text-gray-600'
-                  }`}
-                >
+                <Text style = {{color: '#A0A0A0', fontWeight: '400', fontFamily: 'inter', fontSize: 12, textAlign: 'center'}}>
                   {tab}
                 </Text>
               </Pressable>
