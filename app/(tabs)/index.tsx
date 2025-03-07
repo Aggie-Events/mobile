@@ -18,12 +18,14 @@ export default function ExplorePage() {
   const [events, setEvents] = useState<Event[]>([]);
   const {width, height} = useWindowDimensions();
 
+  const sectionTitleExtraPadding = 30;
+
   const styles = StyleSheet.create({
     recentlyAddedButton: {
-      width: width / 1.1,
-      height: 50,
-      backgroundColor: 'rgb(220, 220, 220)',
-      borderRadius: 12,
+      width: width / 3.3,
+      height: 70,
+      backgroundColor: 'rgb(80, 0, 0)',
+      borderRadius: 8,
       alignSelf: 'center',
       alignItems: 'center',
       flexDirection: 'row',
@@ -43,7 +45,10 @@ export default function ExplorePage() {
   const recentlyAdded = [
     {eventName: "Event 1", imageAddress: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 1},
     {eventName: "Event 2", imageAddress: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 2},
-    {eventName: "Event 3", imageAddress: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 3}
+    {eventName: "Event 3", imageAddress: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 3},
+    {eventName: "Event 4", imageAddress: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 4},
+    {eventName: "Event 5", imageAddress: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 5},
+    {eventName: "Event 6", imageAddress: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 6}
   ]
 
   const upcoming = [
@@ -125,7 +130,7 @@ export default function ExplorePage() {
             />
           </View>
 
-          <Text style = {styles.sectionTitle}>
+          <Text style = {[styles.sectionTitle, {marginTop: sectionTitleExtraPadding}]}>
             UPCOMING
           </Text>
           <View style = {{ width: width, alignSelf: 'center', justifyContent: 'center', alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap' }}>
@@ -142,18 +147,19 @@ export default function ExplorePage() {
             ))}
           </View>
 
-          <Text style = {styles.sectionTitle}>
+          <Text style = {[styles.sectionTitle, {marginTop: sectionTitleExtraPadding}]}>
             RECENTLY ADDED
           </Text>
-          {recentlyAdded.map((item) => (
-            <Pressable style = {styles.recentlyAddedButton} key = {item.key}>
-              <View style = {{ width: 32, height: 32, backgroundColor: 'black', marginLeft: 15 }} />
-              <Text style = {{ color: '#101623', fontSize: 17, marginLeft: 20, fontWeight: '500', flex: 1 }}>{item.eventName}</Text>
-              <Ionicons name='arrow-forward-outline' size={20} style = {{ marginRight: 15 }} />
-            </Pressable>
-          ))}
+          <View style = {{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
+            {recentlyAdded.map((item, index) => (
+              <Pressable style = {[styles.recentlyAddedButton, index == 0 || (index + 1) % 3 != 0 ? {marginRight: 7} : {}]} key = {item.key}>
+                <Text style = {{ color: 'white', fontSize: 17, marginLeft: 20, fontWeight: '500', flex: 1 }}>{item.eventName}</Text>
+                <Ionicons name='arrow-forward-outline' size={15} style = {{ marginRight: 15, color: 'white' }} />
+              </Pressable>
+            ))}
+          </View>
 
-          <Text style = {styles.sectionTitle}>
+          <Text style = {[styles.sectionTitle, {marginTop: sectionTitleExtraPadding}]}>
             EXPLORE SOMETHING NEW
           </Text>
           <Text style = {{marginLeft: 25}}>:(</Text>
