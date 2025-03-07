@@ -49,7 +49,8 @@ export default function ExplorePage() {
   const upcoming = [
     {eventName: "Event 1", orgName: "Organization 1", imageAddress: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 1},
     {eventName: "Event 2", orgName: "Organization 2", imageAddress: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 2},
-    {eventName: "Event 3", orgName: "Organization 3", imageAddress: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 3}
+    {eventName: "Event 3", orgName: "Organization 3", imageAddress: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 3},
+    {eventName: "Event 4", orgName: "Organization 4", imageAddress: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 4}
   ]
 
   useEffect(() => {
@@ -113,14 +114,32 @@ export default function ExplorePage() {
             TRENDING
           </Text>
 
-          <View style = {{width: width, height: 270}}>
+          <View style = {{width: width}}>
             <FlatList 
               data = {events}
               keyExtractor = {(event) => event.event_id.toString()}
               horizontal = {true}
               showsHorizontalScrollIndicator = {false}
               renderItem = {({ item }) => ( <EventCard key={item.event_id} event={item} /> )}
+              ListFooterComponent={<View style = {{ marginRight: 16 }} />}
             />
+          </View>
+
+          <Text style = {styles.sectionTitle}>
+            UPCOMING
+          </Text>
+          <View style = {{ width: width, alignSelf: 'center', justifyContent: 'center', alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap' }}>
+            {upcoming.map((item) => (
+              <View style = {{ flexDirection: 'column', paddingHorizontal: 5, marginBottom: 10 }}>
+                <View style = {{ width: width / 2.3, height: 150, backgroundColor: '#500000', borderRadius: 8 }} />
+                <Text style = {{fontWeight: 'bold', textAlign: 'center'}}>
+                  {item.eventName}
+                </Text>
+                <Text style = {{fontWeight: '300', textAlign: 'center', fontSize: 12}}>
+                  {item.orgName}
+                </Text>
+              </View>
+            ))}
           </View>
 
           <Text style = {styles.sectionTitle}>
@@ -133,26 +152,6 @@ export default function ExplorePage() {
               <Ionicons name='arrow-forward-outline' size={20} style = {{ marginRight: 15 }} />
             </Pressable>
           ))}
-
-          <Text style = {styles.sectionTitle}>
-            UPCOMING
-          </Text>
-          <View style = {{ width: width / 1.1, height: height / 5.5, backgroundColor: 'rgb(220, 220, 220)', borderRadius: 15, alignSelf: 'center', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-            {upcoming.map((item) => (
-              <View style = {{flexDirection: 'column'}}>
-                <Image
-                  src = {item.imageAddress}
-                  style = {{ width: 120, height: 120, padding: 15 }}
-                />
-                <Text style = {{fontWeight: 'bold', textAlign: 'center', marginTop: -10}}>
-                  {item.eventName}
-                </Text>
-                <Text style = {{fontWeight: '300', textAlign: 'center', fontSize: 12}}>
-                  {item.orgName}
-                </Text>
-              </View>
-            ))}
-          </View>
 
           <Text style = {styles.sectionTitle}>
             EXPLORE SOMETHING NEW
