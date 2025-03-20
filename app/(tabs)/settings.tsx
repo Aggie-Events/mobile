@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, Switch, TouchableOpacity, ScrollView, StyleSheet, Alert } from 'react-native';
+import { View, Text, Switch, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { IconSymbol, IconSymbolName } from '@/components/ui/IconSymbol';
 import { tabBarHeight } from './_layout';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
-import { API_URL } from '@/config/api-url';
-import { router } from 'expo-router';
 
 interface SettingsSectionProps {
   title: string;
@@ -93,30 +91,6 @@ export default function SettingsPage() {
             try {
               await GoogleSignin.hasPlayServices();
               const userInfo = await GoogleSignin.signIn();
-              const idToken = userInfo.data?.user.id;
-
-              if (!idToken) {
-                Alert.alert("Sign in failed", "No ID token received");
-                return;
-              }
-        
-              // Send the ID token to your backend for verification
-              const response = await fetch(`${API_URL}/auth/google-signin`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ idToken }),
-              });
-        
-              if (!response.ok) {
-                const errorData = await response.json();
-                Alert.alert("Login failed", errorData.message);
-                return;
-              }
-        
-              const data = await response.json();
-              console.log("Login success:", data);
-              router.push("/");
-
               console.log(userInfo);
             } catch (error) {
               console.error(error);
