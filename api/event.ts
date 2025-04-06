@@ -9,6 +9,7 @@ export interface CreateEventData {
   event_name: string;
   event_description: string | null;
   event_location: string | null;
+  event_status: string;
   start_time: Date;
   end_time: Date;
   tags: string[];

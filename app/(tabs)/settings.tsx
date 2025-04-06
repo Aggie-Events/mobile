@@ -19,6 +19,7 @@ interface SettingsItemProps {
   type?: 'toggle' | 'button';
   value?: boolean;
   onValueChange?: (value: boolean) => void;
+  onPress?: () => void;
 }
 
 const signInWithGoogle = async () => {
@@ -113,28 +114,6 @@ export default function SettingsPage() {
   const [emailUpdates, setEmailUpdates] = useState(true);
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.profileSection}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>JD</Text>
-          </View>
-          <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>John Doe</Text>
-            <Text style={styles.profileEmail}>john.doe@example.com</Text>
-          </View>
-        </View>
-      </View>
-
-      <SettingsSection title="Sign In">
-        <SettingsItem
-          icon="globe"
-          title="Sign In with Google"
-          description="Use your Google account to sign in"
-          type="button"
-          onPress = {async () => await signInWithGoogle()}
-        />
-      </SettingsSection>
     <>
       <Header />
       <ScrollView style={styles.container}>
@@ -150,73 +129,84 @@ export default function SettingsPage() {
           </View>
         </View>
 
-        <SettingsSection title="Preferences">
+        <SettingsSection title="Sign In">
           <SettingsItem
-            icon="gear"
-            title="Notifications"
-            description="Receive push notifications"
-            type="toggle"
-            value={notifications}
-            onValueChange={setNotifications}
-          />
-          <SettingsItem
-            icon="gear"
-            title="Dark Mode"
-            description="Switch to dark theme"
-            type="toggle"
-            value={darkMode}
-            onValueChange={setDarkMode}
-          />
-          <SettingsItem
-            icon="gear"
-            title="Email Updates"
-            description="Receive email notifications"
-            type="toggle"
-            value={emailUpdates}
-            onValueChange={setEmailUpdates}
+            icon="globe"
+            title="Sign In with Google"
+            description="Use your Google account to sign in"
+            type="button"
+            onPress = {async () => await signInWithGoogle()}
           />
         </SettingsSection>
+      
 
-        <SettingsSection title="Account">
-          <SettingsItem
-            icon="gear"
-            title="Edit Profile"
-            description="Update your personal information"
-          />
-          <SettingsItem
-            icon="gear"
-            title="Privacy"
-            description="Manage your privacy settings"
-          />
-          <SettingsItem
-            icon="gear"
-            title="Security"
-            description="Configure security options"
-          />
-        </SettingsSection>
+          <SettingsSection title="Preferences">
+            <SettingsItem
+              icon="gear"
+              title="Notifications"
+              description="Receive push notifications"
+              type="toggle"
+              value={notifications}
+              onValueChange={setNotifications}
+            />
+            <SettingsItem
+              icon="gear"
+              title="Dark Mode"
+              description="Switch to dark theme"
+              type="toggle"
+              value={darkMode}
+              onValueChange={setDarkMode}
+            />
+            <SettingsItem
+              icon="gear"
+              title="Email Updates"
+              description="Receive email notifications"
+              type="toggle"
+              value={emailUpdates}
+              onValueChange={setEmailUpdates}
+            />
+          </SettingsSection>
 
-        <SettingsSection title="Support">
-          <SettingsItem
-            icon="gear"
-            title="Help Center"
-            description="Get help and support"
-          />
-          <SettingsItem
-            icon="gear"
-            title="Terms of Service"
-            description="Read our terms and conditions"
-          />
-          <SettingsItem
-            icon="gear"
-            title="Privacy Policy"
-            description="Read our privacy policy"
-          />
-        </SettingsSection>
+          <SettingsSection title="Account">
+            <SettingsItem
+              icon="gear"
+              title="Edit Profile"
+              description="Update your personal information"
+            />
+            <SettingsItem
+              icon="gear"
+              title="Privacy"
+              description="Manage your privacy settings"
+            />
+            <SettingsItem
+              icon="gear"
+              title="Security"
+              description="Configure security options"
+            />
+          </SettingsSection>
 
-        <TouchableOpacity style={styles.signOutButton}>
-          <Text style={styles.signOutButtonText}>Sign Out</Text>
-        </TouchableOpacity>
-        <View style = {{ height: tabBarHeight }} />
+          <SettingsSection title="Support">
+            <SettingsItem
+              icon="gear"
+              title="Help Center"
+              description="Get help and support"
+            />
+            <SettingsItem
+              icon="gear"
+              title="Terms of Service"
+              description="Read our terms and conditions"
+            />
+            <SettingsItem
+              icon="gear"
+              title="Privacy Policy"
+              description="Read our privacy policy"
+            />
+          </SettingsSection>
+
+          <TouchableOpacity style={styles.signOutButton}>
+            <Text style={styles.signOutButtonText}>Sign Out</Text>
+          </TouchableOpacity>
+          <View style = {{ height: tabBarHeight }} />
       </ScrollView>
     </>
   );
