@@ -3,6 +3,17 @@ import { Event } from "@/config/dbtypes";
 import { EventCreate, EventPageInformation } from "@/config/query-types";
 import { API_URL } from "@/config/api-url";
 
+export type EventStatus = 'draft' | 'published' | 'cancelled';
+
+export interface CreateEventData {
+  event_name: string;
+  event_description: string | null;
+  event_location: string | null;
+  start_time: Date;
+  end_time: Date;
+  tags: string[];
+}
+
 export interface SearchEventsReturn {
   event_id: number;
   org_id?: number;
@@ -88,12 +99,20 @@ export const fetchEventById = async (
     );
     return response.json() ?? null;
   } catch (error) {
-    throw new Error("Error fetching event");
+    throw new Error("Error fetching event by ID: " + error);
   }
 };
 
-export const createEvent = async (event: EventCreate) => {
+/**
+ * Create an event
+ * @param {EventCreate} event - The event to create
+ * @returns {Promise<number>} The created event ID
+ */
+export const createEvent = async (event: CreateEventData) => {
   try {
+    console.log("Formatted event: ", event);
+    console.log(`${API_URL}/events`);
+
     const response = await fetchUtil(
       `${API_URL}/events`,
       {
@@ -101,8 +120,10 @@ export const createEvent = async (event: EventCreate) => {
         body: event,
       },
     );
+    console.log("reponse ", response);
     return response.json() ?? null;
   } catch (error) {
+    console.log("Error creating event: ", error);
     throw new Error("Error creating event");
   }
 };

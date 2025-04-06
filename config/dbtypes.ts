@@ -5,6 +5,7 @@ export interface Event {
   event_description: string;
   event_img: string;
   event_likes: number;
+  event_status: string;
   start_time: Date;
   end_time: Date;
   event_location: string | null;

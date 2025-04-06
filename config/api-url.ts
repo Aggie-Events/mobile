@@ -1,4 +1,5 @@
-export const API_URL = "https://api.aggieevents.tech/api";
+export const API_URL = "http://100.64.26.218:5000/api";
+export const AUTH_URL = "http://100.64.26.218:5000";
 // HOWTO:
 // 1. run ipconfig on your machine (windows) (not sure what the mac equivalent is)
 // 2. find the ipv4 address

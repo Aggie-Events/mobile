@@ -10,6 +10,7 @@ import Header from '@/components/ui/Header';
 import { Ionicons } from "@expo/vector-icons"
 import MaskedView from "@react-native-masked-view/masked-view";
 import { LinearGradient } from 'expo-linear-gradient';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 type Tab = 'Featured' | 'Following';
 
@@ -59,16 +60,22 @@ export default function ExplorePage() {
   ]
 
   useEffect(() => {
+    GoogleSignin.configure({
+      iosClientId: '19658597217-enl8en0fnhsvilikd14gl260705m2e9o.apps.googleusercontent.com', // TODO: update this
+      webClientId: '19658597217-q87pq51i57uhml4bs9r5q0itbb81imi7.apps.googleusercontent.com', // TODO: update this
+      offlineAccess: true,
+    });
+  }, []);
+
+  useEffect(() => {
     const getEvents = async () => {
       try {
         const result = await fetchEvents();
-        console.log(result);
         setEvents(result);
       } catch (error) {
-        console.error("Error calling testApi:", error);
+        console.error("Error calling fetchEvents:", error);
       }
     };
-
     getEvents();
   }, [activeTab]); // refresh when tab is changed
 

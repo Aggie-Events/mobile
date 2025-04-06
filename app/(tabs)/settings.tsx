@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, Switch, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, Switch, TouchableOpacity, ScrollView, StyleSheet, Alert } from 'react-native';
 import { IconSymbol, IconSymbolName } from '@/components/ui/IconSymbol';
 import { tabBarHeight } from './_layout';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
+import { AUTH_URL } from '@/config/api-url';
+import { router } from 'expo-router';
 import Header from "@/components/ui/Header";
 
 interface SettingsSectionProps {
@@ -16,6 +19,51 @@ interface SettingsItemProps {
   type?: 'toggle' | 'button';
   value?: boolean;
   onValueChange?: (value: boolean) => void;
+}
+
+const signInWithGoogle = async () => {
+  try {
+    await GoogleSignin.hasPlayServices();
+    const userInfo = await GoogleSignin.signIn();
+    const idToken = userInfo.data?.idToken;
+
+    if (!idToken) {
+      Alert.alert("Sign in failed", "No ID token received");
+      return;
+    }
+
+    // Send the ID token to your backend for verification
+    // console.log(`${AUTH_URL}/auth/google-mobile`);
+
+    const queryData = {
+      idToken: idToken,
+      user_displayname: userInfo.data?.user.name,
+      user_img: userInfo.data?.user.photo,
+      user_name: "fsdfsadf",
+      user_email: userInfo.data?.user.email,
+    };
+
+    const response = await fetch(`${AUTH_URL}/auth/google-mobile`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: 'include',
+      body: JSON.stringify({ ...queryData }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      Alert.alert("Login failed", errorData.message);
+      return;
+    }
+    // console.log("response ok check after");
+
+
+    const data = await response.json();
+    console.log("Login success:", data);
+    router.push("/");
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 const SettingsSection: React.FC<SettingsSectionProps> = ({ title, children }) => (
@@ -65,6 +113,28 @@ export default function SettingsPage() {
   const [emailUpdates, setEmailUpdates] = useState(true);
 
   return (
+    <ScrollView style={styles.container}>
+      <View style={styles.header}>
+        <View style={styles.profileSection}>
+          <View style={styles.avatar}>
+            <Text style={styles.avatarText}>JD</Text>
+          </View>
+          <View style={styles.profileInfo}>
+            <Text style={styles.profileName}>John Doe</Text>
+            <Text style={styles.profileEmail}>john.doe@example.com</Text>
+          </View>
+        </View>
+      </View>
+
+      <SettingsSection title="Sign In">
+        <SettingsItem
+          icon="globe"
+          title="Sign In with Google"
+          description="Use your Google account to sign in"
+          type="button"
+          onPress = {async () => await signInWithGoogle()}
+        />
+      </SettingsSection>
     <>
       <Header />
       <ScrollView style={styles.container}>

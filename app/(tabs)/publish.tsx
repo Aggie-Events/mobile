@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Image,
 import { BlurView } from 'expo-blur';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { tabBarHeight } from './_layout';
+import { createEvent, CreateEventData } from '@/api/event';
 import * as ImagePicker from 'expo-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 // import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
@@ -39,6 +40,28 @@ export default function PublishPage() {
     title: '',
     tags: [] as string[],
     description: '',
+    start_time: '',
+    end_time: '',
+  });
+
+  const handlePublish = async () => {
+    const eventData: CreateEventData = {
+      event_name: formData.title,
+      event_description: formData.description,
+      event_location: null,
+      start_time: new Date(formData.start_time),
+      end_time: new Date(formData.end_time),
+      tags: [],
+    };
+
+    const createdEvent = await createEvent(eventData);
+
+    if (createdEvent) {
+      console.log('Event created successfully:', createdEvent);
+    } else {
+      console.error('Failed to create event');
+    }
+  };
     startDate: new Date(),
     startTime: new Date(),
     endDate: new Date(),
@@ -296,6 +319,16 @@ export default function PublishPage() {
             />
           </View>
 
+        <View style={styles.row}>
+          <View style={[styles.inputGroup, { flex: 1, marginRight: 8 }]}>
+            <Text style={styles.label}>Date</Text>
+            <TouchableOpacity style={styles.input}>
+              <View style={styles.iconInput}>
+                <IconSymbol name="calendar" size={20} color="#666666" />
+                <Text style={styles.inputText}>{formData.start_time || 'Select date'}</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
           <View style={styles.row}>
             <View style={[styles.inputGroup, { flex: 1, marginRight: 8 }]}>
               <Text style={styles.label}>Start Date</Text>
@@ -318,6 +351,14 @@ export default function PublishPage() {
               )}
             </View>
 
+          <View style={[styles.inputGroup, { flex: 1, marginLeft: 8 }]}>
+            <Text style={styles.label}>Time</Text>
+            <TouchableOpacity style={styles.input}>
+              <View style={styles.iconInput}>
+                <IconSymbol name="clock" size={20} color="#666666" />
+                <Text style={styles.inputText}>{formData.start_time || 'Select time'}</Text>
+              </View>
+            </TouchableOpacity>
             <View style={[styles.inputGroup, { flex: 1, marginLeft: 8 }]}>
               <Text style={styles.label}>Start Time</Text>
               <TouchableOpacity 
@@ -362,6 +403,23 @@ export default function PublishPage() {
               )}
             </View>
 
+
+        <TouchableOpacity style={styles.submitButton} onPress={handlePublish}>
+          <Text style={styles.submitButtonText}>Publish</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.submitButton} onPress={() => {
+          setFormData({
+            title: 'Test Event',
+            description: 'This is a test event',
+            start_time: '2025-01-01',
+            end_time: '2025-01-01',
+          });
+          handlePublish(); }}>
+          <Text style={styles.submitButtonText}>Publish Test Event</Text>
+        </TouchableOpacity>
+      </View>
+      <View style = {{ height: tabBarHeight }} />
+    </ScrollView>
             <View style={[styles.inputGroup, { flex: 1, marginLeft: 8 }]}>
               <Text style={styles.label}>End Time</Text>
               <TouchableOpacity 
