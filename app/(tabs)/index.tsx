@@ -28,10 +28,9 @@ export default function ExplorePage() {
         const result = await fetchEvents();
         setEvents(result);
       } catch (error) {
-        console.error("Error calling testApi:", error);
+        console.error("Error calling fetchEvents:", error);
       }
     };
-
     getEvents();
   }, [activeTab]); // refresh when tab is changed
 

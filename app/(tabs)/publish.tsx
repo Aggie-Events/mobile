@@ -11,7 +11,6 @@ export default function PublishPage() {
     description: '',
     start_time: '',
     end_time: '',
-    type: 'event',
   });
 
   const handlePublish = async () => {
@@ -21,7 +20,6 @@ export default function PublishPage() {
       event_location: null,
       start_time: new Date(formData.start_time),
       end_time: new Date(formData.end_time),
-      event_status: 'published',
       tags: [],
     };
 
@@ -88,51 +86,6 @@ export default function PublishPage() {
           </View>
         </View>
 
-        <View style={styles.typeSelector}>
-          <TouchableOpacity
-            style={[
-              styles.typeOption,
-              formData.type === 'event' && styles.typeOptionSelected,
-            ]}
-            onPress={() => setFormData({ ...formData, type: 'event' })}
-          >
-            <IconSymbol
-              name="calendar.badge.plus"
-              size={24}
-              color={formData.type === 'event' ? '#800000' : '#666666'}
-            />
-            <Text
-              style={[
-                styles.typeText,
-                formData.type === 'event' && styles.typeTextSelected,
-              ]}
-            >
-              Event
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[
-              styles.typeOption,
-              formData.type === 'post' && styles.typeOptionSelected,
-            ]}
-            onPress={() => setFormData({ ...formData, type: 'post' })}
-          >
-            <IconSymbol
-              name="doc.text"
-              size={24}
-              color={formData.type === 'post' ? '#800000' : '#666666'}
-            />
-            <Text
-              style={[
-                styles.typeText,
-                formData.type === 'post' && styles.typeTextSelected,
-              ]}
-            >
-              Post
-            </Text>
-          </TouchableOpacity>
-        </View>
 
         <TouchableOpacity style={styles.submitButton} onPress={handlePublish}>
           <Text style={styles.submitButtonText}>Publish</Text>
@@ -143,7 +96,6 @@ export default function PublishPage() {
             description: 'This is a test event',
             start_time: '2025-01-01',
             end_time: '2025-01-01',
-            type: 'event',
           });
           handlePublish(); }}>
           <Text style={styles.submitButtonText}>Publish Test Event</Text>

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, Switch, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, Switch, TouchableOpacity, ScrollView, StyleSheet, Alert } from 'react-native';
 import { IconSymbol, IconSymbolName } from '@/components/ui/IconSymbol';
 import { tabBarHeight } from './_layout';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
+import { AUTH_URL } from '@/config/api-url';
+import { router } from 'expo-router';
 
 interface SettingsSectionProps {
   title: string;
@@ -91,7 +93,42 @@ export default function SettingsPage() {
             try {
               await GoogleSignin.hasPlayServices();
               const userInfo = await GoogleSignin.signIn();
-              console.log(userInfo);
+              const idToken = userInfo.data?.idToken;
+
+              if (!idToken) {
+                Alert.alert("Sign in failed", "No ID token received");
+                return;
+              }
+        
+              // Send the ID token to your backend for verification
+              console.log(`${AUTH_URL}/auth/google-mobile`);
+
+              const queryData = {
+                idToken: idToken,
+                user_displayname: userInfo.data?.user.name,
+                user_img: userInfo.data?.user.photo,
+                user_name: "fsdfsadf",
+                user_email: userInfo.data?.user.email,
+              };
+
+              const response = await fetch(`${AUTH_URL}/auth/google-signin`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: 'include',
+                body: JSON.stringify({ ...queryData }),
+              });
+        
+              if (!response.ok) {
+                const errorData = await response.json();
+                Alert.alert("Login failed", errorData.message);
+                return;
+              }
+              console.log("response ok check after");
+        
+
+              const data = await response.json();
+              console.log("Login success:", data);
+              router.push("/");
             } catch (error) {
               console.error(error);
             }

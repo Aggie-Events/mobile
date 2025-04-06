@@ -7,6 +7,7 @@ export interface EventPageInformation {
   event_likes: number;
   start_time: Date;
   end_time: Date;
+  event_status: string | null;
   date_created: Date;
   date_modified: Date;
   contributor_name: string;

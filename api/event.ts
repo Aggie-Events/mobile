@@ -11,7 +11,6 @@ export interface CreateEventData {
   event_location: string | null;
   start_time: Date;
   end_time: Date;
-  event_status: EventStatus;
   tags: string[];
 }
 
@@ -100,7 +99,7 @@ export const fetchEventById = async (
     );
     return response.json() ?? null;
   } catch (error) {
-    throw new Error("Error fetching event");
+    throw new Error("Error fetching event by ID: " + error);
   }
 };
 
@@ -112,16 +111,19 @@ export const fetchEventById = async (
 export const createEvent = async (event: CreateEventData) => {
   try {
     console.log("Formatted event: ", event);
+    console.log(`${API_URL}/events`);
 
     const response = await fetchUtil(
-      `${API_URL}}/events`,
+      `${API_URL}/events`,
       {
         method: "POST",
         body: event,
       },
     );
+    console.log("reponse ", response);
     return response.json() ?? null;
   } catch (error) {
+    console.log("Error creating event: ", error);
     throw new Error("Error creating event");
   }
 };
