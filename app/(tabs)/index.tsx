@@ -11,6 +11,7 @@ import { Ionicons } from "@expo/vector-icons"
 import MaskedView from "@react-native-masked-view/masked-view";
 import { LinearGradient } from 'expo-linear-gradient';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import React from 'react';
 
 type Tab = 'Featured' | 'Following';
 
