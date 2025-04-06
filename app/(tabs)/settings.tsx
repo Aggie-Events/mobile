@@ -111,7 +111,7 @@ export default function SettingsPage() {
                 user_email: userInfo.data?.user.email,
               };
 
-              const response = await fetch(`${AUTH_URL}/auth/google-signin`, {
+              const response = await fetch(`${AUTH_URL}/auth/google-mobile`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: 'include',
