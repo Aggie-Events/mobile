@@ -5,6 +5,7 @@ import Header from '../../components/ui/Header';
 import { useEffect, useState } from 'react';
 import { fetchEventById } from '@/api/event';
 import { EventPageInformation } from '@/config/query-types';
+import React from 'react';
 
 export default function EventPage() {
   const { id } = useLocalSearchParams();

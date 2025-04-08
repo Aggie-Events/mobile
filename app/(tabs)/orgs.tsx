@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, useWindowDimensions, Image, Pressable } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import Header from "@/components/ui/Header";
+import MaskedView from '@react-native-masked-view/masked-view';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 
 interface Organization {
   id: string;
@@ -40,6 +43,7 @@ const CATEGORIES = ['All', 'Technology', 'Environment', 'Arts', 'Education', 'So
 type Category = typeof CATEGORIES[number];
 
 export default function OrganizationsPage() {
+  const { width, height } = useWindowDimensions();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<Category>('All');
 
@@ -64,7 +68,26 @@ export default function OrganizationsPage() {
 
   return (
     <>
-      <Header />
+      <Header>
+        <View style = {{ width: width, height: height / 14, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Image 
+            source={require('../../assets/images/logo.png')} 
+            style = {{ width: 40, height: 40, marginLeft: 20 }}
+          />
+          <MaskedView maskElement={<Text style = {{ fontSize: 25, fontFamily: 'inter', fontWeight: 'bold', textAlign: 'center' }}>AggieEvents</Text>}>
+            <LinearGradient
+              colors={["white", "#c2c2c2"]} // Gradient colors
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={{ width: 200, height: 30 }}
+            />
+          </MaskedView>
+          
+          <Pressable className="p-5">
+            <Ionicons name="search" size={24} color="white" />
+          </Pressable>
+        </View>
+      </Header>
       <View style={styles.container}>
         <View style={styles.header}>
           <View style={styles.searchContainer}>

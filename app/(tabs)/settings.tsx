@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, Switch, TouchableOpacity, ScrollView, StyleSheet, Alert } from 'react-native';
+import { View, Text, Switch, TouchableOpacity, ScrollView, StyleSheet, Alert, useWindowDimensions, Image } from 'react-native';
 import { IconSymbol, IconSymbolName } from '@/components/ui/IconSymbol';
 import { tabBarHeight } from './_layout';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import { AUTH_URL } from '@/config/api-url';
 import { router } from 'expo-router';
 import Header from "@/components/ui/Header";
+import MaskedView from '@react-native-masked-view/masked-view';
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface SettingsSectionProps {
   title: string;
@@ -112,10 +114,29 @@ export default function SettingsPage() {
   const [notifications, setNotifications] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
   const [emailUpdates, setEmailUpdates] = useState(true);
+  const { width, height } = useWindowDimensions();
 
   return (
     <>
-      <Header />
+      <Header>
+        <View style = {{ width: width, height: height / 14, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Image 
+            source={require('../../assets/images/logo.png')} 
+            style = {{ width: 40, height: 40, marginLeft: 20 }}
+          />
+          <MaskedView maskElement={<Text style = {{ fontSize: 25, fontFamily: 'inter', fontWeight: 'bold', textAlign: 'center' }}>AggieEvents</Text>}>
+            <LinearGradient
+              colors={["white", "#c2c2c2"]} // Gradient colors
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={{ width: 200, height: 30 }}
+            />
+          </MaskedView>
+          
+          {/* Used for padding right side */}
+          <View style = {{ width: 59 }} />
+        </View>
+      </Header>
       <ScrollView style={styles.container}>
         <View style={styles.header}>
           <View style={styles.profileSection}>

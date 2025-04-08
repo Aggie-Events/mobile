@@ -1,6 +1,7 @@
 import { View, StyleSheet } from 'react-native';
 import { Link, Stack } from 'expo-router';
 import { verifyInstallation } from 'nativewind';
+import React from 'react';
 
 export default function NotFoundScreen() {
   verifyInstallation();
