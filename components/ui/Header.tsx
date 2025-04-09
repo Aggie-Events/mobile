@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { SafeAreaView, StyleSheet, useWindowDimensions } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -29,4 +30,4 @@ const Header: React.FC<NestedProps> = ({ children }) => {
   );
 }
 
-export default Header;
+export default memo(Header);

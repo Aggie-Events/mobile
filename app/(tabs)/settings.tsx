@@ -25,48 +25,48 @@ interface SettingsItemProps {
 }
 
 const signInWithGoogle = async () => {
-  try {
-    await GoogleSignin.hasPlayServices();
-    const userInfo = await GoogleSignin.signIn();
-    const idToken = userInfo.data?.idToken;
+  // try {
+  //   await GoogleSignin.hasPlayServices();
+  //   const userInfo = await GoogleSignin.signIn();
+  //   const idToken = userInfo.data?.idToken;
 
-    if (!idToken) {
-      Alert.alert("Sign in failed", "No ID token received");
-      return;
-    }
+  //   if (!idToken) {
+  //     Alert.alert("Sign in failed", "No ID token received");
+  //     return;
+  //   }
 
-    // Send the ID token to your backend for verification
-    // console.log(`${AUTH_URL}/auth/google-mobile`);
+  //   // Send the ID token to your backend for verification
+  //   // console.log(`${AUTH_URL}/auth/google-mobile`);
 
-    const queryData = {
-      idToken: idToken,
-      user_displayname: userInfo.data?.user.name,
-      user_img: userInfo.data?.user.photo,
-      user_name: "fsdfsadf",
-      user_email: userInfo.data?.user.email,
-    };
+  //   const queryData = {
+  //     idToken: idToken,
+  //     user_displayname: userInfo.data?.user.name,
+  //     user_img: userInfo.data?.user.photo,
+  //     user_name: "fsdfsadf",
+  //     user_email: userInfo.data?.user.email,
+  //   };
 
-    const response = await fetch(`${AUTH_URL}/auth/google-mobile`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: 'include',
-      body: JSON.stringify({ ...queryData }),
-    });
+  //   const response = await fetch(`${AUTH_URL}/auth/google-mobile`, {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     credentials: 'include',
+  //     body: JSON.stringify({ ...queryData }),
+  //   });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      Alert.alert("Login failed", errorData.message);
-      return;
-    }
-    // console.log("response ok check after");
+  //   if (!response.ok) {
+  //     const errorData = await response.json();
+  //     Alert.alert("Login failed", errorData.message);
+  //     return;
+  //   }
+  //   // console.log("response ok check after");
 
 
-    const data = await response.json();
-    console.log("Login success:", data);
-    router.push("/");
-  } catch (error) {
-    console.error(error);
-  }
+  //   const data = await response.json();
+  //   console.log("Login success:", data);
+  //   router.push("/");
+  // } catch (error) {
+  //   console.error(error);
+  // }
 }
 
 const SettingsSection: React.FC<SettingsSectionProps> = ({ title, children }) => (
