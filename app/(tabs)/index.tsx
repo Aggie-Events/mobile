@@ -133,7 +133,7 @@ export default function ExplorePage() {
               keyExtractor = {(event) => event.event_id.toString()}
               horizontal = {true}
               showsHorizontalScrollIndicator = {false}
-              renderItem = {({ item }) => ( <EventCard key={item.event_id} event={item} /> )}
+              renderItem = {({ item }) => ( <EventCard id={item.event_id.toString()} event={item} /> )}
               ListFooterComponent={<View style = {{ marginRight: 16 }} />}
             />
           </View>
@@ -142,8 +142,8 @@ export default function ExplorePage() {
             UPCOMING
           </Text>
           <View style = {{ width: width, alignSelf: 'center', justifyContent: 'center', alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap' }}>
-            {upcoming.map((item) => (
-              <View style = {{ flexDirection: 'column', paddingHorizontal: 5, marginBottom: 10 }}>
+            {upcoming.map((item, index) => (
+              <View style = {{ flexDirection: 'column', paddingHorizontal: 5, marginBottom: 10 }} key={index}>
                 <View style = {{ width: width / 2.3, height: 150, backgroundColor: '#500000', borderRadius: 8 }} />
                 <Text style = {{fontWeight: 'bold', textAlign: 'center'}}>
                   {item.eventName}

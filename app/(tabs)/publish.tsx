@@ -40,7 +40,6 @@ export default function PublishPage() {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#ffffff',
     },
     contentContainer: {
       padding: 20,
@@ -191,7 +190,7 @@ export default function PublishPage() {
           <View style = {{ width: 59 }} />
         </View>
       </Header>
-      <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+      <ScrollView className="bg-gray-50" style={styles.container} contentContainerStyle={styles.contentContainer}>
         <Text style={styles.title}>Publish Event</Text>
         {/* <Text style={styles.subtitle}>Share your next event with the community</Text> */}
 
@@ -214,9 +213,15 @@ export default function PublishPage() {
             <View style = {styles.imagePath}>
               <View style = {[styles.dot, {marginBottom: 5}]} />
               <View style = {styles.verticalDottedLine} />
-              <View style = {[styles.dot, {marginTop: 5}]} />
+              <View style = {[styles.dot, { backgroundColor: '#f8f8f8', borderColor: '#500000', borderWidth: 2, marginTop: 5}]} />
             </View>
             <View style = {styles.timeContainer}>
+              <View style = {{ width: '100%', height: 50, justifyContent: 'center', borderBottomWidth: 1, borderColor: 'rgb(229, 231, 235)' }}>
+                <Text style = {{ fontSize: 16, color: '#b4b4b4' }}>Start</Text>
+              </View>
+              <View style = {{ width: '100%', height: 50, justifyContent: 'center' }}>
+                <Text style = {{ fontSize: 16, color: '#b4b4b4' }}>End</Text>
+              </View>
             </View>
           </View>
         </View>

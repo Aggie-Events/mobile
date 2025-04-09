@@ -46,7 +46,7 @@ export default function CalendarPage() {
         </View>
       </Header>
 
-      <View style={styles.container}>
+      <View className="bg-gray-50" style={styles.container}>
         <Calendar
           onDayPress={(day: DateData) => setSelected(day.dateString)}
           markedDates={{
@@ -89,7 +89,6 @@ export default function CalendarPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
   },
   calendar: {
     borderBottomWidth: 1,

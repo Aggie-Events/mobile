@@ -4,9 +4,10 @@ import type { Event } from '../config/dbtypes';
 
 interface EventCardProps {
   event: Event;
+  id: string;
 }
 
-export default function EventCard({ event }: EventCardProps) {
+export default function EventCard({ event, id }: EventCardProps) {
   const cardWidth = 160;
   const truncateDescription = (text: string | null, maxLength: number = 150) => {
     if (!text) return "no description.";
@@ -15,7 +16,7 @@ export default function EventCard({ event }: EventCardProps) {
   };
 
   return (
-    <Link href={`/event/${event.event_id}`} asChild>
+    <Link key={id} href={`/event/${event.event_id}`} asChild>
       <Pressable style = {{ width: cardWidth, marginLeft: 16 }}>
         {/* <Image
           source={{ uri: event.event_img }}
