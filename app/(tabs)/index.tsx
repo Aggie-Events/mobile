@@ -83,24 +83,9 @@ export default function ExplorePage() {
   return (
     <>
       <Header>
-        <View style = {{ width: width, height: height / 14, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
-          <Image 
-            source={require('../../assets/images/logo.png')} 
-            style = {{ width: 40, height: 40, marginLeft: 20 }}
-          />
-          <MaskedView maskElement={<Text style = {{ fontSize: 25, fontFamily: 'inter', fontWeight: 'bold', textAlign: 'center' }}>AggieEvents</Text>}>
-            <LinearGradient
-              colors={["white", "#c2c2c2"]} // Gradient colors
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={{ width: 200, height: 30 }}
-            />
-          </MaskedView>
-          
-          <Pressable className="p-5">
-            <Ionicons name="search" size={24} color="white" />
-          </Pressable>
-        </View>
+        <Pressable>
+          <Ionicons name="search" size={24} color="white" />
+        </Pressable>
       </Header>
 
       <View className="flex-1 bg-gray-50">

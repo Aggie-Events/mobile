@@ -172,23 +172,7 @@ export default function PublishPage() {
   return (
     <>
       <Header>
-        <View style = {{ width: width, height: height / 14, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
-          <Image 
-            source={require('../../assets/images/logo.png')} 
-            style = {{ width: 40, height: 40, marginLeft: 20 }}
-          />
-          <MaskedView maskElement={<Text style = {{ fontSize: 25, fontFamily: 'inter', fontWeight: 'bold', textAlign: 'center' }}>AggieEvents</Text>}>
-            <LinearGradient
-              colors={["white", "#c2c2c2"]} // Gradient colors
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={{ width: 200, height: 30 }}
-            />
-          </MaskedView>
-          
-          {/* Used for padding right side */}
-          <View style = {{ width: 59 }} />
-        </View>
+        <View style = {{ width: 40 }} />
       </Header>
       <ScrollView className="bg-gray-50" style={styles.container} contentContainerStyle={styles.contentContainer}>
         <Text style={styles.title}>Publish Event</Text>
