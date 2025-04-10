@@ -7,6 +7,7 @@ import { createEvent, CreateEventData } from '@/api/event';
 import Header from '@/components/ui/Header';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from "@expo/vector-icons";
 
 export default function PublishPage() {
   const { width, height } = useWindowDimensions();
@@ -181,7 +182,6 @@ export default function PublishPage() {
         <View style = {styles.imageContainer}>
         </View>
 
-
         <View style={styles.inputGroup}>
           <TextInput
             style={styles.input}
@@ -211,6 +211,13 @@ export default function PublishPage() {
         </View>
 
         <View style={styles.inputGroup}>
+          <View style={[styles.input, { padding: 0, flexDirection: 'row', alignItems: 'center' }]}>
+            <Ionicons name="location-outline" size={24} color="#500000" style={{ marginLeft: 12 }} />
+            <Text style={{ marginLeft: 8, fontSize: 16, color: '#999', fontWeight: '600' }}>Choose Location</Text> 
+          </View>
+        </View>
+
+        <View style={styles.inputGroup}>
           <TextInput
             style={[styles.input, styles.textArea]}
             value={formData.description}
@@ -222,25 +229,27 @@ export default function PublishPage() {
           />
         </View>
 
-        <View style={styles.row}>
-          <View style={[styles.inputGroup, { flex: 1, marginRight: 8 }]}>
-            <Text style={styles.label}>Date</Text>
-            <TouchableOpacity style={styles.input}>
-              <View style={styles.iconInput}>
-                <IconSymbol name="calendar" size={20} color="#666666" />
-                <Text style={styles.inputText}>{formData.start_time || 'Select date'}</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
+        <View style={styles.inputGroup}>
+          <View style={{ width: '100%', height: 1, borderTopWidth: 1, borderColor: 'rgb(200, 200, 200)' }} />
+        </View>
 
-          <View style={[styles.inputGroup, { flex: 1, marginLeft: 8 }]}>
-            <Text style={styles.label}>Time</Text>
-            <TouchableOpacity style={styles.input}>
-              <View style={styles.iconInput}>
-                <IconSymbol name="clock" size={20} color="#666666" />
-                <Text style={styles.inputText}>{formData.start_time || 'Select time'}</Text>
+        <Text style={{ fontSize: 13, color: '#333', fontWeight: '300', marginBottom: 16 }}>Options</Text>
+
+        <View style={[styles.inputGroup, { marginBottom: 32 }]}>
+          <View style={[styles.input, { padding: 0, height: 100, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }]}>
+            <View style={styles.imagePath}>
+              <Ionicons name="eye-outline" size={24} color="#500000" />
+              <View style={[styles.verticalDottedLine, {height: 25, borderWidth: 0}]} />
+              <Ionicons name="people-outline" size={24} color="#500000" />
+            </View>
+            <View style = {styles.timeContainer}>
+              <View style = {{ width: '100%', height: 50, justifyContent: 'center', borderBottomWidth: 1, borderColor: 'rgb(229, 231, 235)' }}>
+                <Text style = {{ fontSize: 16, color: '#b4b4b4' }}>Visibility</Text>
               </View>
-            </TouchableOpacity>
+              <View style = {{ width: '100%', height: 50, justifyContent: 'center' }}>
+                <Text style = {{ fontSize: 16, color: '#b4b4b4' }}>Capacity</Text>
+              </View>
+            </View>
           </View>
         </View>
         

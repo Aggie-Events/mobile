@@ -8,11 +8,6 @@ export const logo = require('../assets/images/logo.png');
 
 
 export default function RootLayout() {
-  useEffect(() => {
-    // Preload the logo image
-    const uri = Image.resolveAssetSource(logo).uri;
-    Image.prefetch(uri);
-  }, []);
 
   return (
     <>

@@ -1,4 +1,4 @@
-import { memo, useCallback   } from "react";
+import { memo, useCallback } from "react";
 import { StyleSheet, Image, Text, View, Platform, StatusBar } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import MaskedView from "@react-native-masked-view/masked-view";
