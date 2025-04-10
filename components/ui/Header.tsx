@@ -1,41 +1,55 @@
-import { memo } from "react";
-import { SafeAreaView, StyleSheet, Image, Text, View } from "react-native";
+import { memo, useCallback   } from "react";
+import { StyleSheet, Image, Text, View, Platform, StatusBar } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import MaskedView from "@react-native-masked-view/masked-view";
+import { logo } from "../../app/_layout";
 
 interface NestedProps {
   children?: React.ReactNode
 }
 
-const Header: React.FC<NestedProps> = memo(({ children }) => {
+const backgroundGradient: [string, string] = ['#763A3A', '#520D0D'];
+const textGradient: [string, string] = ['white', '#c2c2c2'];
+const start: { x: number, y: number } = { x: 0, y: 0 };
+const end: { x: number, y: number } = { x: 1, y: 0 };
+const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 47 : StatusBar.currentHeight || 0;
+
+const Header: React.FC<NestedProps> = ({ children }) => {
+  const renderLogo = useCallback(() => {
+    return (
+      <Image 
+        defaultSource={logo}
+        fadeDuration={0}
+        source={logo} 
+        style = {styles.logo}
+      />
+    );
+  }, []);
 
   return (
     <LinearGradient
-      colors = {['#763A3A', '#520D0D']}
-      start = {{ x: 0, y: 0 }}
-      end = {{ x: 1, y: 0 }}
+      colors = {backgroundGradient}
+      start = {start}
+      end = {end}
       style = {styles.background}
     >
-      <SafeAreaView style = {styles.container}>
-        <Image 
-          source={require('../../assets/images/logo.png')} 
-          style = {{ width: 40, height: 40, marginLeft: 20 }}
-        />
-        <MaskedView maskElement={<Text style = {{ fontSize: 25, fontFamily: 'inter', fontWeight: 'bold', textAlign: 'center' }}>AggieEvents</Text>}>
+      <View style = {styles.container}>
+        {renderLogo()}
+        <MaskedView maskElement={<Text style = {styles.titleMask}>AggieEvents</Text>}>
           <LinearGradient
-            colors={["white", "#c2c2c2"]} // Gradient colors
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={{ width: 200, height: 30 }}
+            colors={textGradient} // Gradient colors
+            start={start}
+            end={end}
+            style={styles.title}
           />
         </MaskedView>
         <View style = {styles.rightContent}>
           {children}
         </View>
-      </SafeAreaView>
+      </View>
     </LinearGradient>
   );
-});
+};
 
 const styles = StyleSheet.create({
   background: {
@@ -48,6 +62,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     justifyContent: 'space-between',
     flexDirection: 'row',
+    paddingTop: STATUSBAR_HEIGHT,
   },
   rightContent: {
     width: 40,
@@ -56,7 +71,24 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     // backgroundColor: 'blue',
     marginRight: 20
+  },
+  logo: {
+    width: 40,
+    height: 40,
+    marginLeft: 20,
+    resizeMode: 'contain',
+    backgroundColor: 'transparent'
+  },
+  title: {
+    width: 200,
+    height: 30
+  },
+  titleMask: {
+    fontSize: 25,
+    fontFamily: 'inter',
+    fontWeight: 'bold',
+    textAlign: 'center'
   }
-})
+});
 
 export default memo(Header);
