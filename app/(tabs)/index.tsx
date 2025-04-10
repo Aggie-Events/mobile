@@ -1,17 +1,15 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, FlatList, Keyboard, Image, TouchableWithoutFeedback, useWindowDimensions, ScrollView, StyleSheet } from "react-native";
 import EventCard from '../../components/EventCard';
 import { mockEvents } from '@/api/fakedb';
 import { fetchEvents, searchEvents } from '@/api/event';
 import { Event } from '@/config/dbtypes';
-import { tabBarHeight } from './_layout';
+import { tabBarHeight } from '@/constants/constants';
 import { testApi } from '@/api/test';
 import Header from '@/components/ui/Header';
 import { Ionicons } from "@expo/vector-icons"
-import MaskedView from "@react-native-masked-view/masked-view";
-import { LinearGradient } from 'expo-linear-gradient';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import React from 'react';
+import { eventCardHeight } from '@/constants/constants';
 
 type Tab = 'Featured' | 'Following';
 
@@ -129,7 +127,7 @@ export default function ExplorePage() {
           <View style = {{ width: width, alignSelf: 'center', justifyContent: 'center', alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap' }}>
             {upcoming.map((item, index) => (
               <View style = {{ flexDirection: 'column', paddingHorizontal: 5, marginBottom: 10 }} key={index}>
-                <View style = {{ width: width / 2.3, height: 150, backgroundColor: '#500000', borderRadius: 8 }} />
+                <View style = {{ width: eventCardHeight * 1.2, height: eventCardHeight * 1.2, backgroundColor: '#500000', borderRadius: 8 }} />
                 <Text style = {{fontWeight: 'bold', textAlign: 'center'}}>
                   {item.eventName}
                 </Text>

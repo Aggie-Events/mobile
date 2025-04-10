@@ -3,8 +3,6 @@ import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, useWindo
 import { BlurView } from 'expo-blur';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import Header from "@/components/ui/Header";
-import MaskedView from '@react-native-masked-view/masked-view';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 
 interface Organization {

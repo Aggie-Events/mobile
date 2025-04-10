@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, useWindowDimensions, Image } from 'react-native';
-import { BlurView } from 'expo-blur';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import { tabBarHeight } from './_layout';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, useWindowDimensions } from 'react-native';
+import { tabBarHeight } from '@/constants/constants';
 import { createEvent, CreateEventData } from '@/api/event';
 import Header from '@/components/ui/Header';
-import MaskedView from '@react-native-masked-view/masked-view';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from "@expo/vector-icons";
+import { eventCardHeight } from '@/constants/constants';
 
 export default function PublishPage() {
-  const { width, height } = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -135,8 +132,8 @@ export default function PublishPage() {
       fontWeight: '600',
     },
     imageContainer: {
-      width: 160 * 1.5,
-      height: 140 * 1.5,
+      width: eventCardHeight * 1.7,
+      height: eventCardHeight * 1.7,
       backgroundColor: '#500000',
       borderRadius: 12,
       alignSelf: 'center',

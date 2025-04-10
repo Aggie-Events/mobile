@@ -3,6 +3,7 @@ import { StyleSheet, Image, Text, View, Platform, StatusBar } from "react-native
 import { LinearGradient } from "expo-linear-gradient";
 import MaskedView from "@react-native-masked-view/masked-view";
 import { logo } from "../../app/_layout";
+import { STATUSBAR_HEIGHT } from "@/constants/constants";
 
 interface NestedProps {
   children?: React.ReactNode
@@ -12,7 +13,6 @@ const backgroundGradient: [string, string] = ['#763A3A', '#520D0D'];
 const textGradient: [string, string] = ['white', '#c2c2c2'];
 const start: { x: number, y: number } = { x: 0, y: 0 };
 const end: { x: number, y: number } = { x: 1, y: 0 };
-const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 47 : StatusBar.currentHeight || 0;
 
 const Header: React.FC<NestedProps> = ({ children }) => {
   const renderLogo = useCallback(() => {

@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, Switch, TouchableOpacity, ScrollView, StyleSheet, Alert, useWindowDimensions, Image } from 'react-native';
 import { IconSymbol, IconSymbolName } from '@/components/ui/IconSymbol';
-import { tabBarHeight } from './_layout';
+import { tabBarHeight } from '@/constants/constants';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import { AUTH_URL } from '@/config/api-url';
 import { router } from 'expo-router';
 import Header from "@/components/ui/Header";
-import MaskedView from '@react-native-masked-view/masked-view';
-import { LinearGradient } from 'expo-linear-gradient';
 
 interface SettingsSectionProps {
   title: string;
