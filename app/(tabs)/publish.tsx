@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, useWindowDimensions } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, useWindowDimensions, Image, Pressable } from 'react-native';
 import { tabBarHeight } from '@/constants/constants';
 import { createEvent, CreateEventData } from '@/api/event';
 import Header from '@/components/ui/Header';
 import { Ionicons } from "@expo/vector-icons";
 import { eventCardHeight } from '@/constants/constants';
+import * as ImagePicker from 'expo-image-picker';
+
+// TODO: Add image picker
 
 export default function PublishPage() {
   const { width } = useWindowDimensions();
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -134,10 +138,10 @@ export default function PublishPage() {
     imageContainer: {
       width: eventCardHeight * 1.7,
       height: eventCardHeight * 1.7,
-      backgroundColor: '#500000',
+      backgroundColor: '#A54646',
       borderRadius: 12,
       alignSelf: 'center',
-      marginVertical: 16,
+      marginBottom: 16,
     },
     imagePath: {
       height: 100,
@@ -165,7 +169,30 @@ export default function PublishPage() {
       borderStyle: 'dotted',
       borderColor: '#500000',
     },
+    imageLogo: {
+      position: 'absolute',
+      bottom: 10,
+      right: 10,
+      width: 32,
+      height: 32,
+      backgroundColor: 'rgba(70, 70, 70, 0.6)',
+      borderRadius: 16,
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
   });
+
+  const handleImagePress = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setSelectedImage(result.assets[0].uri);
+    }
+  };
 
   return (
     <>
@@ -173,11 +200,15 @@ export default function PublishPage() {
         <View style = {{ width: 40 }} />
       </Header>
       <ScrollView className="bg-gray-50" style={styles.container} contentContainerStyle={styles.contentContainer}>
-        <Text style={styles.title}>Publish Event</Text>
+        {/* <Text style={styles.title}>Publish Event</Text> */}
         {/* <Text style={styles.subtitle}>Share your next event with the community</Text> */}
 
-        <View style = {styles.imageContainer}>
-        </View>
+        <Pressable style = {styles.imageContainer} onPress={handleImagePress}>
+          <Image source={selectedImage ? { uri: selectedImage } : require('@/assets/images/default-event-image.png')} style = {styles.imageContainer} />
+          <View style={styles.imageLogo}>
+            <Ionicons name="image-outline" size={20} color="white" />
+          </View>
+        </Pressable>
 
         <View style={styles.inputGroup}>
           <TextInput

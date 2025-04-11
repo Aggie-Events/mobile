@@ -43,6 +43,12 @@
         {
           "iosUrlScheme": "com.googleusercontent.apps.19658597217-enl8en0fnhsvilikd14gl260705m2e9o"
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
       ]
     ],
     "experiments": {
