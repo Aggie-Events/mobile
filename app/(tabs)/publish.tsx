@@ -6,12 +6,15 @@ import Header from '@/components/ui/Header';
 import { Ionicons } from "@expo/vector-icons";
 import { eventCardHeight } from '@/constants/constants';
 import * as ImagePicker from 'expo-image-picker';
+import SegmentedControl from '@react-native-segmented-control/segmented-control';
 
-// TODO: Add image picker
+// TODO: Add visibility and capacity picker
 
 export default function PublishPage() {
   const { width } = useWindowDimensions();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [visibilityIndex, setVisibilityIndex] = useState<number>(0);
+  const visibilityOptions = ['Public', 'Private'];
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -271,8 +274,16 @@ export default function PublishPage() {
               <Ionicons name="people-outline" size={24} color="#500000" />
             </View>
             <View style = {styles.timeContainer}>
-              <View style = {{ width: '100%', height: 50, justifyContent: 'center', borderBottomWidth: 1, borderColor: 'rgb(229, 231, 235)' }}>
+              <View style = {{ width: '100%', height: 50, borderBottomWidth: 1, borderColor: 'rgb(229, 231, 235)', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Text style = {{ fontSize: 16, color: '#b4b4b4' }}>Visibility</Text>
+                <SegmentedControl
+                  values={visibilityOptions}
+                  selectedIndex={visibilityIndex}
+                  onChange={(event) => setVisibilityIndex(event.nativeEvent.selectedSegmentIndex)}
+                  style={{ width: 150, height: 30, marginRight: 12, backgroundColor: '#999999', borderRadius: 8 }}
+                  tintColor="#800000"
+                  fontStyle={{ color: 'white', fontWeight: 'bold' }}
+                />
               </View>
               <View style = {{ width: '100%', height: 50, justifyContent: 'center' }}>
                 <Text style = {{ fontSize: 16, color: '#b4b4b4' }}>Capacity</Text>
