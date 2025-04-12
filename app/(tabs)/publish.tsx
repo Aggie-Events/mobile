@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, useWindowDimensions, Image, Pressable } from 'react-native';
+import React, { useState, useRef, useMemo } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, useWindowDimensions, Image, Pressable, SafeAreaView } from 'react-native';
 import { tabBarHeight } from '@/constants/constants';
 import { createEvent, CreateEventData } from '@/api/event';
 import Header from '@/components/ui/Header';
@@ -7,11 +7,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { eventCardHeight } from '@/constants/constants';
 import * as ImagePicker from 'expo-image-picker';
 import SegmentedControl from '@react-native-segmented-control/segmented-control';
+import { BottomSheetModal, BottomSheetView, BottomSheetTextInput } from '@gorhom/bottom-sheet';
 
 // TODO: Add visibility and capacity picker
 
 export default function PublishPage() {
-  const { width } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [visibilityIndex, setVisibilityIndex] = useState<number>(0);
   const visibilityOptions = ['Public', 'Private'];
@@ -21,7 +22,8 @@ export default function PublishPage() {
     start_time: '',
     end_time: '',
   });
-
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const snapPoints = [height * 0.45];
   const handlePublish = async () => {
     const eventData: CreateEventData = {
       event_name: formData.title,
@@ -40,6 +42,22 @@ export default function PublishPage() {
     } else {
       console.error('Failed to create event');
     }
+  };
+
+  const handleImagePress = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setSelectedImage(result.assets[0].uri);
+    }
+  };
+
+  const presentBottomSheet = () => {
+    bottomSheetModalRef.current?.present();
   };
 
   const styles = StyleSheet.create({
@@ -183,19 +201,13 @@ export default function PublishPage() {
       alignItems: 'center',
       justifyContent: 'center'
     },
+    twoArrows: {
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: 12
+    },
   });
-
-  const handleImagePress = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      allowsEditing: true,
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setSelectedImage(result.assets[0].uri);
-    }
-  };
 
   return (
     <>
@@ -203,8 +215,6 @@ export default function PublishPage() {
         <View style = {{ width: 40 }} />
       </Header>
       <ScrollView className="bg-gray-50" style={styles.container} contentContainerStyle={styles.contentContainer}>
-        {/* <Text style={styles.title}>Publish Event</Text> */}
-        {/* <Text style={styles.subtitle}>Share your next event with the community</Text> */}
 
         <Pressable style = {styles.imageContainer} onPress={handleImagePress}>
           <Image source={selectedImage ? { uri: selectedImage } : require('@/assets/images/default-event-image.png')} style = {styles.imageContainer} />
@@ -285,8 +295,15 @@ export default function PublishPage() {
                   fontStyle={{ color: 'white', fontWeight: 'bold' }}
                 />
               </View>
-              <View style = {{ width: '100%', height: 50, justifyContent: 'center' }}>
+              <View style = {{ width: '100%', height: 50, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Text style = {{ fontSize: 16, color: '#b4b4b4' }}>Capacity</Text>
+                <Pressable onPress={presentBottomSheet} style = {{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                  <Text style = {{ fontSize: 16, color: '#b4b4b4' }}>Unlimited</Text>
+                  <View style = {styles.twoArrows}>
+                    <Ionicons name="chevron-up-outline" size={15} color="#500000" />
+                    <Ionicons name="chevron-down-outline" size={15} color="#500000" />
+                  </View>
+                </Pressable>
               </View>
             </View>
           </View>
@@ -308,6 +325,18 @@ export default function PublishPage() {
 
         <View style = {{ height: tabBarHeight }} />
       </ScrollView>
+
+      {/* Bottom Sheet Modals */}
+      <BottomSheetModal
+        ref={bottomSheetModalRef}
+        snapPoints={snapPoints}
+        enablePanDownToClose={true}
+        enableDismissOnClose={true}
+      >
+        <BottomSheetView style = {{ width: '100%', height: snapPoints[0], justifyContent: 'center', alignItems: 'center' }}>
+          <Text>Hello</Text>
+        </BottomSheetView>
+      </BottomSheetModal>
     </>
   );
 }
