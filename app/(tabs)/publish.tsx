@@ -1,5 +1,5 @@
-import React, { useState, useRef, useMemo } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, useWindowDimensions, Image, Pressable, SafeAreaView } from 'react-native';
+import React, { useState, useRef, useCallback } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, useWindowDimensions, Image, Pressable, SafeAreaView, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { tabBarHeight } from '@/constants/constants';
 import { createEvent, CreateEventData } from '@/api/event';
 import Header from '@/components/ui/Header';
@@ -7,7 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { eventCardHeight } from '@/constants/constants';
 import * as ImagePicker from 'expo-image-picker';
 import SegmentedControl from '@react-native-segmented-control/segmented-control';
-import { BottomSheetModal, BottomSheetView, BottomSheetTextInput } from '@gorhom/bottom-sheet';
+import { BottomSheetModal, BottomSheetView, BottomSheetBackdrop, BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
 
 // TODO: Add visibility and capacity picker
 
@@ -23,7 +23,8 @@ export default function PublishPage() {
     end_time: '',
   });
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const snapPoints = [height * 0.45];
+  const snapPoints = [height * 0.45, height * 0.75];
+  const [snap, setSnap] = useState<number>(0);
   const handlePublish = async () => {
     const eventData: CreateEventData = {
       event_name: formData.title,
@@ -57,8 +58,31 @@ export default function PublishPage() {
   };
 
   const presentBottomSheet = () => {
+    setSnap(0);
     bottomSheetModalRef.current?.present();
   };
+
+  const handleTouchStart = () => {
+    if (Keyboard.isVisible()) {
+      Keyboard.dismiss();
+      setSnap(0);
+    }
+  };
+
+  const handleDismiss = () => {
+    Keyboard.dismiss();
+    bottomSheetModalRef.current?.dismiss();
+  };
+
+  const renderBackdrop = useCallback((props: BottomSheetBackdropProps) => (
+    <BottomSheetBackdrop 
+      {...props} 
+      enableTouchThrough={true} 
+      opacity={0.5}
+      pressBehavior="close"
+      disappearsOnIndex={-1}
+    />
+  ), []);
 
   const styles = StyleSheet.create({
     container: {
@@ -207,6 +231,51 @@ export default function PublishPage() {
       justifyContent: 'center',
       marginRight: 12
     },
+    iconHeader: {
+      width: '100%',
+      alignItems: 'center',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 16,
+      paddingHorizontal: 16
+    },
+    peopleIcon: {
+      backgroundColor: '#800000',
+      width: 40,
+      height: 40,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 100
+    },
+    saveButton: {
+      width: '48%',
+      height: 40,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 100,
+      backgroundColor: '#800000'
+    },
+    unlimitedButton: {
+      width: '48%',
+      height: 40,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 100,
+      borderWidth: 1,
+      borderColor: '#800000'
+    },
+    modalTitle: {
+      fontSize: 20,
+      color: 'black',
+      fontWeight: 'bold',
+      marginBottom: 16
+    },
+    modalSubtitle: {
+      fontSize: 16,
+      color: '#333',
+      fontWeight: '300',
+      marginBottom: 16
+    }
   });
 
   return (
@@ -330,12 +399,47 @@ export default function PublishPage() {
       <BottomSheetModal
         ref={bottomSheetModalRef}
         snapPoints={snapPoints}
+        index={snap}
         enablePanDownToClose={true}
         enableDismissOnClose={true}
+        onChange={(index) => {
+          if (index === -1) { return; }
+          setSnap(index);
+        }}
+        backdropComponent={renderBackdrop}
       >
-        <BottomSheetView style = {{ width: '100%', height: snapPoints[0], justifyContent: 'center', alignItems: 'center' }}>
-          <Text>Hello</Text>
-        </BottomSheetView>
+        <TouchableWithoutFeedback onPress={handleTouchStart}>
+          <BottomSheetView style = {{ alignItems: 'center' }}>
+            <View style = {styles.iconHeader}>
+              <View style = {styles.peopleIcon}>
+              <Ionicons name="people-outline" size={24} color="white" />
+            </View>
+            <Pressable onPress={handleDismiss}>
+              <Ionicons name="close-circle" size={28} color={'gray'} />
+            </Pressable>
+          </View>
+          <Text style = {[styles.modalTitle, {alignSelf: 'flex-start', marginLeft: 16}]}>Capacity</Text>
+          <Text style = {[styles.modalSubtitle, {alignSelf: 'flex-start', marginLeft: 16}]} >How many people can attend this event?</Text>
+          <TextInput 
+            style = {[styles.input, {width: width - 32}]}
+            placeholder="Enter capacity" 
+            keyboardType="numeric"
+            inputMode="numeric"
+            placeholderTextColor={'#999999'}
+            onPressOut={() => {
+              setSnap(1);
+            }}
+          />
+          <View style = {{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 16, paddingHorizontal: 16}}>
+            <Pressable style = {styles.saveButton}>
+              <Text style = {{ fontSize: 16, color: 'white', fontWeight: '300' }}>Save</Text>
+            </Pressable>
+            <Pressable style = {styles.unlimitedButton}>
+              <Text style = {{ fontSize: 16, color: '#800000', fontWeight: '300' }}>Unlimited</Text>
+            </Pressable>
+            </View>
+          </BottomSheetView>
+        </TouchableWithoutFeedback>
       </BottomSheetModal>
     </>
   );
