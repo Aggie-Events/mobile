@@ -16,6 +16,8 @@ export default function PublishPage() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [visibilityIndex, setVisibilityIndex] = useState<number>(0);
   const visibilityOptions = ['Public', 'Private'];
+  const capacityInputRef = useRef<string>('');
+  const [capacity, setCapacity] = useState<string>('Unlimited');
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -72,7 +74,17 @@ export default function PublishPage() {
   const handleDismiss = () => {
     Keyboard.dismiss();
     bottomSheetModalRef.current?.dismiss();
+    capacityInputRef.current = '';
   };
+
+  const handleCapacityChange = (cap: string) => {
+    cap == "" || cap == "0"? setCapacity('Unlimited') : setCapacity(cap);
+    handleDismiss();
+  };
+
+  const handleTextInputFocus = useCallback(() => {
+    setSnap(1);
+  }, []);
 
   const renderBackdrop = useCallback((props: BottomSheetBackdropProps) => (
     <BottomSheetBackdrop 
@@ -321,13 +333,6 @@ export default function PublishPage() {
         </View>
 
         <View style={styles.inputGroup}>
-          <View style={[styles.input, { padding: 0, flexDirection: 'row', alignItems: 'center' }]}>
-            <Ionicons name="location-outline" size={24} color="#500000" style={{ marginLeft: 12 }} />
-            <Text style={{ marginLeft: 8, fontSize: 16, color: '#999', fontWeight: '600' }}>Choose Location</Text> 
-          </View>
-        </View>
-
-        <View style={styles.inputGroup}>
           <TextInput
             style={[styles.input, styles.textArea]}
             value={formData.description}
@@ -367,7 +372,7 @@ export default function PublishPage() {
               <View style = {{ width: '100%', height: 50, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Text style = {{ fontSize: 16, color: '#b4b4b4' }}>Capacity</Text>
                 <Pressable onPress={presentBottomSheet} style = {{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                  <Text style = {{ fontSize: 16, color: '#b4b4b4' }}>Unlimited</Text>
+                  <Text style = {{ fontSize: 16, color: '#b4b4b4' }}>{capacity}</Text>
                   <View style = {styles.twoArrows}>
                     <Ionicons name="chevron-up-outline" size={15} color="#500000" />
                     <Ionicons name="chevron-down-outline" size={15} color="#500000" />
@@ -402,6 +407,9 @@ export default function PublishPage() {
         index={snap}
         enablePanDownToClose={true}
         enableDismissOnClose={true}
+        keyboardBehavior="interactive"  // Add this
+        keyboardBlurBehavior="restore"  // Add this
+        android_keyboardInputMode="adjustResize"  // Add this for Android
         onChange={(index) => {
           if (index === -1) { return; }
           setSnap(index);
@@ -421,21 +429,24 @@ export default function PublishPage() {
           <Text style = {[styles.modalTitle, {alignSelf: 'flex-start', marginLeft: 16}]}>Capacity</Text>
           <Text style = {[styles.modalSubtitle, {alignSelf: 'flex-start', marginLeft: 16}]} >How many people can attend this event?</Text>
           <TextInput 
-            style = {[styles.input, {width: width - 32}]}
+            style={[styles.input, {width: width - 32}]}
             placeholder="Enter capacity" 
             keyboardType="numeric"
             inputMode="numeric"
             placeholderTextColor={'#999999'}
-            onPressOut={() => {
-              setSnap(1);
+            maxLength={5}
+            defaultValue={capacityInputRef.current}
+            onChangeText={(text) => {
+              capacityInputRef.current = text;
             }}
+            onFocus={handleTextInputFocus}
           />
           <View style = {{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 16, paddingHorizontal: 16}}>
-            <Pressable style = {styles.saveButton}>
-              <Text style = {{ fontSize: 16, color: 'white', fontWeight: '300' }}>Save</Text>
+            <Pressable style={styles.saveButton} onPress={() => handleCapacityChange(capacityInputRef.current)}>
+              <Text style={{ fontSize: 16, color: 'white', fontWeight: '300' }}>Save</Text>
             </Pressable>
-            <Pressable style = {styles.unlimitedButton}>
-              <Text style = {{ fontSize: 16, color: '#800000', fontWeight: '300' }}>Unlimited</Text>
+            <Pressable style={styles.unlimitedButton} onPress={() => handleCapacityChange('Unlimited')}>
+              <Text style={{ fontSize: 16, color: '#800000', fontWeight: '300' }}>Unlimited</Text>
             </Pressable>
             </View>
           </BottomSheetView>
