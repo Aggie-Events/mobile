@@ -9,7 +9,12 @@ import * as ImagePicker from 'expo-image-picker';
 import SegmentedControl from '@react-native-segmented-control/segmented-control';
 import { BottomSheetModal, BottomSheetView, BottomSheetBackdrop, BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-// TODO: Date-time pickers
+// TODO: Tag Selection
+
+interface SelectableTag {
+  name: string;
+  selected: boolean;
+}
 
 export default function PublishPage() {
 
@@ -24,6 +29,8 @@ export default function PublishPage() {
   };
 
   const { width, height } = useWindowDimensions();
+  const tags = ['Academic', 'Arts', 'Career', 'Cultural', 'Recreation', 'Service', 'Social', 'Sports', 'Other'];
+  const [selectedTags, setSelectedTags] = useState<SelectableTag[]>(tags.map(tag => ({ name: tag, selected: false } as SelectableTag)));
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [visibilityIndex, setVisibilityIndex] = useState<number>(0);
   const visibilityOptions = ['Public', 'Private'];
@@ -129,6 +136,10 @@ export default function PublishPage() {
       didSelectEnd.current = true;
     }
     setShowDatePicker(true);
+  };
+
+  const handleTagPress = (tag: SelectableTag) => {
+    setSelectedTags(selectedTags.map(t => ({ ...t, selected: t.name === tag.name ? !t.selected : t.selected })));
   };
   
 
@@ -342,6 +353,31 @@ export default function PublishPage() {
       alignItems: 'center',
       justifyContent: 'space-between',
       paddingRight: 16
+    },
+    tagButton: {
+      backgroundColor: '#999999',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 8,
+      paddingHorizontal: 10,
+      borderRadius: 100,
+      gap: 4
+    },
+    tagText: {
+      color: 'white',
+      fontSize: 12,
+      fontWeight: '300'
+    },
+    editTagButton: {
+      backgroundColor: '#800000',
+      padding: 8,
+      borderRadius: 100
+    },
+    editTagText: {
+      color: 'white',
+      fontSize: 12,
+      fontWeight: '300'
     }
   });
 
@@ -359,6 +395,7 @@ export default function PublishPage() {
           </View>
         </Pressable>
 
+        {/* Title */}
         <View style={styles.inputGroup}>
           <TextInput
             style={styles.input}
@@ -369,6 +406,7 @@ export default function PublishPage() {
           />
         </View>
 
+        {/* Date */}
         <View style={styles.inputGroup}>
           <View style = {[styles.input, { padding: 0, height: 100, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }]}>
             <View style = {styles.imagePath}>
@@ -393,6 +431,7 @@ export default function PublishPage() {
           </View>
         </View>
 
+        {/* Description */}
         <View style={styles.inputGroup}>
           <TextInput
             style={[styles.input, styles.textArea]}
@@ -405,12 +444,31 @@ export default function PublishPage() {
           />
         </View>
 
+        {/* Divider */}
         <View style={styles.inputGroup}>
           <View style={{ width: '100%', height: 1, borderTopWidth: 1, borderColor: 'rgb(200, 200, 200)' }} />
         </View>
 
+        {/* Tags */}
+        <Text style={{ fontSize: 13, color: '#333', fontWeight: '300', marginBottom: 16 }}>Tags</Text>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
+          {selectedTags.map((tag, index) => (
+            <Pressable key={index} style={[styles.tagButton, {backgroundColor: tag.selected ? '#800000' : '#999999'}]} onPress={() => handleTagPress(tag)}>
+              <Text style={styles.tagText}>{tag.name}</Text>
+              <Ionicons name={tag.selected ? "close-circle-outline" : "add-circle-outline"} size={16} color="white" />
+            </Pressable>
+          ))}
+        </View>
+
+        {/* Divider */}
+        <View style={styles.inputGroup}>
+          <View style={{ width: '100%', height: 1, borderTopWidth: 1, borderColor: 'rgb(200, 200, 200)' }} />
+        </View>
+
+        {/* Options */}
         <Text style={{ fontSize: 13, color: '#333', fontWeight: '300', marginBottom: 16 }}>Options</Text>
 
+        {/* Visibility + Capacity */}
         <View style={[styles.inputGroup, { marginBottom: 32 }]}>
           <View style={[styles.input, { padding: 0, height: 100, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }]}>
             <View style={styles.imagePath}>
@@ -443,7 +501,8 @@ export default function PublishPage() {
             </View>
           </View>
         </View>
-        
+
+        {/* Publish Buttons */}
         <TouchableOpacity style={styles.submitButton} onPress={handlePublish}>
           <Text style={styles.submitButtonText}>Publish</Text>
         </TouchableOpacity>
