@@ -8,16 +8,33 @@ import { eventCardHeight } from '@/constants/constants';
 import * as ImagePicker from 'expo-image-picker';
 import SegmentedControl from '@react-native-segmented-control/segmented-control';
 import { BottomSheetModal, BottomSheetView, BottomSheetBackdrop, BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
-
-// TODO: Add visibility and capacity picker
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+// TODO: Date-time pickers
 
 export default function PublishPage() {
+
+  const formatDate = (date: Date) => {
+    const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    let returnString = "";
+    returnString += daysOfWeek[date.getDay()] + ", ";
+    returnString += months[date.getMonth()] + " " + date.getDate() + " at ";
+    returnString += (date.getHours() > 12 ? date.getHours() - 12 : date.getHours()) + ":" + (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) + " " + (date.getHours() >= 12 ? "PM" : "AM");
+    return returnString;
+  };
+
   const { width, height } = useWindowDimensions();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [visibilityIndex, setVisibilityIndex] = useState<number>(0);
   const visibilityOptions = ['Public', 'Private'];
   const capacityInputRef = useRef<string>('');
   const [capacity, setCapacity] = useState<string>('Unlimited');
+  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+  const [startDate, setStartDate] = useState<Date>(new Date());
+  const [endDate, setEndDate] = useState<Date>(new Date());
+  const [datePickerDate, setDatePickerDate] = useState<Date>(new Date());
+  const didSelectStart = useRef<boolean>(false);
+  const didSelectEnd = useRef<boolean>(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -86,6 +103,35 @@ export default function PublishPage() {
     setSnap(1);
   }, []);
 
+  const handleDateConfirm = (date: Date) => {
+    if (didSelectStart.current) {
+      setStartDate(date);
+    }
+    else {
+      setEndDate(date);
+    }
+    setShowDatePicker(false);
+  };
+
+  const handleDateCancel = () => {
+    didSelectStart.current = false;
+    didSelectEnd.current = false;
+    setShowDatePicker(false);
+  };
+
+  const handlePickerSelect = (preset: string) => {
+    if (preset == "start") {
+      setDatePickerDate(startDate);
+      didSelectStart.current = true;
+    } 
+    else {
+      setDatePickerDate(endDate);
+      didSelectEnd.current = true;
+    }
+    setShowDatePicker(true);
+  };
+  
+
   const renderBackdrop = useCallback((props: BottomSheetBackdropProps) => (
     <BottomSheetBackdrop 
       {...props} 
@@ -93,6 +139,7 @@ export default function PublishPage() {
       opacity={0.5}
       pressBehavior="close"
       disappearsOnIndex={-1}
+      onPress={handleDismiss}
     />
   ), []);
 
@@ -287,6 +334,14 @@ export default function PublishPage() {
       color: '#333',
       fontWeight: '300',
       marginBottom: 16
+    },
+    timeRow: {
+      flexDirection: 'row',
+      width: '100%',
+      height: 50,
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingRight: 16
     }
   });
 
@@ -322,11 +377,17 @@ export default function PublishPage() {
               <View style = {[styles.dot, { backgroundColor: '#f8f8f8', borderColor: '#500000', borderWidth: 2, marginTop: 5}]} />
             </View>
             <View style = {styles.timeContainer}>
-              <View style = {{ width: '100%', height: 50, justifyContent: 'center', borderBottomWidth: 1, borderColor: 'rgb(229, 231, 235)' }}>
+              <View style = {[styles.timeRow, {borderBottomWidth: 1, borderColor: 'rgb(229, 231, 235)'}]}>
                 <Text style = {{ fontSize: 16, color: '#b4b4b4' }}>Start</Text>
+                <Pressable onPress={() => handlePickerSelect("start")}>
+                  <Text style = {{ fontSize: 16, color: '#800000' }}>{formatDate(startDate)}</Text>
+                </Pressable>
               </View>
-              <View style = {{ width: '100%', height: 50, justifyContent: 'center' }}>
+              <View style = {styles.timeRow}>
                 <Text style = {{ fontSize: 16, color: '#b4b4b4' }}>End</Text>
+                <Pressable onPress={() => handlePickerSelect("end")}>
+                  <Text style = {{ fontSize: 16, color: '#800000' }}>{formatDate(endDate)}</Text>
+                </Pressable>
               </View>
             </View>
           </View>
@@ -452,6 +513,16 @@ export default function PublishPage() {
           </BottomSheetView>
         </TouchableWithoutFeedback>
       </BottomSheetModal>
+
+      <DateTimePickerModal
+        isVisible={showDatePicker}
+        date={datePickerDate}
+        mode="datetime"
+        onConfirm={handleDateConfirm}
+        onCancel={handleDateCancel}
+        isDarkModeEnabled={false}
+        textColor="black"
+      />
     </>
   );
 }
