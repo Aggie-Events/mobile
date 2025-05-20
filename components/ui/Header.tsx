@@ -35,14 +35,16 @@ const Header: React.FC<NestedProps> = ({ children }) => {
     >
       <View style = {styles.container}>
         {renderLogo()}
-        <MaskedView maskElement={<Text style = {styles.titleMask}>AggieEvents</Text>}>
-          <LinearGradient
-            colors={textGradient} // Gradient colors
-            start={start}
-            end={end}
-            style={styles.title}
-          />
-        </MaskedView>
+        <View style = {{flex: 1, alignItems: 'center', paddingTop: Platform.OS == "ios" ? 0 : 10}}>
+          <MaskedView maskElement={<Text style = {styles.titleMask}>AggieEvents</Text>}>
+            <LinearGradient
+              colors={textGradient} // Gradient colors
+              start={start}
+              end={end}
+              style={styles.title}
+            />
+          </MaskedView>
+        </View>
         <View style = {styles.rightContent}>
           {children}
         </View>
@@ -54,7 +56,7 @@ const Header: React.FC<NestedProps> = ({ children }) => {
 const styles = StyleSheet.create({
   background: {
     width: '100%',
-    height: 110,
+    height: Platform.OS == "ios" ? 110 : 80,
   },
   container: {
     width: '100%',
@@ -81,7 +83,7 @@ const styles = StyleSheet.create({
   },
   title: {
     width: 200,
-    height: 30
+    height: Platform.OS == 'ios' ? 30 : 40,
   },
   titleMask: {
     fontSize: 25,

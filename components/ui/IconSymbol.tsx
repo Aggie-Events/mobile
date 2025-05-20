@@ -9,12 +9,11 @@ import { OpaqueColorValue, StyleProp, TextStyle } from 'react-native';
 const MAPPING = {
   // See MaterialIcons here: https://icons.expo.fyi
   // See SF Symbols in the SF Symbols app on Mac.
-  'house.fill': 'home',
-  'paperplane.fill': 'send',
-  'chevron.left.forwardslash.chevron.right': 'code',
-  'chevron.right': 'chevron-right',
-  'drop.fill' : 'groups', // TODO: figure how these weird naming restrictions got imposed
-  'gear': 'settings',
+  "paperplane.fill": "send",
+  "calendar": "calendar-today",
+  "plus.circle.fill": "add-circle-outline",
+  "building.2": "business",
+  "gearshape.fill": "settings",
 } as Partial<
   Record<
     import('expo-symbols').SymbolViewProps['name'],
