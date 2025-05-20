@@ -14,6 +14,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 interface SelectableTag {
   name: string;
   selected: boolean;
+  id: number;
 }
 
 export default function PublishPage() {
@@ -29,8 +30,14 @@ export default function PublishPage() {
   };
 
   const { width, height } = useWindowDimensions();
-  const tags = ['Academic', 'Arts', 'Career', 'Cultural', 'Recreation', 'Service', 'Social', 'Sports', 'Other'];
-  const [selectedTags, setSelectedTags] = useState<SelectableTag[]>(tags.map(tag => ({ name: tag, selected: false } as SelectableTag)));
+
+  // Tags from database
+  const tags = ["Workshop", "Career Fair", "Social", "Academic", "Sports", "Free Food", "Performance", "Seminar", "Engineering", "Business", "Arts", "Science"];
+
+  // Tags from website
+  // const tags = ['Academic', 'Arts', 'Career', 'Cultural', 'Recreation', 'Service', 'Social', 'Sports', 'Other'];
+
+  const [selectedTags, setSelectedTags] = useState<SelectableTag[]>(tags.map((tag, index) => ({ name: tag, selected: false, id: index + 1 } as SelectableTag)));
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [visibilityIndex, setVisibilityIndex] = useState<number>(0);
   const visibilityOptions = ['Public', 'Private'];
@@ -47,6 +54,7 @@ export default function PublishPage() {
     description: '',
     start_time: '',
     end_time: '',
+    location: '',
   });
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const snapPoints = [height * 0.45, height * 0.75];
@@ -186,7 +194,7 @@ export default function PublishPage() {
     input: {
       backgroundColor: '#f8f8f8',
       borderRadius: 12,
-      padding: 16,
+      paddingLeft: 16,
       fontSize: 20,
       color: '#333333',
       borderWidth: 1,
@@ -408,7 +416,7 @@ export default function PublishPage() {
 
         {/* Date */}
         <View style={styles.inputGroup}>
-          <View style = {[styles.input, { padding: 0, height: 100, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }]}>
+          <View style = {[styles.input, { paddingLeft: 0, height: 100, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }]}>
             <View style = {styles.imagePath}>
               <View style = {[styles.dot, {marginBottom: 5}]} />
               <View style = {styles.verticalDottedLine} />
@@ -431,13 +439,24 @@ export default function PublishPage() {
           </View>
         </View>
 
+        {/* Location */}
+        <View style={styles.inputGroup}>
+          <TextInput
+            style={styles.input}
+            value={formData.location}
+            onChangeText={(text) => setFormData({ ...formData, location: text })}
+            placeholder="Event Location"
+            placeholderTextColor="#999"
+          />
+        </View>
+
         {/* Description */}
         <View style={styles.inputGroup}>
           <TextInput
             style={[styles.input, styles.textArea]}
             value={formData.description}
             onChangeText={(text) => setFormData({ ...formData, description: text })}
-            placeholder="Describe your event"
+            placeholder="Describe your event..."
             placeholderTextColor="#999"
             multiline
             numberOfLines={4}
@@ -512,6 +531,7 @@ export default function PublishPage() {
             description: 'This is a test event',
             start_time: '2025-01-01',
             end_time: '2025-01-01',
+            location: 'Test Location',
           });
           handlePublish(); }}>
           <Text style={styles.submitButtonText}>Publish Test Event</Text>
