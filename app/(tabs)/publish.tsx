@@ -6,10 +6,9 @@ import Header from '@/components/ui/Header';
 import { Ionicons } from "@expo/vector-icons";
 import { eventCardHeight } from '@/constants/constants';
 import * as ImagePicker from 'expo-image-picker';
-import SegmentedControl from '@react-native-segmented-control/segmented-control';
-import { BottomSheetModal, BottomSheetView, BottomSheetBackdrop, BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
+import { BottomSheetModal, BottomSheetBackdrop, BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-// TODO: Tag Selection
+import BaseBottomSheet from '@/components/BaseBottomSheet';
 
 interface SelectableTag {
   name: string;
@@ -39,10 +38,9 @@ export default function PublishPage() {
 
   const [selectedTags, setSelectedTags] = useState<SelectableTag[]>(tags.map((tag, index) => ({ name: tag, selected: false, id: index + 1 } as SelectableTag)));
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [visibilityIndex, setVisibilityIndex] = useState<number>(0);
-  const visibilityOptions = ['Public', 'Private'];
   const capacityInputRef = useRef<string>('');
   const [capacity, setCapacity] = useState<string>('Unlimited');
+  const [orginization, setOrganization] = useState<string>('N/A');
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [endDate, setEndDate] = useState<Date>(new Date());
@@ -56,14 +54,19 @@ export default function PublishPage() {
     end_time: '',
     location: '',
   });
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+
   const snapPoints = [height * 0.45, height * 0.75];
-  const [snap, setSnap] = useState<number>(0);
+  const orgSheetModalRef = useRef<BottomSheetModal>(null);
+  const [orgSnap, setOrgSnap] = useState<number>(1);
+  const capacitySheetModalRef = useRef<BottomSheetModal>(null);
+  const [capacitySnap, setCapacitySnap] = useState<number>(0);
+
+
   const handlePublish = async () => {
     const eventData: CreateEventData = {
       event_name: formData.title,
       event_description: formData.description,
-      event_location: null,
+      event_location: formData.location,
       event_status: 'published',
       start_time: new Date(formData.start_time),
       end_time: new Date(formData.end_time),
@@ -91,31 +94,36 @@ export default function PublishPage() {
     }
   };
 
-  const presentBottomSheet = () => {
-    setSnap(0);
-    bottomSheetModalRef.current?.present();
+  const presentBottomSheet = (sheetRef: React.RefObject<BottomSheetModal>) => {
+    setCapacitySnap(0);
+    sheetRef.current?.present();
   };
 
-  const handleTouchStart = () => {
+  const handleTouchStart = useCallback(() => {
     if (Keyboard.isVisible()) {
       Keyboard.dismiss();
-      setSnap(0);
+      setCapacitySnap(0);
     }
-  };
+  }, []);
 
-  const handleDismiss = () => {
+  const handleDismiss = useCallback(() => {
     Keyboard.dismiss();
-    bottomSheetModalRef.current?.dismiss();
+    capacitySheetModalRef.current?.dismiss();
     capacityInputRef.current = '';
-  };
+  }, []);
 
   const handleCapacityChange = (cap: string) => {
     cap == "" || cap == "0"? setCapacity('Unlimited') : setCapacity(cap);
     handleDismiss();
   };
 
+  const onCapacitySnapChange = useCallback((index: number) => {
+    if (index === -1) { return; }
+    setOrgSnap(index);
+  }, [])
+
   const handleTextInputFocus = useCallback(() => {
-    setSnap(1);
+    setCapacitySnap(1);
   }, []);
 
   const handleDateConfirm = (date: Date) => {
@@ -309,22 +317,6 @@ export default function PublishPage() {
       justifyContent: 'center',
       marginRight: 12
     },
-    iconHeader: {
-      width: '100%',
-      alignItems: 'center',
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginBottom: 16,
-      paddingHorizontal: 16
-    },
-    peopleIcon: {
-      backgroundColor: '#800000',
-      width: 40,
-      height: 40,
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderRadius: 100
-    },
     saveButton: {
       width: '48%',
       height: 40,
@@ -341,18 +333,6 @@ export default function PublishPage() {
       borderRadius: 100,
       borderWidth: 1,
       borderColor: '#800000'
-    },
-    modalTitle: {
-      fontSize: 20,
-      color: 'black',
-      fontWeight: 'bold',
-      marginBottom: 16
-    },
-    modalSubtitle: {
-      fontSize: 16,
-      color: '#333',
-      fontWeight: '300',
-      marginBottom: 16
     },
     timeRow: {
       flexDirection: 'row',
@@ -489,31 +469,30 @@ export default function PublishPage() {
 
         {/* Visibility + Capacity */}
         <View style={[styles.inputGroup, { marginBottom: 32 }]}>
-          <View style={[styles.input, { padding: 0, height: 100, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }]}>
+          <View style={[styles.input, { paddingLeft: 0, height: 100, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }]}>
             <View style={styles.imagePath}>
-              <Ionicons name="eye-outline" size={24} color="#500000" />
+              <Ionicons name="business-outline" size={24} color="#500000" />
               <View style={[styles.verticalDottedLine, {height: 25, borderWidth: 0}]} />
               <Ionicons name="people-outline" size={24} color="#500000" />
             </View>
             <View style = {styles.timeContainer}>
               <View style = {{ width: '100%', height: 50, borderBottomWidth: 1, borderColor: 'rgb(229, 231, 235)', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Text style = {{ fontSize: 16, color: '#b4b4b4' }}>Visibility</Text>
-                <SegmentedControl
-                  values={visibilityOptions}
-                  selectedIndex={visibilityIndex}
-                  onChange={(event) => setVisibilityIndex(event.nativeEvent.selectedSegmentIndex)}
-                  style={{ width: 150, height: 30, marginRight: 12, backgroundColor: '#999999', borderRadius: 8 }}
-                  tintColor="#800000"
-                  fontStyle={{ color: 'white', fontWeight: 'bold' }}
-                />
+                <Text style = {{ fontSize: 16, color: '#b4b4b4' }}>Organization</Text>
+                <Pressable onPress={() => presentBottomSheet(orgSheetModalRef)} style = {{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                  <Text style = {{ fontSize: 16, color: '#b4b4b4' }}>{orginization}</Text>
+                  <View style = {styles.twoArrows}>
+                    <Ionicons name="chevron-up-outline" size={15} color="#800000" />
+                    <Ionicons name="chevron-down-outline" size={15} color="#800000" />
+                  </View>
+                </Pressable>
               </View>
               <View style = {{ width: '100%', height: 50, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Text style = {{ fontSize: 16, color: '#b4b4b4' }}>Capacity</Text>
-                <Pressable onPress={presentBottomSheet} style = {{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <Pressable onPress={() => presentBottomSheet(capacitySheetModalRef)} style = {{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                   <Text style = {{ fontSize: 16, color: '#b4b4b4' }}>{capacity}</Text>
                   <View style = {styles.twoArrows}>
-                    <Ionicons name="chevron-up-outline" size={15} color="#500000" />
-                    <Ionicons name="chevron-down-outline" size={15} color="#500000" />
+                    <Ionicons name="chevron-up-outline" size={15} color="#800000" />
+                    <Ionicons name="chevron-down-outline" size={15} color="#800000" />
                   </View>
                 </Pressable>
               </View>
@@ -541,57 +520,40 @@ export default function PublishPage() {
       </ScrollView>
 
       {/* Bottom Sheet Modals */}
-      <BottomSheetModal
-        ref={bottomSheetModalRef}
+      <BaseBottomSheet
+        ref={capacitySheetModalRef}
+        title = "Capacity"
+        subtitle = "How many people can attend this event?"
+        iconName='people-outline'
         snapPoints={snapPoints}
-        index={snap}
-        enablePanDownToClose={true}
-        enableDismissOnClose={true}
-        keyboardBehavior="interactive"  // Add this
-        keyboardBlurBehavior="restore"  // Add this
-        android_keyboardInputMode="adjustResize"  // Add this for Android
-        onChange={(index) => {
-          if (index === -1) { return; }
-          setSnap(index);
-        }}
+        index={capacitySnap}
+        onChange={onCapacitySnapChange}
         backdropComponent={renderBackdrop}
+        withoutFeedbackPress={handleTouchStart}
+        handleDismiss={handleDismiss}
       >
-        <TouchableWithoutFeedback onPress={handleTouchStart}>
-          <BottomSheetView style = {{ alignItems: 'center' }}>
-            <View style = {styles.iconHeader}>
-              <View style = {styles.peopleIcon}>
-              <Ionicons name="people-outline" size={24} color="white" />
-            </View>
-            <Pressable onPress={handleDismiss}>
-              <Ionicons name="close-circle" size={28} color={'gray'} />
-            </Pressable>
-          </View>
-          <Text style = {[styles.modalTitle, {alignSelf: 'flex-start', marginLeft: 16}]}>Capacity</Text>
-          <Text style = {[styles.modalSubtitle, {alignSelf: 'flex-start', marginLeft: 16}]} >How many people can attend this event?</Text>
-          <TextInput 
-            style={[styles.input, {width: width - 32}]}
-            placeholder="Enter capacity" 
-            keyboardType="numeric"
-            inputMode="numeric"
-            placeholderTextColor={'#999999'}
-            maxLength={5}
-            defaultValue={capacityInputRef.current}
-            onChangeText={(text) => {
-              capacityInputRef.current = text;
-            }}
-            onFocus={handleTextInputFocus}
-          />
-          <View style = {{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 16, paddingHorizontal: 16}}>
-            <Pressable style={styles.saveButton} onPress={() => handleCapacityChange(capacityInputRef.current)}>
-              <Text style={{ fontSize: 16, color: 'white', fontWeight: '300' }}>Save</Text>
-            </Pressable>
-            <Pressable style={styles.unlimitedButton} onPress={() => handleCapacityChange('Unlimited')}>
-              <Text style={{ fontSize: 16, color: '#800000', fontWeight: '300' }}>Unlimited</Text>
-            </Pressable>
-            </View>
-          </BottomSheetView>
-        </TouchableWithoutFeedback>
-      </BottomSheetModal>
+        <TextInput 
+          style={[styles.input, {width: width - 32}]}
+          placeholder="Enter capacity" 
+          keyboardType="numeric"
+          inputMode="numeric"
+          placeholderTextColor={'#999999'}
+          maxLength={5}
+          defaultValue={capacityInputRef.current}
+          onChangeText={(text) => {
+            capacityInputRef.current = text;
+          }}
+          onFocus={handleTextInputFocus}
+        />
+        <View style = {{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 16, paddingHorizontal: 16}}>
+          <Pressable style={styles.saveButton} onPress={() => handleCapacityChange(capacityInputRef.current)}>
+            <Text style={{ fontSize: 16, color: 'white', fontWeight: '300' }}>Save</Text>
+          </Pressable>
+          <Pressable style={styles.unlimitedButton} onPress={() => handleCapacityChange('Unlimited')}>
+            <Text style={{ fontSize: 16, color: '#800000', fontWeight: '300' }}>Unlimited</Text>
+          </Pressable>
+        </View>
+      </BaseBottomSheet>
 
       <DateTimePickerModal
         isVisible={showDatePicker}
