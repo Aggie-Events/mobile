@@ -453,13 +453,13 @@ export default function PublishPage() {
         {/* Description */}
         <View style={styles.inputGroup}>
           <TextInput
-            style={[styles.input, styles.textArea]}
+            style={[styles.input, styles.textArea, {fontSize: 16, fontWeight: '400'}]}
             value={formData.description}
             onChangeText={(text) => setFormData({ ...formData, description: text })}
             placeholder="Describe your event..."
             placeholderTextColor="#999"
             multiline
-            numberOfLines={4}
+            numberOfLines={8}
           />
         </View>
 
