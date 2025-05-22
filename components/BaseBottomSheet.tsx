@@ -12,7 +12,7 @@ interface BaseBottomSheetProps {
   index: number;
   onChange: (index: number) => void;
   backdropComponent: (props: BottomSheetBackdropProps) => React.JSX.Element;
-  withoutFeedbackPress: () => void;
+  withoutFeedbackPress?: () => void;
   handleDismiss: () => void;
   children?: React.ReactNode;
 }
@@ -71,19 +71,21 @@ const BaseBottomSheet = React.forwardRef<BottomSheetModal, BaseBottomSheetProps>
       backdropComponent={backdropComponent}
     >
       <TouchableWithoutFeedback onPress={withoutFeedbackPress}>
-        <BottomSheetView style = {styles.centerAlignItems}>
-          <View style = {styles.iconHeader}>
-            <View style = {styles.iconBackground}>
-              <Ionicons name={iconName} size={24} color="white" />
+        <View style = {{ flex: 1 }}>
+          <BottomSheetView style = {styles.centerAlignItems}>
+            <View style = {styles.iconHeader}>
+              <View style = {styles.iconBackground}>
+                <Ionicons name={iconName} size={24} color="white" />
+              </View>
+              <Pressable onPress={handleDismiss}>
+                <Ionicons name="close-circle" size={28} color='gray' />
+              </Pressable>
             </View>
-            <Pressable onPress={handleDismiss}>
-              <Ionicons name="close-circle" size={28} color='gray' />
-            </Pressable>
-          </View>
-          <Text style = {styles.modalTitle}>{title}</Text>
-          <Text style = {styles.modalSubtitle} >{subtitle}</Text>
+            <Text style = {styles.modalTitle}>{title}</Text>
+            <Text style = {styles.modalSubtitle}>{subtitle ?? ""}</Text>
+          </BottomSheetView>
           {children}
-        </BottomSheetView>
+        </View>
       </TouchableWithoutFeedback>
     </BottomSheetModal>
   );

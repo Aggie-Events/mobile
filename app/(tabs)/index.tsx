@@ -43,19 +43,19 @@ export default function ExplorePage() {
   });
 
   const recentlyAdded = [
-    {eventName: "Event 1", imageAddress: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 1},
-    {eventName: "Event 2", imageAddress: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 2},
-    {eventName: "Event 3", imageAddress: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 3},
-    {eventName: "Event 4", imageAddress: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 4},
-    {eventName: "Event 5", imageAddress: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 5},
-    {eventName: "Event 6", imageAddress: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 6}
+    {event_name: "Event 1", event_img: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 1},
+    {event_name: "Event 2", event_img: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 2},
+    {event_name: "Event 3", event_img: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 3},
+    {event_name: "Event 4", event_img: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 4},
+    {event_name: "Event 5", event_img: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 5},
+    {event_name: "Event 6", event_img: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 6}
   ]
 
   const upcoming = [
-    {eventName: "Event 1", orgName: "Organization 1", imageAddress: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 1},
-    {eventName: "Event 2", orgName: "Organization 2", imageAddress: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 2},
-    {eventName: "Event 3", orgName: "Organization 3", imageAddress: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 3},
-    {eventName: "Event 4", orgName: "Organization 4", imageAddress: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 4}
+    {event_name: "Event 1", orgName: "Organization 1", event_img: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 1},
+    {event_name: "Event 2", orgName: "Organization 2", event_img: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 2},
+    {event_name: "Event 3", orgName: "Organization 3", event_img: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 3},
+    {event_name: "Event 4", orgName: "Organization 4", event_img: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 4}
   ]
 
   useEffect(() => {
@@ -127,9 +127,13 @@ export default function ExplorePage() {
           <View style = {{ width: width, alignSelf: 'center', justifyContent: 'center', alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap' }}>
             {upcoming.map((item, index) => (
               <View style = {{ flexDirection: 'column', paddingHorizontal: 5, marginBottom: 10 }} key={index}>
-                <View style = {{ width: eventCardHeight * 1.2, height: eventCardHeight * 1.2, backgroundColor: '#500000', borderRadius: 8 }} />
+                <Image 
+                  style = {{ width: eventCardHeight * 1.2, height: eventCardHeight * 1.2, backgroundColor: '#500000', borderRadius: 8 }}
+                  source = {item.event_img ? { uri: item.event_img } : require('../../assets/images/default-event-image.png')}  
+                  resizeMode = "cover"
+                />
                 <Text style = {{fontWeight: 'bold', textAlign: 'center'}}>
-                  {item.eventName}
+                  {item.event_name}
                 </Text>
                 <Text style = {{fontWeight: '300', textAlign: 'center', fontSize: 12}}>
                   {item.orgName}
@@ -144,7 +148,7 @@ export default function ExplorePage() {
           <View style = {{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
             {recentlyAdded.map((item, index) => (
               <Pressable style = {[styles.recentlyAddedButton, index == 0 || (index + 1) % 3 != 0 ? {marginRight: 7} : {}]} key = {item.key}>
-                <Text style = {{ color: 'white', fontSize: 17, marginLeft: 20, fontWeight: '500', flex: 1 }}>{item.eventName}</Text>
+                <Text style = {{ color: 'white', fontSize: 17, marginLeft: 20, fontWeight: '500', flex: 1 }}>{item.event_name}</Text>
                 <Ionicons name='arrow-forward-outline' size={15} style = {{ marginRight: 15, color: 'white' }} />
               </Pressable>
             ))}

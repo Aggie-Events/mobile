@@ -6,7 +6,7 @@ import Header from '@/components/ui/Header';
 import { Ionicons } from "@expo/vector-icons";
 import { eventCardHeight } from '@/constants/constants';
 import * as ImagePicker from 'expo-image-picker';
-import { BottomSheetModal, BottomSheetBackdrop, BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
+import { BottomSheetModal, BottomSheetFlatList, BottomSheetBackdrop, BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import BaseBottomSheet from '@/components/BaseBottomSheet';
 
@@ -18,15 +18,20 @@ interface SelectableTag {
 
 export default function PublishPage() {
 
-  const formatDate = (date: Date) => {
-    const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    let returnString = "";
-    returnString += daysOfWeek[date.getDay()] + ", ";
-    returnString += months[date.getMonth()] + " " + date.getDate() + " at ";
-    returnString += (date.getHours() > 12 ? date.getHours() - 12 : date.getHours()) + ":" + (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) + " " + (date.getHours() >= 12 ? "PM" : "AM");
-    return returnString;
-  };
+  const sampleOrgs = [
+    'Engineering Club',
+    'Business Society',
+    'Art Collective',
+    'Science Association',
+    'Sports Union',
+    'Music Group',
+    'Engineering Club',
+    'Business Society',
+    'Art Collective',
+    'Science Association',
+    'Sports Union',
+    'Music Group'
+  ]
 
   const { width, height } = useWindowDimensions();
 
@@ -40,7 +45,8 @@ export default function PublishPage() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const capacityInputRef = useRef<string>('');
   const [capacity, setCapacity] = useState<string>('Unlimited');
-  const [orginization, setOrganization] = useState<string>('N/A');
+  const [organization, setOrganization] = useState<string>('N/A');
+  const selectedIndex = useRef<number>(-1);
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [endDate, setEndDate] = useState<Date>(new Date());
@@ -56,10 +62,22 @@ export default function PublishPage() {
   });
 
   const snapPoints = [height * 0.45, height * 0.75];
+  const orgSnapPoints = [height * 0.75];
   const orgSheetModalRef = useRef<BottomSheetModal>(null);
-  const [orgSnap, setOrgSnap] = useState<number>(1);
+  const [orgSnap, setOrgSnap] = useState<number>(0);
   const capacitySheetModalRef = useRef<BottomSheetModal>(null);
   const [capacitySnap, setCapacitySnap] = useState<number>(0);
+
+
+  const formatDate = (date: Date) => {
+    const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    let returnString = "";
+    returnString += daysOfWeek[date.getDay()] + ", ";
+    returnString += months[date.getMonth()] + " " + date.getDate() + " at ";
+    returnString += (date.getHours() > 12 ? date.getHours() - 12 : date.getHours()) + ":" + (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) + " " + (date.getHours() >= 12 ? "PM" : "AM");
+    return returnString;
+  };
 
 
   const handlePublish = async () => {
@@ -96,6 +114,7 @@ export default function PublishPage() {
 
   const presentBottomSheet = (sheetRef: React.RefObject<BottomSheetModal>) => {
     setCapacitySnap(0);
+    setOrgSnap(0);
     sheetRef.current?.present();
   };
 
@@ -112,14 +131,24 @@ export default function PublishPage() {
     capacityInputRef.current = '';
   }, []);
 
+  const handleOrgDismiss = useCallback(() => {
+    setOrgSnap(-1);
+    orgSheetModalRef.current?.dismiss();
+  }, []);
+
   const handleCapacityChange = (cap: string) => {
     cap == "" || cap == "0"? setCapacity('Unlimited') : setCapacity(cap);
     handleDismiss();
   };
 
-  const onCapacitySnapChange = useCallback((index: number) => {
+  const onOrgSnapChange = useCallback((index: number) => {
     if (index === -1) { return; }
     setOrgSnap(index);
+  }, [])
+
+  const onCapacitySnapChange = useCallback((index: number) => {
+    if (index === -1) { return; }
+    setCapacitySnap(index);
   }, [])
 
   const handleTextInputFocus = useCallback(() => {
@@ -366,7 +395,15 @@ export default function PublishPage() {
       color: 'white',
       fontSize: 12,
       fontWeight: '300'
-    }
+    },
+    clearSelectionButton: {
+      padding: 16,
+      borderRadius: 30,
+      backgroundColor: '#800000',
+      alignItems: 'center',
+      justifyContent: 'center',
+      margin: 16,
+    },
   });
 
   return (
@@ -376,6 +413,7 @@ export default function PublishPage() {
       </Header>
       <ScrollView className="bg-gray-50" style={styles.container} contentContainerStyle={styles.contentContainer}>
 
+        {/* Image */}
         <Pressable style = {styles.imageContainer} onPress={handleImagePress}>
           <Image source={selectedImage ? { uri: selectedImage } : require('@/assets/images/default-event-image.png')} style = {styles.imageContainer} />
           <View style={styles.imageLogo}>
@@ -479,7 +517,7 @@ export default function PublishPage() {
               <View style = {{ width: '100%', height: 50, borderBottomWidth: 1, borderColor: 'rgb(229, 231, 235)', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Text style = {{ fontSize: 16, color: '#b4b4b4' }}>Organization</Text>
                 <Pressable onPress={() => presentBottomSheet(orgSheetModalRef)} style = {{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                  <Text style = {{ fontSize: 16, color: '#b4b4b4' }}>{orginization}</Text>
+                  <Text style = {{ fontSize: 16, color: '#b4b4b4' }}>{organization}</Text>
                   <View style = {styles.twoArrows}>
                     <Ionicons name="chevron-up-outline" size={15} color="#800000" />
                     <Ionicons name="chevron-down-outline" size={15} color="#800000" />
@@ -512,14 +550,70 @@ export default function PublishPage() {
             end_time: '2025-01-01',
             location: 'Test Location',
           });
-          handlePublish(); }}>
+          handlePublish(); 
+        }}>
           <Text style={styles.submitButtonText}>Publish Test Event</Text>
         </TouchableOpacity>
 
         <View style = {{ height: tabBarHeight }} />
       </ScrollView>
 
+
       {/* Bottom Sheet Modals */}
+      <BaseBottomSheet
+        ref={orgSheetModalRef}
+        title="Select Organization"
+        subtitle="Choose the organization hosting this event"
+        iconName="business-outline"
+        snapPoints={orgSnapPoints}
+        index={orgSnap}
+        onChange={onOrgSnapChange}
+        backdropComponent={renderBackdrop}
+        handleDismiss={handleOrgDismiss}
+      >
+        <View style={{ paddingHorizontal: 16, flex: 1 }}>
+          <BottomSheetFlatList
+            data={sampleOrgs}
+            keyExtractor={(_, index) => String(index)}
+            renderItem={({ item, index }) => (
+              <Pressable
+                style={{
+                  paddingHorizontal: 16,
+                  borderRadius: 8,
+                  backgroundColor: organization === item && selectedIndex.current == index ? '#800000' : '#f8f8f8',
+                  marginBottom: 8,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                  height: 50,
+                }}
+                onPress={() => {
+                  setOrganization(item);
+                  selectedIndex.current = index;
+                  handleOrgDismiss();
+                }}
+              >
+                <Text style={[{fontSize: 16, fontWeight: '300'}, organization === item && selectedIndex.current == index ? {color: 'white'} : {color: "black"}]}>{item}</Text>
+                {organization === item && selectedIndex.current == index && (
+                  <Ionicons name="checkmark-circle" size={20} color="white" />
+                )}
+              </Pressable>
+            )}
+          />
+        </View>
+        <Pressable style = {styles.clearSelectionButton}
+          onPress={() => {
+            setOrganization('N/A');
+            handleOrgDismiss();
+          }}
+        >
+          <Text style={{ fontSize: 16, color: 'white', fontWeight: '300' }}>
+            Clear Selection
+          </Text>
+        </Pressable>
+      </BaseBottomSheet>
+
       <BaseBottomSheet
         ref={capacitySheetModalRef}
         title = "Capacity"
@@ -533,7 +627,7 @@ export default function PublishPage() {
         handleDismiss={handleDismiss}
       >
         <TextInput 
-          style={[styles.input, {width: width - 32}]}
+          style={[styles.input, {marginLeft: 16, width: width - 32}]}
           placeholder="Enter capacity" 
           keyboardType="numeric"
           inputMode="numeric"

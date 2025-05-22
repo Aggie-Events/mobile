@@ -19,16 +19,16 @@ export default function EventCard({ event, id }: EventCardProps) {
   return (
     <Link key={id} href={`/event/${event.event_id}`} asChild>
       <Pressable style = {{ width: eventCardHeight * multiplier, marginLeft: 16 }}>
-        {/* <Image
-          source={{ uri: event.event_img }}
-          className="w-full h-48 rounded-xl"
+        <Image
+          source={event.event_img ? { uri: event.event_img } : require('../assets/images/default-event-image.png')}
+          style = {{ width: eventCardHeight * multiplier, height: eventCardHeight * multiplier, backgroundColor: '#500000', borderRadius: 8 }}
           resizeMode="cover"
-        /> */}
-        <View style = {{ width: eventCardHeight * multiplier, height: eventCardHeight * multiplier, backgroundColor: '#500000', borderRadius: 8 }}>
+        />
+        {/* <View style = {{ width: eventCardHeight * multiplier, height: eventCardHeight * multiplier, backgroundColor: '#500000', borderRadius: 8 }}>
           <Text className="text-white font-bold text-xl px-3">
             Org Name Here?
           </Text>
-        </View>
+        </View> */}
         <View style = {{ width: eventCardHeight * multiplier, justifyContent: 'center', alignItems: 'center' }}>
           <View style = {{ width: eventCardHeight * multiplier, alignSelf: 'center', paddingHorizontal: 10}}>
             <Text className="text-sm font-bold text-gray-900" style = {{textAlign: 'center'}}>
