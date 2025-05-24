@@ -86,9 +86,10 @@ export default function PublishPage() {
       event_description: formData.description,
       event_location: formData.location,
       event_status: 'published',
-      start_time: new Date(formData.start_time),
-      end_time: new Date(formData.end_time),
-      tags: [],
+      start_time: startDate,
+      end_time: endDate,
+      tags: selectedTags.filter(tag => tag.selected).map(tag => tag.name),
+      event_img: selectedImage,
     };
 
     const createdEvent = await createEvent(eventData);
@@ -175,10 +176,12 @@ export default function PublishPage() {
     if (preset == "start") {
       setDatePickerDate(startDate);
       didSelectStart.current = true;
+      didSelectEnd.current = false;
     } 
     else {
       setDatePickerDate(endDate);
       didSelectEnd.current = true;
+      didSelectStart.current = false;
     }
     setShowDatePicker(true);
   };

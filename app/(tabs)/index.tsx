@@ -59,11 +59,11 @@ export default function ExplorePage() {
   ]
 
   useEffect(() => {
-    GoogleSignin.configure({
-      iosClientId: '19658597217-enl8en0fnhsvilikd14gl260705m2e9o.apps.googleusercontent.com', // TODO: update this
-      webClientId: '19658597217-q87pq51i57uhml4bs9r5q0itbb81imi7.apps.googleusercontent.com', // TODO: update this
-      offlineAccess: true,
-    });
+    // GoogleSignin.configure({
+    //   iosClientId: '19658597217-enl8en0fnhsvilikd14gl260705m2e9o.apps.googleusercontent.com', // TODO: update this
+    //   webClientId: '19658597217-q87pq51i57uhml4bs9r5q0itbb81imi7.apps.googleusercontent.com', // TODO: update this
+    //   offlineAccess: true,
+    // });
   }, []);
 
   useEffect(() => {

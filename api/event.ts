@@ -9,10 +9,11 @@ export interface CreateEventData {
   event_name: string;
   event_description: string | null;
   event_location: string | null;
-  event_status: string;
   start_time: Date;
   end_time: Date;
+  event_status: string;
   tags: string[];
+  event_img: string | null;
 }
 
 export interface SearchEventsReturn {
