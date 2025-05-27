@@ -1,7 +1,9 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, useWindowDimensions, Image, Pressable, SafeAreaView, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { tabBarHeight } from '@/constants/constants';
 import { createEvent, CreateEventData } from '@/api/event';
+import { fetchOrganizations } from "@/api/orgs";
+import { Organization } from '@/config/dbtypes';
 import Header from '@/components/ui/Header';
 import { Ionicons } from "@expo/vector-icons";
 import { eventCardHeight } from '@/constants/constants';
@@ -18,57 +20,42 @@ interface SelectableTag {
 
 export default function PublishPage() {
 
-  const sampleOrgs = [
-    'Engineering Club',
-    'Business Society',
-    'Art Collective',
-    'Science Association',
-    'Sports Union',
-    'Music Group',
-    'Engineering Club',
-    'Business Society',
-    'Art Collective',
-    'Science Association',
-    'Sports Union',
-    'Music Group'
-  ]
-
+  const [orgs, setOrgs] = useState<Organization[]>([]);
+  
   const { width, height } = useWindowDimensions();
-
+  
   // Tags from database
   const tags = ["Workshop", "Career Fair", "Social", "Academic", "Sports", "Free Food", "Performance", "Seminar", "Engineering", "Business", "Arts", "Science"];
 
   // Tags from website
   // const tags = ['Academic', 'Arts', 'Career', 'Cultural', 'Recreation', 'Service', 'Social', 'Sports', 'Other'];
-
-  const [selectedTags, setSelectedTags] = useState<SelectableTag[]>(tags.map((tag, index) => ({ name: tag, selected: false, id: index + 1 } as SelectableTag)));
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const capacityInputRef = useRef<string>('');
-  const [capacity, setCapacity] = useState<string>('Unlimited');
-  const [organization, setOrganization] = useState<string>('N/A');
-  const selectedIndex = useRef<number>(-1);
-  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
-  const [startDate, setStartDate] = useState<Date>(new Date());
-  const [endDate, setEndDate] = useState<Date>(new Date());
-  const [datePickerDate, setDatePickerDate] = useState<Date>(new Date());
-  const didSelectStart = useRef<boolean>(false);
-  const didSelectEnd = useRef<boolean>(false);
+  
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    start_time: '',
-    end_time: '',
     location: '',
+    start_time: new Date(),
+    end_time: new Date(),
+    tags: [] as string[],
+    image: null as string | null,
+    capacity: -1, // -1 means unlimited capacity
   });
-
+  const capacityInputRef = useRef<string>('');
+  const [selectedTags, setSelectedTags] = useState<SelectableTag[]>(tags.map((tag, index) => ({ name: tag, selected: false, id: index + 1 } as SelectableTag)));
+  const [organization, setOrganization] = useState<Organization | null>(null);
+  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+  const [datePickerDate, setDatePickerDate] = useState<Date>(new Date());
+  const didSelectStart = useRef<boolean>(false);
+  const didSelectEnd = useRef<boolean>(false);
+  
   const snapPoints = [height * 0.45, height * 0.75];
   const orgSnapPoints = [height * 0.75];
   const orgSheetModalRef = useRef<BottomSheetModal>(null);
   const [orgSnap, setOrgSnap] = useState<number>(0);
   const capacitySheetModalRef = useRef<BottomSheetModal>(null);
   const [capacitySnap, setCapacitySnap] = useState<number>(0);
-
-
+  
+  
   const formatDate = (date: Date) => {
     const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -78,29 +65,31 @@ export default function PublishPage() {
     returnString += (date.getHours() > 12 ? date.getHours() - 12 : date.getHours()) + ":" + (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) + " " + (date.getHours() >= 12 ? "PM" : "AM");
     return returnString;
   };
-
-
+  
+  
   const handlePublish = async () => {
     const eventData: CreateEventData = {
       event_name: formData.title,
       event_description: formData.description,
       event_location: formData.location,
       event_status: 'published',
-      start_time: startDate,
-      end_time: endDate,
+      start_time: formData.start_time,
+      end_time: formData.end_time,
       tags: selectedTags.filter(tag => tag.selected).map(tag => tag.name),
-      event_img: selectedImage,
+      event_img: formData.image,
+      max_capacity: formData.capacity,
+      event_org: organization
     };
-
+    
     const createdEvent = await createEvent(eventData);
-
+    
     if (createdEvent) {
       console.log('Event created successfully:', createdEvent);
     } else {
       console.error('Failed to create event');
     }
   };
-
+  
   const handleImagePress = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
@@ -109,16 +98,16 @@ export default function PublishPage() {
     });
 
     if (!result.canceled) {
-      setSelectedImage(result.assets[0].uri);
+      setFormData({ ...formData, image: result.assets[0].uri });
     }
   };
-
+  
   const presentBottomSheet = (sheetRef: React.RefObject<BottomSheetModal>) => {
     setCapacitySnap(0);
     setOrgSnap(0);
     sheetRef.current?.present();
   };
-
+  
   const handleTouchStart = useCallback(() => {
     if (Keyboard.isVisible()) {
       Keyboard.dismiss();
@@ -131,76 +120,100 @@ export default function PublishPage() {
     capacitySheetModalRef.current?.dismiss();
     capacityInputRef.current = '';
   }, []);
-
+  
   const handleOrgDismiss = useCallback(() => {
     setOrgSnap(-1);
     orgSheetModalRef.current?.dismiss();
   }, []);
-
+  
   const handleCapacityChange = (cap: string) => {
-    cap == "" || cap == "0"? setCapacity('Unlimited') : setCapacity(cap);
+    if (cap == "" || Number(cap) <= 0) {
+      setFormData({ ...formData, capacity: -1 });
+    }
+    else {
+      setFormData({ ...formData, capacity: Number(cap) });
+    }
     handleDismiss();
   };
-
+  
   const onOrgSnapChange = useCallback((index: number) => {
     if (index === -1) { return; }
     setOrgSnap(index);
   }, [])
-
+  
   const onCapacitySnapChange = useCallback((index: number) => {
     if (index === -1) { return; }
     setCapacitySnap(index);
   }, [])
-
+  
   const handleTextInputFocus = useCallback(() => {
     setCapacitySnap(1);
   }, []);
-
+  
   const handleDateConfirm = (date: Date) => {
     if (didSelectStart.current) {
-      setStartDate(date);
+      setFormData({ ...formData, start_time: date });
     }
     else {
-      setEndDate(date);
+      setFormData({ ...formData, end_time: date });
     }
     setShowDatePicker(false);
   };
-
+  
   const handleDateCancel = () => {
     didSelectStart.current = false;
     didSelectEnd.current = false;
     setShowDatePicker(false);
   };
-
+  
   const handlePickerSelect = (preset: string) => {
     if (preset == "start") {
-      setDatePickerDate(startDate);
+      setDatePickerDate(formData.start_time);
       didSelectStart.current = true;
       didSelectEnd.current = false;
     } 
     else {
-      setDatePickerDate(endDate);
+      setDatePickerDate(formData.end_time);
       didSelectEnd.current = true;
       didSelectStart.current = false;
     }
     setShowDatePicker(true);
   };
-
+  
   const handleTagPress = (tag: SelectableTag) => {
     setSelectedTags(selectedTags.map(t => ({ ...t, selected: t.name === tag.name ? !t.selected : t.selected })));
   };
-  
 
+  const truncateString = (str: string, maxLength: number = 20) => {
+    if (str.length <= maxLength) return str;
+    return str.slice(0, maxLength).trimEnd() + '...';
+  }
+  
+  
   const renderBackdrop = useCallback((props: BottomSheetBackdropProps) => (
     <BottomSheetBackdrop 
-      {...props} 
-      enableTouchThrough={true} 
-      opacity={0.5}
-      pressBehavior="close"
-      disappearsOnIndex={-1}
-      onPress={handleDismiss}
+    {...props} 
+    enableTouchThrough={true} 
+    opacity={0.5}
+    pressBehavior="close"
+    disappearsOnIndex={-1}
+    onPress={handleDismiss}
     />
   ), []);
+
+  const fetchOrgs = async () => {
+    try {
+      const organizations = await fetchOrganizations();
+      console.log('Fetched organizations:', organizations);
+      setOrgs(organizations);
+    } catch (error) {
+      console.error('Error fetching organizations:', error);
+    }
+  };
+  
+  useEffect(() => {
+    fetchOrgs();
+  }, []);
 
   const styles = StyleSheet.create({
     container: {
@@ -418,7 +431,7 @@ export default function PublishPage() {
 
         {/* Image */}
         <Pressable style = {styles.imageContainer} onPress={handleImagePress}>
-          <Image source={selectedImage ? { uri: selectedImage } : require('@/assets/images/default-event-image.png')} style = {styles.imageContainer} />
+          <Image source={formData.image ? { uri: formData.image } : require('@/assets/images/default-event-image.png')} style = {styles.imageContainer} />
           <View style={styles.imageLogo}>
             <Ionicons name="image-outline" size={20} color="white" />
           </View>
@@ -447,13 +460,13 @@ export default function PublishPage() {
               <View style = {[styles.timeRow, {borderBottomWidth: 1, borderColor: 'rgb(229, 231, 235)'}]}>
                 <Text style = {{ fontSize: 16, color: '#b4b4b4' }}>Start</Text>
                 <Pressable onPress={() => handlePickerSelect("start")}>
-                  <Text style = {{ fontSize: 16, color: '#800000' }}>{formatDate(startDate)}</Text>
+                  <Text style = {{ fontSize: 16, color: '#800000' }}>{formatDate(formData.start_time)}</Text>
                 </Pressable>
               </View>
               <View style = {styles.timeRow}>
                 <Text style = {{ fontSize: 16, color: '#b4b4b4' }}>End</Text>
                 <Pressable onPress={() => handlePickerSelect("end")}>
-                  <Text style = {{ fontSize: 16, color: '#800000' }}>{formatDate(endDate)}</Text>
+                  <Text style = {{ fontSize: 16, color: '#800000' }}>{formatDate(formData.end_time)}</Text>
                 </Pressable>
               </View>
             </View>
@@ -520,7 +533,7 @@ export default function PublishPage() {
               <View style = {{ width: '100%', height: 50, borderBottomWidth: 1, borderColor: 'rgb(229, 231, 235)', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Text style = {{ fontSize: 16, color: '#b4b4b4' }}>Organization</Text>
                 <Pressable onPress={() => presentBottomSheet(orgSheetModalRef)} style = {{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                  <Text style = {{ fontSize: 16, color: '#b4b4b4' }}>{organization}</Text>
+                  <Text style = {{ fontSize: 16, color: '#b4b4b4' }}>{organization ? truncateString(organization.org_name) : 'N/A'}</Text>
                   <View style = {styles.twoArrows}>
                     <Ionicons name="chevron-up-outline" size={15} color="#800000" />
                     <Ionicons name="chevron-down-outline" size={15} color="#800000" />
@@ -530,7 +543,7 @@ export default function PublishPage() {
               <View style = {{ width: '100%', height: 50, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Text style = {{ fontSize: 16, color: '#b4b4b4' }}>Capacity</Text>
                 <Pressable onPress={() => presentBottomSheet(capacitySheetModalRef)} style = {{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                  <Text style = {{ fontSize: 16, color: '#b4b4b4' }}>{capacity}</Text>
+                  <Text style = {{ fontSize: 16, color: '#b4b4b4' }}>{formData.capacity == -1 ? 'Unlimited' : formData.capacity}</Text>
                   <View style = {styles.twoArrows}>
                     <Ionicons name="chevron-up-outline" size={15} color="#800000" />
                     <Ionicons name="chevron-down-outline" size={15} color="#800000" />
@@ -545,16 +558,7 @@ export default function PublishPage() {
         <TouchableOpacity style={styles.submitButton} onPress={handlePublish}>
           <Text style={styles.submitButtonText}>Publish</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.submitButton} onPress={() => {
-          setFormData({
-            title: 'Test Event',
-            description: 'This is a test event',
-            start_time: '2025-01-01',
-            end_time: '2025-01-01',
-            location: 'Test Location',
-          });
-          handlePublish(); 
-        }}>
+        <TouchableOpacity style={styles.submitButton}>
           <Text style={styles.submitButtonText}>Publish Test Event</Text>
         </TouchableOpacity>
 
@@ -576,14 +580,14 @@ export default function PublishPage() {
       >
         <View style={{ paddingHorizontal: 16, flex: 1 }}>
           <BottomSheetFlatList
-            data={sampleOrgs}
-            keyExtractor={(_, index) => String(index)}
-            renderItem={({ item, index }) => (
+            data={orgs}
+            keyExtractor={(item) => item.org_id.toString()}
+            renderItem={({ item }) => (
               <Pressable
                 style={{
                   paddingHorizontal: 16,
                   borderRadius: 8,
-                  backgroundColor: organization === item && selectedIndex.current == index ? '#800000' : '#f8f8f8',
+                  backgroundColor: organization?.org_id === item.org_id ? '#800000' : '#f8f8f8',
                   marginBottom: 8,
                   flexDirection: 'row',
                   alignItems: 'center',
@@ -593,12 +597,11 @@ export default function PublishPage() {
                 }}
                 onPress={() => {
                   setOrganization(item);
-                  selectedIndex.current = index;
                   handleOrgDismiss();
                 }}
               >
-                <Text style={[{fontSize: 16, fontWeight: '300'}, organization === item && selectedIndex.current == index ? {color: 'white'} : {color: "black"}]}>{item}</Text>
-                {organization === item && selectedIndex.current == index && (
+                <Text style={[{fontSize: 16, fontWeight: '300'}, organization?.org_id === item.org_id ? {color: 'white'} : {color: "black"}]}>{item.org_name}</Text>
+                {organization?.org_id === item.org_id && (
                   <Ionicons name="checkmark-circle" size={20} color="white" />
                 )}
               </Pressable>
@@ -607,7 +610,7 @@ export default function PublishPage() {
         </View>
         <Pressable style = {styles.clearSelectionButton}
           onPress={() => {
-            setOrganization('N/A');
+            setOrganization(null);
             handleOrgDismiss();
           }}
         >
@@ -646,7 +649,7 @@ export default function PublishPage() {
           <Pressable style={styles.saveButton} onPress={() => handleCapacityChange(capacityInputRef.current)}>
             <Text style={{ fontSize: 16, color: 'white', fontWeight: '300' }}>Save</Text>
           </Pressable>
-          <Pressable style={styles.unlimitedButton} onPress={() => handleCapacityChange('Unlimited')}>
+          <Pressable style={styles.unlimitedButton} onPress={() => handleCapacityChange('')}>
             <Text style={{ fontSize: 16, color: '#800000', fontWeight: '300' }}>Unlimited</Text>
           </Pressable>
         </View>

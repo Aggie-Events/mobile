@@ -3,22 +3,28 @@ export interface Event {
   contributer_id: number;
   event_name: string;
   event_description: string;
+  event_location: string | null;
   event_img: string;
-  event_likes: number;
-  event_status: string;
   start_time: Date;
   end_time: Date;
-  event_location: string | null;
+  event_status: string;
   date_created: Date;
   date_modified: Date;
+  event_saves: number;
+  max_capacity: number;
 }
 
 export interface Organization {
-  org_description: string | null;
-  org_email: string | null;
-  org_icon: string | null;
   org_id: number;
   org_name: string;
-  org_reputation: number;
+  org_email: string | null;
+  org_description: string | null;
+  org_icon: string | null;
   org_verified: boolean;
+  org_reputation: number;
+  org_building: string | null;
+  org_room: string | null;
+  org_events_count: number;
+  org_members_count: number;
+  org_slug: string | null;
 }

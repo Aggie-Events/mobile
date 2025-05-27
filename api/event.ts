@@ -1,5 +1,5 @@
 import { fetchUtil } from "@/api/fetch";
-import { Event } from "@/config/dbtypes";
+import { Event, Organization } from "@/config/dbtypes";
 import { EventCreate, EventPageInformation } from "@/config/query-types";
 import { API_URL } from "@/config/api-url";
 
@@ -14,6 +14,8 @@ export interface CreateEventData {
   event_status: string;
   tags: string[];
   event_img: string | null;
+  max_capacity: number;
+  event_org: Organization | null;
 }
 
 export interface SearchEventsReturn {

@@ -17,7 +17,7 @@ export const addOrganization = async (username: string, email: string) => {
   }
 };
 
-export const fetchOrganization = async (): Promise<Organization[]> => {
+export const fetchOrganizations = async (): Promise<Organization[]> => {
   try {
     const response = await fetchUtil(
       `${API_URL}/orgs`,
