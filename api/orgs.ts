@@ -1,6 +1,7 @@
 import { fetchUtil } from "@/api/fetch";
 import { Organization } from "@/config/dbtypes";
 import { API_URL } from "@/config/api-url";
+import Toast from "react-native-toast-message";
 
 export const addOrganization = async (username: string, email: string) => {
   try {
@@ -13,7 +14,11 @@ export const addOrganization = async (username: string, email: string) => {
     );
     console.log("Organization added successfully", response);
   } catch (error) {
-    throw new Error("Error adding Organization");
+    Toast.show({
+      type: "error",
+      text1: "Error adding Organization",
+    });
+    throw new Error("Error adding Organization: " + error);
   }
 };
 
@@ -27,7 +32,11 @@ export const fetchOrganizations = async (): Promise<Organization[]> => {
     );
     return response.json() ?? [];
   } catch (error) {
-    throw new Error("Error fetching Organization");
+    Toast.show({
+      type: "error",
+      text1: "Error fetching Organizations",
+    });
+    throw new Error("Error fetching Organizations: " + error);
   }
 };
 
@@ -40,6 +49,10 @@ export const deleteOrganization = async () => {
       },
     );
   } catch (error) {
-    throw new Error("Error deleting Organization");
+    Toast.show({
+      type: "error",
+      text1: "Error deleting Organization",
+    });
+    throw new Error("Error deleting Organization: " + error);
   }
 };

@@ -2,6 +2,7 @@ import { fetchUtil } from "@/api/fetch";
 import { Event, Organization } from "@/config/dbtypes";
 import { EventCreate, EventPageInformation } from "@/config/query-types";
 import { API_URL } from "@/config/api-url";
+import Toast from "react-native-toast-message";
 
 export type EventStatus = 'draft' | 'published' | 'cancelled';
 
@@ -73,11 +74,15 @@ export const searchEvents = async (
       resultSize: resultSize.event_count,
     };
   } catch (error) {
-    throw new Error("Error searching events" + error);
+    Toast.show({
+      type: "error",
+      text1: "Error searching events"
+    });
+    throw new Error("Error searching events: " + error);
   }
 };
 
-export const fetchEvents = async (): Promise<Event[]> => {
+export const fetchEvents = async () => {
   try {
     const response = await fetchUtil(
       `${API_URL}/events`,
@@ -85,15 +90,20 @@ export const fetchEvents = async (): Promise<Event[]> => {
         method: "GET",
       },
     );
-    return response.json() ?? [];
+    const data = await response.json();
+    return data ?? [];
   } catch (error) {
-    throw new Error("Error fetching events");
+    Toast.show({
+      type: "error",
+      text1: "Error fetching events"
+    });
+    throw new Error("Error fetching events: " + error);
   }
 };
 
 export const fetchEventById = async (
   eventID: number,
-): Promise<EventPageInformation> => {
+): Promise<EventPageInformation | null> => {
   try {
     const response = await fetchUtil(
       `${API_URL}/events/${eventID}`,
@@ -103,6 +113,10 @@ export const fetchEventById = async (
     );
     return response.json() ?? null;
   } catch (error) {
+    Toast.show({
+      type: "error",
+      text1: "Error fetching event by ID"
+    });
     throw new Error("Error fetching event by ID: " + error);
   }
 };
@@ -124,11 +138,15 @@ export const createEvent = async (event: CreateEventData) => {
         body: event,
       },
     );
-    console.log("reponse ", response);
-    return response.json() ?? null;
+    const data = await response.json();
+    console.log("response ", data);
+    return data ?? null;
   } catch (error) {
-    console.log("Error creating event: ", error);
-    throw new Error("Error creating event");
+    Toast.show({
+      type: "error",
+      text1: "Error creating event"
+    });
+    throw new Error("Error creating event: " + error);
   }
 };
 
@@ -146,3 +164,4 @@ export const createEvent = async (event: CreateEventData) => {
 //     } catch (error) {
 //         throw new Error('Error getting event tags' + error);
 //     }
+// };

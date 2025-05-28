@@ -11,6 +11,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { BottomSheetModal, BottomSheetFlatList, BottomSheetBackdrop, BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import BaseBottomSheet from '@/components/BaseBottomSheet';
+import Toast from 'react-native-toast-message';
 
 interface SelectableTag {
   name: string;
@@ -65,6 +66,24 @@ export default function PublishPage() {
     returnString += (date.getHours() > 12 ? date.getHours() - 12 : date.getHours()) + ":" + (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) + " " + (date.getHours() >= 12 ? "PM" : "AM");
     return returnString;
   };
+
+  const validateFormData = (formData: CreateEventData): boolean => {
+    if (formData.event_name.trim() === '') {
+      Toast.show({
+        type: 'error',
+        text1: 'Form Error: Event name is required',
+      });
+      return false;
+    }
+    if (formData.start_time >= formData.end_time) {
+      Toast.show({
+        type: 'error',
+        text1: 'Form Error: End time must be after start time.',
+      });
+      return false;
+    }
+    return true;
+  }
   
   
   const handlePublish = async () => {
@@ -80,13 +99,29 @@ export default function PublishPage() {
       max_capacity: formData.capacity,
       event_org: organization
     };
+
+    const isFormDataValid = validateFormData(eventData);
+    if (!isFormDataValid) { return; }
     
-    const createdEvent = await createEvent(eventData);
-    
-    if (createdEvent) {
-      console.log('Event created successfully:', createdEvent);
-    } else {
-      console.error('Failed to create event');
+    try {
+      const createdEvent = await createEvent(eventData);
+      
+      if (createdEvent) {
+        console.log('Event created successfully:', createdEvent);
+        Toast.show({
+          type: 'success',
+          text1: 'Event created successfully!',
+        });
+      } else {
+        console.error('Failed to create event');
+        Toast.show({
+          type: 'error',
+          text1: 'Failed to create event. Please try again later.',
+        });
+      }
+    }
+    catch (error) {
+      console.error('Error creating event:', error);
     }
   };
   
@@ -204,7 +239,6 @@ export default function PublishPage() {
   const fetchOrgs = async () => {
     try {
       const organizations = await fetchOrganizations();
-      console.log('Fetched organizations:', organizations);
       setOrgs(organizations);
     } catch (error) {
       console.error('Error fetching organizations:', error);

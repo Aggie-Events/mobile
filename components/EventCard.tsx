@@ -1,3 +1,4 @@
+import React from 'react';
 import { View, Text, Image, Pressable, useWindowDimensions } from 'react-native';
 import { Link } from 'expo-router';
 import type { Event } from '../config/dbtypes';
@@ -8,7 +9,7 @@ interface EventCardProps {
   id: string;
 }
 
-export default function EventCard({ event, id }: EventCardProps) {
+const EventCard: React.FC<EventCardProps> = ({ event, id }) => {
   const multiplier = 1.1;
   const truncateDescription = (text: string | null, maxLength: number = 150) => {
     if (!text) return "no description.";
@@ -40,3 +41,5 @@ export default function EventCard({ event, id }: EventCardProps) {
     </Link>
   );
 } 
+
+export default React.memo(EventCard);
