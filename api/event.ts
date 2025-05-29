@@ -141,10 +141,14 @@ export const createEvent = async (event: CreateEventData) => {
     const data = await response.json();
     console.log("response ", data);
     return data ?? null;
-  } catch (error) {
+  } catch (error: Error | any) {
+    let toastMsg = "Error creating event. Please try again later.";
+    if (error.message.includes("Unauthorized")) {
+      toastMsg = "Unauthorized: Please log in to create an event";
+    }
     Toast.show({
       type: "error",
-      text1: "Error creating event"
+      text1: toastMsg
     });
     throw new Error("Error creating event: " + error);
   }

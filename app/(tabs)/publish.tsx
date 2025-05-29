@@ -1,6 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, useWindowDimensions, Image, Pressable, SafeAreaView, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { tabBarHeight } from '@/constants/constants';
+import { getSecureURL } from '@/api/uploadImage';
 import { createEvent, CreateEventData } from '@/api/event';
 import { fetchOrganizations } from "@/api/orgs";
 import { Organization } from '@/config/dbtypes';
@@ -102,7 +103,24 @@ export default function PublishPage() {
 
     const isFormDataValid = validateFormData(eventData);
     if (!isFormDataValid) { return; }
+
+    // Get secure URL for image if it exists
+    if (formData.image) {
+      try {
+        const file = {
+          uri: formData.image,
+          name: 'event_image.png',
+          type: 'image/png',
+        }
+        const secureURL = await getSecureURL(file);
+        eventData.event_img = secureURL;
+      } catch (error) {
+        console.error('Error uploading image:', error);
+        return;
+      }
+    }
     
+    // Create event
     try {
       const createdEvent = await createEvent(eventData);
       
