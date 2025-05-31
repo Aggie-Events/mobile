@@ -416,6 +416,17 @@ export default function PublishPage() {
       alignItems: 'center',
       justifyContent: 'center'
     },
+    clearImageSelection: {
+      position: 'absolute',
+      bottom: 10,
+      left: 10,
+      width: 32,
+      height: 32,
+      backgroundColor: 'rgba(70, 70, 70, 0.6)',
+      borderRadius: 16,
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
     twoArrows: {
       flexDirection: 'column',
       alignItems: 'center',
@@ -495,6 +506,9 @@ export default function PublishPage() {
           <View style={styles.imageLogo}>
             <Ionicons name="image-outline" size={20} color="white" />
           </View>
+          <Pressable style = {styles.clearImageSelection} onPress={() => setFormData({ ...formData, image: null })}>
+            <Ionicons name="close" size={20} color="white" />
+          </Pressable>
         </Pressable>
 
         {/* Title */}
