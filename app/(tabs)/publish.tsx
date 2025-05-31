@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, useWindowDimensions, Image, Pressable, SafeAreaView, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { tabBarHeight } from '@/constants/constants';
 import { getSecureURL } from '@/api/uploadImage';
+import { fetchTags } from '@/api/tags';
 import { createEvent, CreateEventData } from '@/api/event';
 import { fetchOrganizations } from "@/api/orgs";
 import { Organization } from '@/config/dbtypes';
@@ -26,12 +27,6 @@ export default function PublishPage() {
   
   const { width, height } = useWindowDimensions();
   
-  // Tags from database
-  const tags = ["Workshop", "Career Fair", "Social", "Academic", "Sports", "Free Food", "Performance", "Seminar", "Engineering", "Business", "Arts", "Science"];
-
-  // Tags from website
-  // const tags = ['Academic', 'Arts', 'Career', 'Cultural', 'Recreation', 'Service', 'Social', 'Sports', 'Other'];
-  
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -43,7 +38,7 @@ export default function PublishPage() {
     capacity: -1, // -1 means unlimited capacity
   });
   const capacityInputRef = useRef<string>('');
-  const [selectedTags, setSelectedTags] = useState<SelectableTag[]>(tags.map((tag, index) => ({ name: tag, selected: false, id: index + 1 } as SelectableTag)));
+  const [selectedTags, setSelectedTags] = useState<SelectableTag[]>([]);
   const [organization, setOrganization] = useState<Organization | null>(null);
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
   const [datePickerDate, setDatePickerDate] = useState<Date>(new Date());
@@ -113,6 +108,10 @@ export default function PublishPage() {
           type: 'image/png',
         }
         const secureURL = await getSecureURL(file);
+        if (!secureURL) {
+          console.error('Failed to get secure URL for image');
+          return;
+        }
         eventData.event_img = secureURL;
       } catch (error) {
         console.error('Error uploading image:', error);
@@ -254,7 +253,16 @@ export default function PublishPage() {
     />
   ), []);
 
-  const fetchOrgs = async () => {
+  const runPreFetch = async () => {
+    // Fetch tags
+    try {
+      const fetchedTags = (await fetchTags()).tags;
+      setSelectedTags(fetchedTags.map((tag, index) => ({ name: tag, selected: false, id: index + 1 } as SelectableTag)));
+    } catch (error) {
+      console.error('Error fetching tags:', error);
+    }
+
+    // Fetch organizations
     try {
       const organizations = await fetchOrganizations();
       setOrgs(organizations);
@@ -264,7 +272,7 @@ export default function PublishPage() {
   };
   
   useEffect(() => {
-    fetchOrgs();
+    runPreFetch();
   }, []);
 
   const styles = StyleSheet.create({

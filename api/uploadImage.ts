@@ -16,12 +16,19 @@ export async function getSecureURL(file: any) {
       },
     );
 
+    console.log(response.ok, response.status)
+
     if (!response.ok) {
+      let toastMsg = "Image could not be uploaded. Please try again later.";
+      if (response.status == 401) {
+        toastMsg = "Unauthorized: Please log in to create an event";
+      }
       Toast.show({
         type: "error",
-        text1: `Image could not be uploaded. Please try again later.`,
+        text1: toastMsg,
       });
-      throw new Error(`Upload failed with status: ${response.status}`);
+      console.error("Image upload failed with status:", response.status);
+      return null;
     }
 
     const data = await response.json();
@@ -29,7 +36,7 @@ export async function getSecureURL(file: any) {
   } catch (error) {
     Toast.show({
       type: "error",
-      text1: `Image could not be uploaded. Please try again later.`,
+      text1: "Image could not be uploaded. Please try again later.",
     });
     throw new Error("Image upload failed: " + error);
   }
