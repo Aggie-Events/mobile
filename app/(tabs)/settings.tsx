@@ -6,6 +6,7 @@ import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-si
 import { AUTH_URL } from '@/config/api-url';
 import { router } from 'expo-router';
 import Header from "@/components/ui/Header";
+import Toast from 'react-native-toast-message';
 
 interface SettingsSectionProps {
   title: string;
@@ -20,51 +21,6 @@ interface SettingsItemProps {
   value?: boolean;
   onValueChange?: (value: boolean) => void;
   onPress?: () => void;
-}
-
-const signInWithGoogle = async () => {
-  try {
-    await GoogleSignin.hasPlayServices();
-    const userInfo = await GoogleSignin.signIn();
-    const idToken = userInfo.data?.idToken;
-
-    if (!idToken) {
-      Alert.alert("Sign in failed", "No ID token received");
-      return;
-    }
-
-    // Send the ID token to your backend for verification
-    // console.log(`${AUTH_URL}/auth/google-mobile`);
-
-    const queryData = {
-      idToken: idToken,
-      user_displayname: userInfo.data?.user.name,
-      user_img: userInfo.data?.user.photo,
-      user_name: "fsdfsadf",
-      user_email: userInfo.data?.user.email,
-    };
-
-    const response = await fetch(`${AUTH_URL}/auth/google-mobile`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: 'include',
-      body: JSON.stringify({ ...queryData }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      Alert.alert("Login failed", errorData.message);
-      return;
-    }
-    // console.log("response ok check after");
-
-
-    const data = await response.json();
-    console.log("Login success:", data);
-    router.push("/");
-  } catch (error) {
-    console.error(error);
-  }
 }
 
 const SettingsSection: React.FC<SettingsSectionProps> = ({ title, children }) => (
@@ -109,10 +65,77 @@ const SettingsItem: React.FC<SettingsItemProps> = ({
 );
 
 export default function SettingsPage() {
+  // Account Info
+  const [avatarImg, setAvatarImg] = useState(require('@/assets/images/default-event-image.png'));
+  const [profileName, setProfileName] = useState('John Doe');
+  const [profileEmail, setProfileEmail] = useState('john.doe@example.com');
   const [notifications, setNotifications] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
   const [emailUpdates, setEmailUpdates] = useState(true);
   const { width, height } = useWindowDimensions();
+
+  const signInWithGoogle = async () => {
+  try {
+    await GoogleSignin.hasPlayServices();
+    const userInfo = await GoogleSignin.signIn();
+    const idToken = userInfo.data?.idToken;
+
+    if (!idToken) {
+      Alert.alert("Sign in failed", "No ID token received");
+      return;
+    }
+
+    // Send the ID token to your backend for verification
+    // console.log(`${AUTH_URL}/auth/google-mobile`);
+
+    const queryData = {
+      idToken: idToken,
+      user_displayname: userInfo.data?.user.name,
+      user_img: userInfo.data?.user.photo,
+      user_name: "fsdfsadf",
+      user_email: userInfo.data?.user.email,
+    };
+
+    const response = await fetch(`${AUTH_URL}/auth/google-mobile`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: 'include',
+      body: JSON.stringify({ ...queryData }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      Toast.show({
+        type: 'error',
+        text1: 'An error occurred during sign in. Please try again later.'
+      });
+      console.error("Sign in failed:", errorData);
+      return;
+    }
+    // console.log("response ok check after");
+
+
+    const data = await response.json();
+    console.log("Login success:", data);
+
+    if (data.user.user_displayname) {
+      setProfileName(data.user.user_displayname);
+    }
+    if (data.user.user_email) {
+      setProfileEmail(data.user.user_email);
+    }
+    if (data.user.user_img) {
+      setAvatarImg({ uri: data.user.user_img });
+    }
+
+    Toast.show({
+      type: 'success',
+      text1: 'Sign in successful!'
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
 
   return (
     <>
@@ -122,24 +145,23 @@ export default function SettingsPage() {
       <ScrollView style={styles.container}>
         <View style={styles.header}>
           <View style={styles.profileSection}>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>JD</Text>
-            </View>
+            <Image style={styles.avatar} source={avatarImg} />
             <View style={styles.profileInfo}>
-              <Text style={styles.profileName}>John Doe</Text>
-              <Text style={styles.profileEmail}>john.doe@example.com</Text>
+              <Text style={styles.profileName}>{profileName}</Text>
+              <Text style={styles.profileEmail}>{profileEmail}</Text>
             </View>
           </View>
         </View>
 
         <SettingsSection title="Sign In">
-          <SettingsItem
-            icon="globe"
-            title="Sign In with Google"
-            description="Use your Google account to sign in"
-            type="button"
-            onPress = {async () => await signInWithGoogle()}
-          />
+          <TouchableOpacity onPress = {async () => await signInWithGoogle()}>
+            <SettingsItem
+              icon="globe"
+              title="Sign In with Google"
+              description="Use your Google account to sign in"
+              type="button"
+            />
+          </TouchableOpacity>
         </SettingsSection>
       
 
