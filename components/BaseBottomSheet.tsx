@@ -6,19 +6,21 @@ import { Ionicons } from '@expo/vector-icons';
 
 interface BaseBottomSheetProps {
   title: string;
-  subtitle?: string;
   iconName: React.ComponentProps<typeof Ionicons>['name'];
   snapPoints: number[] | string[];
   index: number;
-  onChange: (index: number) => void;
-  backdropComponent: (props: BottomSheetBackdropProps) => React.JSX.Element;
+  subtitle?: string;
+  enablePanDownToClose?: boolean;
+  enableDismissOnClose?: boolean;
+  onChange?: (index: number) => void;
+  backdropComponent?: (props: BottomSheetBackdropProps) => React.JSX.Element;
   withoutFeedbackPress?: () => void;
-  handleDismiss: () => void;
+  handleDismiss?: () => void;
   children?: React.ReactNode;
 }
 
 const BaseBottomSheet = React.forwardRef<BottomSheetModal, BaseBottomSheetProps>((props, ref) => {
-  const { title, subtitle, iconName, snapPoints, index, onChange, backdropComponent, withoutFeedbackPress, handleDismiss, children } = props
+  const { title, subtitle, iconName, snapPoints, index, enablePanDownToClose, enableDismissOnClose, onChange, backdropComponent, withoutFeedbackPress, handleDismiss, children } = props
   const styles = StyleSheet.create({
     centerAlignItems: {
       alignItems: 'center'
@@ -62,8 +64,8 @@ const BaseBottomSheet = React.forwardRef<BottomSheetModal, BaseBottomSheetProps>
       ref={ref}
       snapPoints={snapPoints}
       index={index}
-      enablePanDownToClose={true}
-      enableDismissOnClose={true}
+      enablePanDownToClose={enablePanDownToClose ?? true}
+      enableDismissOnClose={enableDismissOnClose ?? true}
       keyboardBehavior="interactive"
       keyboardBlurBehavior="restore"
       android_keyboardInputMode="adjustResize"
@@ -77,9 +79,11 @@ const BaseBottomSheet = React.forwardRef<BottomSheetModal, BaseBottomSheetProps>
               <View style = {styles.iconBackground}>
                 <Ionicons name={iconName} size={24} color="white" />
               </View>
-              <Pressable onPress={handleDismiss}>
-                <Ionicons name="close-circle" size={28} color='gray' />
-              </Pressable>
+              {handleDismiss && (
+                <Pressable onPress={handleDismiss}>
+                  <Ionicons name="close-circle" size={28} color='gray' />
+                </Pressable>
+              )}
             </View>
             <Text style = {styles.modalTitle}>{title}</Text>
             <Text style = {styles.modalSubtitle}>{subtitle ?? ""}</Text>

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, Switch, TouchableOpacity, ScrollView, StyleSheet, Alert, useWindowDimensions, Image } from 'react-native';
+import React, { useRef, useState, useCallback, useMemo } from 'react';
+import { View, Text, Switch, TouchableOpacity, ScrollView, StyleSheet, Alert, useWindowDimensions, Image, Keyboard } from 'react-native';
 import { IconSymbol, IconSymbolName } from '@/components/ui/IconSymbol';
 import { tabBarHeight } from '@/constants/constants';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
@@ -7,6 +7,10 @@ import { AUTH_URL } from '@/config/api-url';
 import { router } from 'expo-router';
 import Header from "@/components/ui/Header";
 import Toast from 'react-native-toast-message';
+import { BottomSheetModal, BottomSheetBackdrop, BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
+import BaseBottomSheet from '@/components/BaseBottomSheet';
+import { TextInput } from 'react-native-gesture-handler';
+import { Ionicons } from '@expo/vector-icons';
 
 interface SettingsSectionProps {
   title: string;
@@ -66,76 +70,155 @@ const SettingsItem: React.FC<SettingsItemProps> = ({
 
 export default function SettingsPage() {
   // Account Info
-  const [avatarImg, setAvatarImg] = useState(require('@/assets/images/default-event-image.png'));
-  const [profileName, setProfileName] = useState('John Doe');
-  const [profileEmail, setProfileEmail] = useState('john.doe@example.com');
+  // TODO: Get from auth provider
+  const [avatarImg, setAvatarImg] = useState<any>(null);
+  const [profileName, setProfileName] = useState<string | null>(null);
+  const [profileEmail, setProfileEmail] = useState<string | null>(null);
+  const username = useRef<string>("");
+
+  // Settings
   const [notifications, setNotifications] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
   const [emailUpdates, setEmailUpdates] = useState(true);
-  const { width, height } = useWindowDimensions();
+
+  // Username stuff
+  const usernamePromptRef = useRef<BottomSheetModal>(null);
+  const [usernameSnapIndex, setUsernameSnapIndex] = useState<number>(0);
+  const [usernameErrorMessages, setUsernameErrorMessages] = useState<string[]>(["Username must be at least 3 characters long."]);
+
+  const renderBackdrop = useCallback((props: BottomSheetBackdropProps) => (
+    <BottomSheetBackdrop 
+      {...props} 
+      opacity={0.5}
+      disappearsOnIndex={-1}
+      pressBehavior='none'
+    />
+  ), []);
+
+  const errorList = useMemo(() => (
+    usernameErrorMessages.length > 0 ? (
+      <View style={{ marginTop: 16 }}>
+        {usernameErrorMessages.map((error, index) => (
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }} key={index}>
+            <Ionicons name="close" size={16} color="red" style={{ marginRight: 4 }} />
+            <Text style={{ color: 'red', fontSize: 14 }}>{error}</Text>
+          </View>
+        ))}
+      </View>
+    ) : (
+      <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 16, flexDirection: 'row' }}>
+        <Ionicons name="checkmark" size={16} color="green" style={{ marginRight: 4 }} />
+        <Text style={{ color: 'green', fontSize: 14 }}>Username is valid!</Text>
+      </View>
+    )
+  ), [JSON.stringify(usernameErrorMessages)]);
 
   const signInWithGoogle = async () => {
-  try {
-    await GoogleSignin.hasPlayServices();
-    const userInfo = await GoogleSignin.signIn();
-    const idToken = userInfo.data?.idToken;
+    // try {
+    //   await GoogleSignin.hasPlayServices();
+    //   const userInfo = await GoogleSignin.signIn();
+    //   const idToken = userInfo.data?.idToken;
 
-    if (!idToken) {
-      Alert.alert("Sign in failed", "No ID token received");
-      return;
+    //   if (!idToken) {
+    //     Alert.alert("Sign in failed", "No ID token received");
+    //     return;
+    //   }
+
+    //   // Send the ID token to your backend for verification
+    //   // console.log(`${AUTH_URL}/auth/google-mobile`);
+
+    //   const queryData = {
+    //     idToken: idToken,
+    //     user_displayname: userInfo.data?.user.name,
+    //     user_img: userInfo.data?.user.photo,
+    //     user_name: "fsdfsadf",
+    //     user_email: userInfo.data?.user.email,
+    //   };
+
+    //   const response = await fetch(`${AUTH_URL}/auth/google-mobile`, {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     credentials: 'include',
+    //     body: JSON.stringify({ ...queryData }),
+    //   });
+
+    //   if (!response.ok) {
+    //     const errorData = await response.json();
+    //     Toast.show({
+    //       type: 'error',
+    //       text1: 'An error occurred during sign in. Please try again later.'
+    //     });
+    //     console.error("Sign in failed:", errorData);
+    //     return;
+    //   }
+    //   // console.log("response ok check after");
+
+
+    //   const data = await response.json();
+    //   console.log("Login success:", data);
+
+    //   if (data.user.user_displayname) {
+    //     setProfileName(data.user.user_displayname);
+    //   }
+    //   if (data.user.user_email) {
+    //     setProfileEmail(data.user.user_email);
+    //   }
+    //   if (data.user.user_img) {
+    //     setAvatarImg({ uri: data.user.user_img });
+    //   }
+
+    //   Toast.show({
+    //     type: 'success',
+    //     text1: 'Sign in successful!'
+    //   });
+    // } 
+    // catch (error) {
+    //   console.error(error);
+    // }
+    usernamePromptRef.current?.present();
+    setUsernameSnapIndex(0);
+  }
+
+  const onChangeUsernameSnapIndex = (index: number) => {
+    if (index === -1) {
+      // User dismissed the bottom sheet
+      console.log("Username prompt dismissed");
+      usernamePromptRef.current?.close();
     }
+    setUsernameSnapIndex(index);
+  }
 
-    // Send the ID token to your backend for verification
-    // console.log(`${AUTH_URL}/auth/google-mobile`);
+  const handleUsernameChange = (text: string) => {
+    username.current = text;
+    let errorMessages = [];
+    if (text.length < 3) {
+      errorMessages.push("Username must be at least 3 characters long.");
+    }
+    if (text != "" && !/^[a-zA-Z0-9]+$/.test(text)) {
+      errorMessages.push("Username can only contain letters and numbers.");
+    }
+    setUsernameErrorMessages(errorMessages);
+  };
 
-    const queryData = {
-      idToken: idToken,
-      user_displayname: userInfo.data?.user.name,
-      user_img: userInfo.data?.user.photo,
-      user_name: "fsdfsadf",
-      user_email: userInfo.data?.user.email,
-    };
-
-    const response = await fetch(`${AUTH_URL}/auth/google-mobile`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: 'include',
-      body: JSON.stringify({ ...queryData }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
+  const handleSubmitUsername = async () => {
+    if (usernameErrorMessages.length > 0) {
       Toast.show({
         type: 'error',
-        text1: 'An error occurred during sign in. Please try again later.'
+        text1: 'Please fix the errors before submitting.'
       });
-      console.error("Sign in failed:", errorData);
       return;
     }
-    // console.log("response ok check after");
 
-
-    const data = await response.json();
-    console.log("Login success:", data);
-
-    if (data.user.user_displayname) {
-      setProfileName(data.user.user_displayname);
-    }
-    if (data.user.user_email) {
-      setProfileEmail(data.user.user_email);
-    }
-    if (data.user.user_img) {
-      setAvatarImg({ uri: data.user.user_img });
-    }
-
+    // Here you would typically send the username to your backend
+    // For now, we will just log it and close the bottom sheet
+    console.log("Submitted username:", username.current);
+    usernamePromptRef.current?.close();
+    setUsernameSnapIndex(-1);
     Toast.show({
       type: 'success',
-      text1: 'Sign in successful!'
+      text1: 'Username submitted successfully!'
     });
-  } catch (error) {
-    console.error(error);
   }
-}
 
   return (
     <>
@@ -145,10 +228,11 @@ export default function SettingsPage() {
       <ScrollView style={styles.container}>
         <View style={styles.header}>
           <View style={styles.profileSection}>
-            <Image style={styles.avatar} source={avatarImg} />
+            <Image style={styles.avatar} source={avatarImg ? {uri: avatarImg} : require('@/assets/images/default-event-image.png')} />
             <View style={styles.profileInfo}>
-              <Text style={styles.profileName}>{profileName}</Text>
-              <Text style={styles.profileEmail}>{profileEmail}</Text>
+              <Text style={styles.profileName}>{profileName ?? "Display Name"}</Text>
+              <Text style={styles.profileEmail}>{profileEmail ?? "email@email.com"}</Text>
+              <Text style={styles.profileEmail}>{username.current != "" ? `@${username.current}` : "@username"}</Text>
             </View>
           </View>
         </View>
@@ -233,6 +317,36 @@ export default function SettingsPage() {
           </TouchableOpacity>
           <View style = {{ height: tabBarHeight }} />
       </ScrollView>
+
+      {/* Username Prompt Bottom Sheet */}
+      <BaseBottomSheet
+        ref={usernamePromptRef}
+        title="Username"
+        subtitle="Please enter a username to continue."
+        iconName="person"
+        snapPoints={['85%']}
+        index={usernameSnapIndex}
+        onChange={onChangeUsernameSnapIndex}
+        backdropComponent={renderBackdrop}
+        enablePanDownToClose={false}
+        enableDismissOnClose={false}
+        withoutFeedbackPress={() => Keyboard.dismiss()}
+      >
+        <TextInput
+          style={styles.usernameInput}
+          autoCorrect={false}
+          autoCapitalize="none"
+          placeholder="Enter username" 
+          placeholderTextColor={'#999999'}
+          maxLength={20}
+          defaultValue={""}
+          onChangeText={(text) => handleUsernameChange(text)}
+        />
+        {errorList}
+        <TouchableOpacity style = {styles.submitButton} onPress={() => handleSubmitUsername()}>
+          <Text style = {{ fontSize: 16, color: 'white', fontWeight: '300' }}>Submit</Text>
+        </TouchableOpacity>
+      </BaseBottomSheet>
     </>
   );
 }
@@ -273,7 +387,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     color: '#333333',
-    marginBottom: 4,
   },
   profileEmail: {
     fontSize: 14,
@@ -339,4 +452,26 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  usernameInput: {
+    backgroundColor: '#f8f8f8',
+    borderRadius: 12,
+    paddingLeft: 16,
+    fontSize: 20,
+    color: '#333333',
+    borderWidth: 1,
+    borderColor: '#eeeeee',
+    fontWeight: '600',
+    height: 50,
+    marginHorizontal: 16,
+  },
+  submitButton: {
+    width: '48%',
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    marginTop: 16,
+    borderRadius: 100,
+    backgroundColor: '#800000'
+  }
 });

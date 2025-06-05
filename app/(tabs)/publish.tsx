@@ -244,12 +244,12 @@ export default function PublishPage() {
   
   const renderBackdrop = useCallback((props: BottomSheetBackdropProps) => (
     <BottomSheetBackdrop 
-    {...props} 
-    enableTouchThrough={true} 
-    opacity={0.5}
-    pressBehavior="close"
-    disappearsOnIndex={-1}
-    onPress={handleDismiss}
+      {...props} 
+      enableTouchThrough={true} 
+      opacity={0.5}
+      pressBehavior="close"
+      disappearsOnIndex={-1}
+      onPress={handleDismiss}
     />
   ), []);
 
@@ -561,7 +561,7 @@ export default function PublishPage() {
         {/* Description */}
         <View style={styles.inputGroup}>
           <TextInput
-            style={[styles.input, styles.textArea, {fontSize: 16, fontWeight: '400'}]}
+            style={[styles.input, styles.textArea, {fontSize: 16, fontWeight: '400', paddingTop: 8}]}
             value={formData.description}
             onChangeText={(text) => setFormData({ ...formData, description: text })}
             placeholder="Describe your event..."
