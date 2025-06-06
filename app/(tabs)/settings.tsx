@@ -11,6 +11,9 @@ import { BottomSheetModal, BottomSheetBackdrop, BottomSheetBackdropProps } from 
 import BaseBottomSheet from '@/components/BaseBottomSheet';
 import { TextInput } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
+import { User } from '@/api/user';
+import { useAuth } from '@/components/auth/AuthProvider';
+import { checkIfUsernameExists, updateUsername } from '@/api/user';
 
 interface SettingsSectionProps {
   title: string;
@@ -70,18 +73,15 @@ const SettingsItem: React.FC<SettingsItemProps> = ({
 
 export default function SettingsPage() {
   // Account Info
-  // TODO: Get from auth provider
-  const [avatarImg, setAvatarImg] = useState<any>(null);
-  const [profileName, setProfileName] = useState<string | null>(null);
-  const [profileEmail, setProfileEmail] = useState<string | null>(null);
-  const username = useRef<string>("");
-
+  const { user, setUser } = useAuth();
+  
   // Settings
   const [notifications, setNotifications] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
   const [emailUpdates, setEmailUpdates] = useState(true);
-
+  
   // Username stuff
+  const usernameInput = useRef<string>("");
   const usernamePromptRef = useRef<BottomSheetModal>(null);
   const [usernameSnapIndex, setUsernameSnapIndex] = useState<number>(0);
   const [usernameErrorMessages, setUsernameErrorMessages] = useState<string[]>(["Username must be at least 3 characters long."]);
@@ -114,69 +114,87 @@ export default function SettingsPage() {
   ), [JSON.stringify(usernameErrorMessages)]);
 
   const signInWithGoogle = async () => {
-    // try {
-    //   await GoogleSignin.hasPlayServices();
-    //   const userInfo = await GoogleSignin.signIn();
-    //   const idToken = userInfo.data?.idToken;
+    try {
+      if (user && user.user_name) {
+        Toast.show({
+          type: 'info',
+          text1: 'You are already signed in!'
+        });
+        return;
+      }
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      const idToken = userInfo.data?.idToken;
 
-    //   if (!idToken) {
-    //     Alert.alert("Sign in failed", "No ID token received");
-    //     return;
-    //   }
+      if (!idToken) {
+        Alert.alert("Sign in failed", "No ID token received");
+        return;
+      }
 
-    //   // Send the ID token to your backend for verification
-    //   // console.log(`${AUTH_URL}/auth/google-mobile`);
+      // Send the ID token to your backend for verification
+      // console.log(`${AUTH_URL}/auth/google-mobile`);
 
-    //   const queryData = {
-    //     idToken: idToken,
-    //     user_displayname: userInfo.data?.user.name,
-    //     user_img: userInfo.data?.user.photo,
-    //     user_name: "fsdfsadf",
-    //     user_email: userInfo.data?.user.email,
-    //   };
+      const queryData = {
+        idToken: idToken,
+        user_displayname: userInfo.data?.user.name,
+        user_img: userInfo.data?.user.photo,
+        user_name: null,
+        user_email: userInfo.data?.user.email,
+      };
 
-    //   const response = await fetch(`${AUTH_URL}/auth/google-mobile`, {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     credentials: 'include',
-    //     body: JSON.stringify({ ...queryData }),
-    //   });
+      const response = await fetch(`${AUTH_URL}/google-mobile`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: 'include',
+        body: JSON.stringify({ ...queryData }),
+      });
 
-    //   if (!response.ok) {
-    //     const errorData = await response.json();
-    //     Toast.show({
-    //       type: 'error',
-    //       text1: 'An error occurred during sign in. Please try again later.'
-    //     });
-    //     console.error("Sign in failed:", errorData);
-    //     return;
-    //   }
-    //   // console.log("response ok check after");
+      if (!response.ok) {
+        const errorData = await response.json();
+        Toast.show({
+          type: 'error',
+          text1: 'An error occurred during sign in. Please try again later.'
+        });
+        console.error("Sign in failed:", errorData);
+        return;
+      }
+      // console.log("response ok check after");
 
 
-    //   const data = await response.json();
-    //   console.log("Login success:", data);
+      const data: { message: string; user: User } = await response.json();
+      console.log("Login success:", data);
 
-    //   if (data.user.user_displayname) {
-    //     setProfileName(data.user.user_displayname);
-    //   }
-    //   if (data.user.user_email) {
-    //     setProfileEmail(data.user.user_email);
-    //   }
-    //   if (data.user.user_img) {
-    //     setAvatarImg({ uri: data.user.user_img });
-    //   }
+      if (!data || !data.user) {
+        Toast.show({
+          type: 'error',
+          text1: 'No user data received. Please try again later.'
+        });
+        return;
+      }
 
-    //   Toast.show({
-    //     type: 'success',
-    //     text1: 'Sign in successful!'
-    //   });
-    // } 
-    // catch (error) {
-    //   console.error(error);
-    // }
-    usernamePromptRef.current?.present();
-    setUsernameSnapIndex(0);
+      setUser(data.user);
+
+      if (!data.user.user_name || data.user.user_name === "") {
+        // If the user has no username, prompt them to set one
+        usernameInput.current = "";
+        usernamePromptRef.current?.present();
+        setUsernameSnapIndex(0);
+        return;
+      }
+      usernameInput.current = data.user.user_name;
+
+      Toast.show({
+        type: 'success',
+        text1: 'Sign in successful!'
+      });
+    } 
+    catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Sign in failed. Please try again later.'
+      });
+      console.error(error);
+    }
   }
 
   const onChangeUsernameSnapIndex = (index: number) => {
@@ -188,8 +206,8 @@ export default function SettingsPage() {
     setUsernameSnapIndex(index);
   }
 
-  const handleUsernameChange = (text: string) => {
-    username.current = text;
+  const handleUsernameChange = async (text: string) => {
+    usernameInput.current = text;
     let errorMessages = [];
     if (text.length < 3) {
       errorMessages.push("Username must be at least 3 characters long.");
@@ -197,6 +215,14 @@ export default function SettingsPage() {
     if (text != "" && !/^[a-zA-Z0-9]+$/.test(text)) {
       errorMessages.push("Username can only contain letters and numbers.");
     }
+
+    if (text.length > 0) {
+      const usernameExists = await checkIfUsernameExists(text);
+      if (usernameExists) {
+        errorMessages.push("Username already exists. Please choose a different one.");
+      }
+    }
+
     setUsernameErrorMessages(errorMessages);
   };
 
@@ -209,15 +235,23 @@ export default function SettingsPage() {
       return;
     }
 
-    // Here you would typically send the username to your backend
-    // For now, we will just log it and close the bottom sheet
-    console.log("Submitted username:", username.current);
+    try {
+      await updateUsername(usernameInput.current);
+      console.log("Username updated successfully:", usernameInput.current);
+      setUser({
+        ...user,
+        user_name: usernameInput.current
+      } as User);
+      Toast.show({
+        type: 'success',
+        text1: 'Username submitted! Sign in successful!'
+      });
+    }
+    catch (error) {
+      console.error("Error updating username:", error);
+    }  
     usernamePromptRef.current?.close();
     setUsernameSnapIndex(-1);
-    Toast.show({
-      type: 'success',
-      text1: 'Username submitted successfully!'
-    });
   }
 
   return (
@@ -228,11 +262,11 @@ export default function SettingsPage() {
       <ScrollView style={styles.container}>
         <View style={styles.header}>
           <View style={styles.profileSection}>
-            <Image style={styles.avatar} source={avatarImg ? {uri: avatarImg} : require('@/assets/images/default-event-image.png')} />
+            <Image style={styles.avatar} source={user?.user_img ? {uri: user.user_img} : require('@/assets/images/default-event-image.png')} />
             <View style={styles.profileInfo}>
-              <Text style={styles.profileName}>{profileName ?? "Display Name"}</Text>
-              <Text style={styles.profileEmail}>{profileEmail ?? "email@email.com"}</Text>
-              <Text style={styles.profileEmail}>{username.current != "" ? `@${username.current}` : "@username"}</Text>
+              <Text style={styles.profileName}>{user?.user_displayname ?? "Display Name"}</Text>
+              <Text style={styles.profileEmail}>{user?.user_email ?? "email@email.com"}</Text>
+              <Text style={styles.profileEmail}>{user?.user_name && user.user_name.length > 0  ? `@${user?.user_name}` : "@username"}</Text>
             </View>
           </View>
         </View>

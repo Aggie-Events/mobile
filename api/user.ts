@@ -4,9 +4,10 @@ import { API_URL } from "@/config/api-url";
 
 export interface User {
     user_email: string;
+    user_displayname: string;
+    user_img: string;
     user_id: number;
-    user_mod: boolean;
-    user_name: string;
+    user_name: string | null;
 }
 
 export const addUser = async (username: string, email: string) => {
@@ -93,3 +94,41 @@ export const verifyUserUpdate = async (username: string) => {
 
     return response.status === 200;
 };
+
+export const checkIfUsernameExists = async (username: string): Promise<boolean> => {
+    try {
+        const response = await fetchUtil(
+            `${API_URL}/users/exists`,
+            {
+                method: "POST",
+                body: { username },
+            },
+        );
+        const data = await response.json();
+        return data.exists;
+    } catch (error) {
+        console.error("Error checking if username exists:", error);
+        throw new Error("Error checking if username exists: " + error);
+    }
+}
+
+export const updateUsername = async (newUsername: string): Promise<void> => {
+    try {
+        console.log('api url: ', `${API_URL}/users/username`);
+        console.log('new username: ', newUsername);
+        await fetch(`${API_URL}/users/username`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({ username: newUsername }),
+        });
+    } catch (error) {
+        Toast.show({
+            type: "error",
+            text1: "Error setting username. Please try again later."
+        });
+        throw new Error("Error updating username: " + error);
+    }
+}

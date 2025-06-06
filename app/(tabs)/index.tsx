@@ -10,6 +10,9 @@ import Header from '@/components/ui/Header';
 import { Ionicons } from "@expo/vector-icons"
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { eventCardHeight } from '@/constants/constants';
+import { useAuth } from '@/components/auth/AuthProvider';
+import { getUser } from '@/auth/auth-router';
+import Toast from 'react-native-toast-message';
 
 type Tab = 'Featured' | 'Following';
 
@@ -17,6 +20,7 @@ export default function ExplorePage() {
   const [activeTab, setActiveTab] = useState<Tab>('Featured');
   const [events, setEvents] = useState<Event[]>([]);
   const {width, height} = useWindowDimensions();
+  const { setUser } = useAuth();
 
   const sectionTitleExtraPadding = 30;
 
@@ -58,12 +62,32 @@ export default function ExplorePage() {
     {event_name: "Event 4", orgName: "Organization 4", event_img: "https://ih1.redbubble.net/image.2097232951.6764/st,small,507x507-pad,600x600,f8f8f8.jpg", key: 4}
   ]
 
+  const getUserInfo = async () => {
+    try {
+      const user = await getUser();
+      if (user) {
+        setUser(user);
+      } 
+      else {
+        console.warn("No user information found.");
+      }
+    }
+    catch (error) {
+      console.error("Error setting up user credentials:", error);
+      Toast.show({
+        type: 'error',
+        text1: 'Failed to get user credentials. Please try again later.'
+      });
+    }
+  }
+
   useEffect(() => {
     GoogleSignin.configure({
       iosClientId: '19658597217-enl8en0fnhsvilikd14gl260705m2e9o.apps.googleusercontent.com', // TODO: update this
       webClientId: '19658597217-q87pq51i57uhml4bs9r5q0itbb81imi7.apps.googleusercontent.com', // TODO: update this
       offlineAccess: true,
     });
+    getUserInfo();
   }, []);
 
   useEffect(() => {
