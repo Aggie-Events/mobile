@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { User } from '@/api/user';
+import { logout as apiLogout } from '@/auth/auth-router';
+import Toast from 'react-native-toast-message';
 
 interface AuthContextType {
   user: User | null;
@@ -16,9 +18,18 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
 
-  const logout = () => {
-    setUser(null);
-    // Additional logout logic can be added here, such as clearing tokens or redirecting
+  const logout = async () => {
+    try {
+      await apiLogout();
+      setUser(null);
+      Toast.show({
+        type: 'success',
+        text1: 'Logged out successfully!',
+      });
+    }
+    catch (error) {
+      console.error('Logout failed:', error);
+    }
   };
 
   return (

@@ -25,3 +25,18 @@ export const getUser = async (): Promise<User | null> => {
         throw new Error("Error fetching user: " + error);
     }
 }
+
+export const logout = async (): Promise<void> => {
+    try {
+        await fetch(`${AUTH_URL}/logout`, {
+            method: "POST",
+            credentials: "include",
+        });
+    } catch (error) {
+        Toast.show({
+            type: "error",
+            text1: "Error logging out. Please try again later."
+        });
+        throw new Error("Error logging out: " + error);
+    }
+}

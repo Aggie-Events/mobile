@@ -73,7 +73,7 @@ const SettingsItem: React.FC<SettingsItemProps> = ({
 
 export default function SettingsPage() {
   // Account Info
-  const { user, setUser } = useAuth();
+  const { user, setUser, logout } = useAuth();
   
   // Settings
   const [notifications, setNotifications] = useState(true);
@@ -85,6 +85,9 @@ export default function SettingsPage() {
   const usernamePromptRef = useRef<BottomSheetModal>(null);
   const [usernameSnapIndex, setUsernameSnapIndex] = useState<number>(0);
   const [usernameErrorMessages, setUsernameErrorMessages] = useState<string[]>(["Username must be at least 3 characters long."]);
+
+  // Extra
+  const scrollViewRef = useRef<ScrollView>(null);
 
   const renderBackdrop = useCallback((props: BottomSheetBackdropProps) => (
     <BottomSheetBackdrop 
@@ -259,7 +262,7 @@ export default function SettingsPage() {
       <Header>
         <View style = {{ width: 40 }} />
       </Header>
-      <ScrollView style={styles.container}>
+      <ScrollView style={styles.container} ref={scrollViewRef}>
         <View style={styles.header}>
           <View style={styles.profileSection}>
             <Image style={styles.avatar} source={user?.user_img ? {uri: user.user_img} : require('@/assets/images/default-event-image.png')} />
@@ -346,7 +349,13 @@ export default function SettingsPage() {
             />
           </SettingsSection>
 
-          <TouchableOpacity style={styles.signOutButton}>
+          <TouchableOpacity style={styles.signOutButton} 
+            onPress = {() => {
+                logout(); 
+                scrollViewRef.current?.scrollTo({ y: 0, animated: false });
+              }
+            }
+          >
             <Text style={styles.signOutButtonText}>Sign Out</Text>
           </TouchableOpacity>
           <View style = {{ height: tabBarHeight }} />
