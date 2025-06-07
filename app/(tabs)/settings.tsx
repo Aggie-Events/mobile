@@ -1,4 +1,4 @@
-import React, { useRef, useState, useCallback, useMemo } from 'react';
+import React, { useRef, useState, useCallback, useMemo, useEffect } from 'react';
 import { View, Text, Switch, TouchableOpacity, ScrollView, StyleSheet, Alert, useWindowDimensions, Image, Keyboard } from 'react-native';
 import { IconSymbol, IconSymbolName } from '@/components/ui/IconSymbol';
 import { tabBarHeight } from '@/constants/constants';
@@ -183,8 +183,7 @@ export default function SettingsPage() {
       if (!data.user.user_name || data.user.user_name === "") {
         // If the user has no username, prompt them to set one
         usernameInput.current = "";
-        usernamePromptRef.current?.present();
-        setUsernameSnapIndex(0);
+        presentUsernamePrompt();
         return;
       }
       usernameInput.current = data.user.user_name;
@@ -201,6 +200,16 @@ export default function SettingsPage() {
       });
       console.error(error);
     }
+  }
+
+  const presentUsernamePrompt = () => {
+    usernamePromptRef.current?.present();
+    setUsernameSnapIndex(0);
+  }
+
+  const dismissUsernamePrompt = () => {
+    usernamePromptRef.current?.close();
+    setUsernameSnapIndex(-1);
   }
 
   const onChangeUsernameSnapIndex = (index: number) => {
@@ -256,9 +265,14 @@ export default function SettingsPage() {
     catch (error) {
       console.error("Error updating username:", error);
     }  
-    usernamePromptRef.current?.close();
-    setUsernameSnapIndex(-1);
+    dismissUsernamePrompt();
   }
+
+  useEffect(() => {
+    if (user && !user.user_name) {
+      presentUsernamePrompt();
+    }
+  }, []);
 
   return (
     <>
