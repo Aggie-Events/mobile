@@ -14,6 +14,21 @@ const MAPPING = {
   "plus.circle.fill": "add-circle-outline",
   "building.2": "business",
   "gearshape.fill": "settings",
+
+  // --- Add these for settings ---
+  "globe": "public", // Sign In with Google
+  "rectangle.portrait.and.arrow.right": "logout", // Sign Out
+  "bell": "notifications-none", // Notifications
+  "moon": "dark-mode", // Dark Mode
+  "envelope": "mail-outline", // Email Updates
+  "person.crop.circle": "person-outline", // Edit Profile
+  "lock.shield": "security", // Security
+  "hand.raised": "privacy-tip", // Privacy
+  "questionmark.circle": "help-outline", // Help Center
+  "doc.text": "description", // Terms of Service
+  "shield": "privacy-tip", // Privacy Policy
+  // Chevron for navigation
+  "chevron.right": "chevron-right",
 } as Partial<
   Record<
     import('expo-symbols').SymbolViewProps['name'],

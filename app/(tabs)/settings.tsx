@@ -44,12 +44,15 @@ const SettingsItem: React.FC<SettingsItemProps> = ({
   type = 'button',
   value,
   onValueChange,
+  onPress,
 }) => (
-  <View    
+  <TouchableOpacity
+    activeOpacity={type === 'button' ? 0.2 : 1}
+    onPress={type === 'button' && onPress ? onPress : undefined}
     style={styles.settingsItem}
   >
     <View style={styles.settingsItemIcon}>
-      <IconSymbol name={icon} size={24} color="#666666" />
+      <IconSymbol name={icon} size={22} color="#800000" />
     </View>
     <View style={styles.settingsItemContent}>
       <Text style={styles.settingsItemTitle}>{title}</Text>
@@ -61,14 +64,14 @@ const SettingsItem: React.FC<SettingsItemProps> = ({
       <Switch
         value={value}
         onValueChange={onValueChange}
-        trackColor={{ false: '#dddddd', true: '#800000' }}
-        thumbColor="#ffffff"
+        trackColor={{ false: '#ddd', true: '#800000' }}
+        thumbColor="#fff"
       />
     )}
     {type === 'button' && (
-      <IconSymbol name="chevron.right" size={20} color="#666666" />
+      <IconSymbol name="chevron.right" size={20} color="#bbb" />
     )}
-  </View>
+  </TouchableOpacity>
 );
 
 export default function SettingsPage() {
@@ -87,7 +90,7 @@ export default function SettingsPage() {
   const [usernameErrorMessages, setUsernameErrorMessages] = useState<string[]>(["Username must be at least 3 characters long."]);
 
   // Extra
-  const scrollViewRef = useRef<ScrollView>(null);
+  const scrollViewRef = useRef<ScrollView>(null); // Not being used, but can be useful for future scroll handling
 
   const renderBackdrop = useCallback((props: BottomSheetBackdropProps) => (
     <BottomSheetBackdrop 
@@ -274,91 +277,80 @@ export default function SettingsPage() {
           </View>
         </View>
 
-        <SettingsSection title="Sign In">
-          <TouchableOpacity onPress = {async () => await signInWithGoogle()}>
-            <SettingsItem
-              icon="globe"
-              title="Sign In with Google"
-              description="Use your Google account to sign in"
-              type="button"
-            />
-          </TouchableOpacity>
+        <SettingsSection title={!user ? "Sign In" : "Sign Out"}>
+          <SettingsItem
+            icon={!user ? "globe" : "rectangle.portrait.and.arrow.right"}
+            title={!user ? "Sign In with Google" : "Sign Out"}
+            description={!user ? "Use your Google account to sign in" : "Click to sign out"}
+            type="button"
+            onPress={!user ? signInWithGoogle : logout}
+          />
         </SettingsSection>
-      
 
-          <SettingsSection title="Preferences">
-            <SettingsItem
-              icon="gear"
-              title="Notifications"
-              description="Receive push notifications"
-              type="toggle"
-              value={notifications}
-              onValueChange={setNotifications}
-            />
-            <SettingsItem
-              icon="gear"
-              title="Dark Mode"
-              description="Switch to dark theme"
-              type="toggle"
-              value={darkMode}
-              onValueChange={setDarkMode}
-            />
-            <SettingsItem
-              icon="gear"
-              title="Email Updates"
-              description="Receive email notifications"
-              type="toggle"
-              value={emailUpdates}
-              onValueChange={setEmailUpdates}
-            />
-          </SettingsSection>
+        <SettingsSection title="Preferences">
+          <SettingsItem
+            icon="bell"
+            title="Notifications"
+            description="Receive push notifications"
+            type="toggle"
+            value={notifications}
+            onValueChange={setNotifications}
+          />
+          <SettingsItem
+            icon="moon"
+            title="Dark Mode"
+            description="Switch to dark theme"
+            type="toggle"
+            value={darkMode}
+            onValueChange={setDarkMode}
+          />
+          <SettingsItem
+            icon="envelope"
+            title="Email Updates"
+            description="Receive email notifications"
+            type="toggle"
+            value={emailUpdates}
+            onValueChange={setEmailUpdates}
+          />
+        </SettingsSection>
 
-          <SettingsSection title="Account">
-            <SettingsItem
-              icon="gear"
-              title="Edit Profile"
-              description="Update your personal information"
-            />
-            <SettingsItem
-              icon="gear"
-              title="Privacy"
-              description="Manage your privacy settings"
-            />
-            <SettingsItem
-              icon="gear"
-              title="Security"
-              description="Configure security options"
-            />
-          </SettingsSection>
+        <SettingsSection title="Account">
+          <SettingsItem
+            icon="person.crop.circle"
+            title="Edit Profile"
+            description="Update your personal information"
+          />
+          <SettingsItem
+            icon="hand.raised"
+            title="Privacy"
+            description="Manage your privacy settings"
+          />
+          <SettingsItem
+            icon="lock.shield"
+            title="Security"
+            description="Configure security options"
+          />
+        </SettingsSection>
 
-          <SettingsSection title="Support">
-            <SettingsItem
-              icon="gear"
-              title="Help Center"
-              description="Get help and support"
-            />
-            <SettingsItem
-              icon="gear"
-              title="Terms of Service"
-              description="Read our terms and conditions"
-            />
-            <SettingsItem
-              icon="gear"
-              title="Privacy Policy"
-              description="Read our privacy policy"
-            />
-          </SettingsSection>
+        <SettingsSection title="Support">
+          <SettingsItem
+            icon="questionmark.circle"
+            title="Help Center"
+            description="Get help and support"
+          />
+          <SettingsItem
+            icon="doc.text"
+            title="Terms of Service"
+            description="Read our terms and conditions"
+          />
+          <SettingsItem
+            icon="shield"
+            title="Privacy Policy"
+            description="Read our privacy policy"
+          />
+        </SettingsSection>
 
-          <TouchableOpacity style={styles.signOutButton} 
-            onPress = {() => {
-                logout(); 
-                scrollViewRef.current?.scrollTo({ y: 0, animated: false });
-              }
-            }
-          >
-            <Text style={styles.signOutButtonText}>Sign Out</Text>
-          </TouchableOpacity>
-          <View style = {{ height: tabBarHeight }} />
+        <View style = {{ height: tabBarHeight + 16 }} />
       </ScrollView>
 
       {/* Username Prompt Bottom Sheet */}
@@ -456,31 +448,38 @@ const styles = StyleSheet.create({
   settingsItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eeeeee',
+    paddingVertical: 18,
+    paddingHorizontal: 18,
+    borderRadius: 14,
+    marginVertical: 6,
+    backgroundColor: '#fff',
+    shadowColor: '#80000022',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.07,
+    shadowRadius: 6,
+    elevation: 1,
   },
   settingsItemIcon: {
     width: 40,
     height: 40,
-    borderRadius: 20,
-    backgroundColor: '#f8f8f8',
+    borderRadius: 12,
+    backgroundColor: '#f6f7fb',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
+    marginRight: 16,
   },
   settingsItemContent: {
     flex: 1,
   },
   settingsItemTitle: {
     fontSize: 16,
-    fontWeight: '500',
-    color: '#333333',
-    marginBottom: 4,
+    fontWeight: '700',
+    color: '#222',
+    marginBottom: 2,
   },
   settingsItemDescription: {
-    fontSize: 14,
-    color: '#666666',
+    fontSize: 13,
+    color: '#888',
   },
   signOutButton: {
     margin: 20,
