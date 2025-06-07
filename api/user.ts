@@ -114,8 +114,6 @@ export const checkIfUsernameExists = async (username: string): Promise<boolean> 
 
 export const updateUsername = async (newUsername: string): Promise<void> => {
     try {
-        console.log('api url: ', `${API_URL}/users/username`);
-        console.log('new username: ', newUsername);
         await fetch(`${API_URL}/users/username`, {
             method: "PUT",
             headers: {
