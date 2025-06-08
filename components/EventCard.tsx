@@ -18,7 +18,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, id }) => {
   };
 
   return (
-    <Link key={id} href={`/event/${event.event_id}`} asChild>
+    <Link key={id} href={`/(tabs)/(explore)/event/${event.event_id}`} asChild>
       <Pressable style = {{ width: eventCardHeight * multiplier, marginLeft: 16 }}>
         <Image
           source={event.event_img ? { uri: event.event_img } : require('../assets/images/default-event-image.png')}

@@ -1,7 +1,7 @@
 import { View, Text, Image, ScrollView } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { Stack } from 'expo-router';
-import Header from '../../components/ui/Header';
+import Header from '../../../../components/ui/Header';
 import { useEffect, useState } from 'react';
 import { fetchEventById } from '@/api/event';
 import { EventPageInformation } from '@/config/query-types';
@@ -35,11 +35,6 @@ export default function EventPage() {
 
   return (
     <>
-      <Stack.Screen 
-        options={{
-          headerTitle: 'Event Details',
-        }}
-      />
       <ScrollView className="flex-1 bg-white">
         <Image
           source={{ uri: event.event_img }}

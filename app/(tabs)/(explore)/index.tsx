@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, FlatList, Keyboard, Image, TouchableWithoutFeedback, useWindowDimensions, ScrollView, StyleSheet } from "react-native";
-import EventCard from '../../components/EventCard';
+import EventCard from '../../../components/EventCard';
 import { mockEvents } from '@/api/fakedb';
 import { fetchEvents, searchEvents } from '@/api/event';
 import { Event } from '@/config/dbtypes';
@@ -153,7 +153,7 @@ export default function ExplorePage() {
               <View style = {{ flexDirection: 'column', paddingHorizontal: 5, marginBottom: 10 }} key={index}>
                 <Image 
                   style = {{ width: eventCardHeight * 1.2, height: eventCardHeight * 1.2, backgroundColor: '#500000', borderRadius: 8 }}
-                  source = {item.event_img ? { uri: item.event_img } : require('../../assets/images/default-event-image.png')}  
+                  source = {item.event_img ? { uri: item.event_img } : require('../../../assets/images/default-event-image.png')}  
                   resizeMode = "cover"
                 />
                 <Text style = {{fontWeight: 'bold', textAlign: 'center'}}>
