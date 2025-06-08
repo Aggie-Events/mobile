@@ -11,7 +11,7 @@ import { BottomSheetModal, BottomSheetBackdrop, BottomSheetBackdropProps } from 
 import BaseBottomSheet from '@/components/BaseBottomSheet';
 import { TextInput } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
-import { User } from '@/api/user';
+import { User } from "@/config/dbtypes";
 import { useAuth } from '@/components/auth/AuthProvider';
 import { checkIfUsernameExists, updateUsername } from '@/api/user';
 

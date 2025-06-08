@@ -28,3 +28,11 @@ export interface Organization {
   org_members_count: number;
   org_slug: string | null;
 }
+
+export interface User {
+  user_email: string;
+  user_displayname: string;
+  user_img: string;
+  user_id: number;
+  user_name: string | null;
+}

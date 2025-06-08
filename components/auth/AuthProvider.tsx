@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { User } from '@/api/user';
+import { User } from "@/config/dbtypes";
 import { logout as apiLogout } from '@/auth/auth-router';
 import Toast from 'react-native-toast-message';
 

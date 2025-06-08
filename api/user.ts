@@ -1,14 +1,7 @@
 import Toast from "react-native-toast-message";
 import { fetchUtil } from "@/api/fetch";
 import { API_URL } from "@/config/api-url";
-
-export interface User {
-    user_email: string;
-    user_displayname: string;
-    user_img: string;
-    user_id: number;
-    user_name: string | null;
-}
+import { User } from "@/config/dbtypes";
 
 export const addUser = async (username: string, email: string) => {
     try {

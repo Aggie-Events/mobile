@@ -1,6 +1,6 @@
 import { AUTH_URL } from "@/config/api-url";
 import { fetchUtil } from "@/api/fetch";
-import { User } from "@/api/user";
+import { User } from "@/config/dbtypes";
 import Toast from "react-native-toast-message";
 
 export const getUser = async (): Promise<User | null> => {
