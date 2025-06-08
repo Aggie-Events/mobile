@@ -17,7 +17,7 @@ export default function RootLayout() {
       <BottomSheetModalProvider>
         <AuthProvider>
           <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }}  />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           </Stack>
           <Toast />
         </AuthProvider>
