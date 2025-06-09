@@ -1,8 +1,9 @@
 import React from 'react';
 import { View, Text, Image, Pressable, useWindowDimensions } from 'react-native';
 import { Link } from 'expo-router';
-import type { Event } from '../config/dbtypes';
+import { Event } from '@/config/dbtypes';
 import { eventCardHeight } from '@/constants/constants';
+import { defaultEventImage } from '@/constants/constants';
 
 interface EventCardProps {
   event: Event;
@@ -21,7 +22,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, id }) => {
     <Link key={id} href={`/(tabs)/(explore)/event/${event.event_id}`} asChild>
       <Pressable style = {{ width: eventCardHeight * multiplier, marginLeft: 16 }}>
         <Image
-          source={event.event_img ? { uri: event.event_img } : require('../assets/images/default-event-image.png')}
+          source={event.event_img ? { uri: event.event_img } : defaultEventImage}
           style = {{ width: eventCardHeight * multiplier, height: eventCardHeight * multiplier, backgroundColor: '#500000', borderRadius: 8 }}
           resizeMode="cover"
         />

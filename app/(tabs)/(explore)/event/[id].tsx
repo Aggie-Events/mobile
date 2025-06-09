@@ -3,7 +3,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { fetchEventById } from '@/api/event';
 import { EventPageInformation } from '@/config/query-types';
-import { eventCardHeight } from '@/constants/constants';
+import { defaultEventImage, eventCardHeight } from '@/constants/constants';
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { tabBarHeight } from '@/constants/constants';
@@ -149,7 +149,7 @@ export default function EventPage() {
   return (
     <ScrollView>
       <Image
-        source={event.event_img ? { uri: event.event_img } : require('../../../../assets/images/default-event-image.png')}
+        source={event.event_img ? { uri: event.event_img } : defaultEventImage}
         style={styles.imageContainer}
         resizeMode="cover"
       />

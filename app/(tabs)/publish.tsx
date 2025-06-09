@@ -14,6 +14,7 @@ import { BottomSheetModal, BottomSheetFlatList, BottomSheetBackdrop, BottomSheet
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import BaseBottomSheet from '@/components/ui/BaseBottomSheet';
 import Toast from 'react-native-toast-message';
+import { defaultEventImage } from '@/constants/constants';
 
 interface SelectableTag {
   name: string;
@@ -502,7 +503,7 @@ export default function PublishPage() {
 
         {/* Image */}
         <Pressable style = {styles.imageContainer} onPress={handleImagePress}>
-          <Image source={formData.image ? { uri: formData.image } : require('@/assets/images/default-event-image.png')} style = {styles.imageContainer} />
+          <Image source={formData.image ? { uri: formData.image } : defaultEventImage} style = {styles.imageContainer} />
           <View style={styles.imageLogo}>
             <Ionicons name="image-outline" size={20} color="white" />
           </View>
