@@ -8,7 +8,7 @@ import { router } from 'expo-router';
 import Header from "@/components/ui/Header";
 import Toast from 'react-native-toast-message';
 import { BottomSheetModal, BottomSheetBackdrop, BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
-import BaseBottomSheet from '@/components/BaseBottomSheet';
+import BaseBottomSheet from '@/components/ui/BaseBottomSheet';
 import { TextInput } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
 import { User } from "@/config/dbtypes";

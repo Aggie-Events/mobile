@@ -12,7 +12,7 @@ import { eventCardHeight } from '@/constants/constants';
 import * as ImagePicker from 'expo-image-picker';
 import { BottomSheetModal, BottomSheetFlatList, BottomSheetBackdrop, BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import BaseBottomSheet from '@/components/BaseBottomSheet';
+import BaseBottomSheet from '@/components/ui/BaseBottomSheet';
 import Toast from 'react-native-toast-message';
 
 interface SelectableTag {

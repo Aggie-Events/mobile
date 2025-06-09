@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, FlatList, Keyboard, Image, TouchableWithoutFeedback, useWindowDimensions, ScrollView, StyleSheet } from "react-native";
-import EventCard from '../../../components/EventCard';
+import EventCard from '../../../components/ui/EventCard';
 import { mockEvents } from '@/api/fakedb';
 import { fetchEvents, searchEvents } from '@/api/event';
 import { Event } from '@/config/dbtypes';
