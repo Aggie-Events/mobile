@@ -1,11 +1,125 @@
-import { View, Text, Image, ScrollView } from 'react-native';
+import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { Stack } from 'expo-router';
-import Header from '../../../../components/ui/Header';
 import { useEffect, useState } from 'react';
 import { fetchEventById } from '@/api/event';
 import { EventPageInformation } from '@/config/query-types';
+import { eventCardHeight } from '@/constants/constants';
 import React from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import { tabBarHeight } from '@/constants/constants';
+
+const imageMultiplier = 1.7;
+
+const styles = StyleSheet.create({
+  imageContainer: {
+    width: eventCardHeight * imageMultiplier,
+    height: eventCardHeight * imageMultiplier,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    marginTop: 16,
+    backgroundColor: '#A54646',
+  },
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    shadowColor: '#800000',
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 6,
+    padding: 16,
+    marginTop: 3,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#800000',
+    marginBottom: 8,
+    fontFamily: 'inter',
+    textAlign: 'center',
+  },
+  section: {
+    marginBottom: 12,
+  },
+  label: {
+    color: '#A54646',
+    fontWeight: '600',
+    fontSize: 15,
+    marginRight: 6,
+    fontFamily: 'inter',
+  },
+  value: {
+    color: '#6B2323', // darker maroon for better contrast
+    fontSize: 15,
+    fontFamily: 'inter',
+    fontWeight: '600',
+    letterSpacing: 0.1,
+  },
+  tag: {
+    backgroundColor: '#800000',
+    color: 'white',
+    borderRadius: 100,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    marginRight: 8,
+    marginBottom: 6,
+    fontSize: 13,
+    fontWeight: '500',
+    fontFamily: 'inter',
+    overflow: 'hidden',
+  },
+  description: {
+    color: '#6B2323', // darker maroon for description too
+    fontSize: 16,
+    lineHeight: 24,
+    marginVertical: 12,
+    fontFamily: 'inter',
+    fontWeight: '600',
+  },
+  saveButton: {
+    backgroundColor: '#800000',
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: 'center',
+    marginTop: 10,
+    marginBottom: 4,
+    shadowColor: '#800000',
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  saveButtonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: '600',
+    fontFamily: 'inter',
+    letterSpacing: 1,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#e5e5e5',
+    marginVertical: 5,
+    borderRadius: 1,
+  },
+  statRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+    gap: 12,
+  },
+  statIcon: {
+    fontSize: 16,
+    color: '#800000',
+  },
+  statValue: {
+    color: '#800000',
+    fontWeight: 'bold',
+    fontSize: 15,
+    fontFamily: 'inter',
+  },
+});
 
 export default function EventPage() {
   const { id } = useLocalSearchParams();
@@ -18,7 +132,6 @@ export default function EventPage() {
         setEvent(eventData);
       } catch (error) {
         console.error('Error fetching event:', error);
-        // You might want to add error handling here
       }
     };
 
@@ -27,34 +140,114 @@ export default function EventPage() {
 
   if (!event) {
     return (
-      <View className="flex-1 items-center justify-center">
-        <Text>Loading...</Text>
+      <View className="flex-1 items-center justify-center bg-gray-50">
+        <Text className="text-lg text-gray-500">Loading event details...</Text>
       </View>
     );
   }
 
   return (
-    <>
-      <ScrollView className="flex-1 bg-white">
-        <Image
-          source={{ uri: event.event_img }}
-          className="w-full h-64"
-          resizeMode="cover"
-        />
-        <View className="p-4">
-          <Text className="text-2xl font-bold text-gray-900 mb-2">
-            {event.event_name}
-          </Text>
-          <View className="flex-row mb-4">
-            <Text className="text-gray-500">{event.start_time.toString()}</Text>
-            <Text className="text-gray-500 mx-2">•</Text>
-            <Text className="text-gray-500">{event.event_location}</Text>
+    <ScrollView>
+      <Image
+        source={event.event_img ? { uri: event.event_img } : require('../../../../assets/images/default-event-image.png')}
+        style={styles.imageContainer}
+        resizeMode="cover"
+      />
+      <View className="px-4 py-4">
+        <View style={styles.card}>
+          <Text style={styles.title}>{event.event_name}</Text>
+
+          {/* Date & Time Row */}
+          <View style={[styles.section, { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 18 }]}>
+            <Text style={{ color: '#800000', fontWeight: '600', fontFamily: 'inter', fontSize: 16 }}>
+              {event.start_time instanceof Date
+                ? event.start_time.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })
+                : new Date(event.start_time).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
+            </Text>
+            <Text style={{ color: '#A54646', fontWeight: '600', marginHorizontal: 8, fontSize: 16 }}>–</Text>
+            <Text style={{ color: '#800000', fontWeight: '600', fontFamily: 'inter', fontSize: 16 }}>
+              {event.end_time instanceof Date
+                ? event.end_time.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })
+                : new Date(event.end_time).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
+            </Text>
           </View>
-          <Text className="text-gray-600 leading-6">
-            {event.event_description}
+
+          {/* Details Section */}
+          <View style={[styles.section, { marginBottom: 10 }]}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+              <Text style={styles.label}>Location:</Text>
+              <Text style={styles.value}>{event.event_location || 'No location'}</Text>
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+              <Text style={styles.label}>Organization:</Text>
+              <Text style={styles.value}>{event.org_name ?? 'N/A'}</Text>
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={styles.label}>Created by:</Text>
+              <Text style={styles.value}>{`@${event.contributor_name}`}</Text>
+            </View>
+          </View>
+
+          {/* Stats */}
+          <View style={[styles.section, { marginBottom: 8 }]}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', marginBottom: 6 }}>
+              <View style={styles.statRow}>
+                <Text style={styles.statIcon}>🔖</Text>
+                <Text style={styles.statValue}>{event.event_saves ?? 0} Saves</Text>
+              </View>
+              <View style={[styles.statRow, { marginLeft: 18 }]}>
+                <Ionicons name="people" size={18} color="red" style={{ marginRight: 4 }} />
+                <Text style={styles.statValue}>
+                  {event.max_capacity !== null && event.max_capacity > 0
+                    ? `${event.max_capacity} Max`
+                    : 'No Limit'}
+                </Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Tags */}
+          <View style={[styles.section, { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }]}>
+            {event.tags.map((tag, index) => (
+              <Text key={index} style={styles.tag}>
+                {tag}
+              </Text>
+            ))}
+          </View>
+
+          {/* Divider */}
+          <View style={styles.divider} />
+
+          {/* Description */}
+          <Text style={styles.description}>
+            {event.event_description || 'No description provided.'}
           </Text>
+
+          {/* Created/Modified */}
+          <View style={[styles.section, { alignItems: 'center', marginTop: 8 }]}>
+            <Text style={{ color: '#A54646', fontSize: 13, fontFamily: 'inter' }}>
+              Created: {event.date_created instanceof Date
+                ? event.date_created.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })
+                : new Date(event.date_created).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
+            </Text>
+            <Text style={{ color: '#A54646', fontSize: 13, fontFamily: 'inter' }}>
+              Last Modified: {event.date_modified instanceof Date
+                ? event.date_modified.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })
+                : new Date(event.date_modified).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
+            </Text>
+          </View>
+
+          {/* Save Button */}
+          <TouchableOpacity
+            style={styles.saveButton}
+            activeOpacity={0.85}
+            // onPress={handleSaveEvent} // Logic not implemented
+          >
+            <Text style={styles.saveButtonText}>Save Event</Text>
+          </TouchableOpacity>
         </View>
-      </ScrollView>
-    </>
+        <View style = {{ height: tabBarHeight }} />
+      </View>
+    </ScrollView>
   );
-} 
+}

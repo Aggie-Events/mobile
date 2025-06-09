@@ -2,14 +2,15 @@ export interface EventPageInformation {
   event_id: number;
   event_name: string;
   event_description: string | null;
-  event_img: string;
   event_location: string | null;
-  event_likes: number;
+  event_img: string;
   start_time: Date;
   end_time: Date;
-  event_status: string | null;
   date_created: Date;
   date_modified: Date;
+  event_status: string | null;
+  event_saves: number;
+  max_capacity: number | null;
   contributor_name: string;
   org_name: string | null;
   org_id: number | null;

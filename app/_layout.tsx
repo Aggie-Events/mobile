@@ -2,7 +2,7 @@ import { Stack } from "expo-router";
 import "../global.css";
 import Toast from 'react-native-toast-message';
 import React, { useEffect } from "react";
-import { Image } from "react-native";
+import { Image, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import AuthProvider from "@/components/auth/AuthProvider";

@@ -12,7 +12,12 @@ export default function ExploreLayout() {
           options={{
             headerTitle: "Event Details",
             headerStyle: {
-              backgroundColor: "#ffffff",
+              backgroundColor: "#500000", // darker maroon
+            },
+            headerTintColor: "#fff", // white text/icons
+            headerTitleStyle: {
+              fontFamily: "inter",
+              color: "#fff",
             },
             headerShadowVisible: false,
           }}
