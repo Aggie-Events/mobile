@@ -1,8 +1,106 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { View, Text, Image, StyleSheet, useWindowDimensions, Pressable } from 'react-native';
+import { Event } from '@/config/dbtypes';
+import { eventCardHeight } from '@/constants/constants';
+import { defaultEventImage } from '@/constants/constants';
+import { router } from 'expo-router';
 
-const Following: React.FC = () => {
-  return <Text>Following</Text>;
+interface FollowingProps {
+  followedEvents?: Event[];
+}
+
+const Following: React.FC<FollowingProps> = ({ followedEvents = [] }) => {
+  const { width } = useWindowDimensions();
+  const eventCardMultiplier = 1.1;
+
+  const styles = StyleSheet.create({
+    sectionTitle: {
+      color: '#500000',
+      fontWeight: '600',
+      fontSize: 17,
+      marginLeft: 25,
+      marginVertical: 15,
+      fontFamily: 'inter',
+    },
+    emptyText: {
+      color: '#A54646',
+      fontSize: 16,
+      textAlign: 'center',
+      marginTop: 40,
+      fontFamily: 'inter',
+      fontWeight: '500',
+    },
+    eventCard: {
+      alignItems: 'center',
+      backgroundColor: '#fff',
+      borderRadius: 8,
+      marginBottom: 14,
+      padding: 10,
+      shadowColor: '#800000',
+      shadowOpacity: 0.08,
+      shadowRadius: 6,
+      elevation: 2,
+      width: width * 0.43,
+      marginHorizontal: 7,
+    },
+    eventImage: {
+      width: eventCardHeight * eventCardMultiplier,
+      height: eventCardHeight * eventCardMultiplier,
+      alignSelf: 'center',
+      backgroundColor: '#500000',
+      borderRadius: 8,
+    },
+    eventInfo: {
+      flex: 1,
+      flexDirection: 'column',
+      justifyContent: 'center',
+    },
+    eventName: {
+      fontWeight: 'bold',
+      fontSize: 14,
+      color: '#500000',
+      fontFamily: 'inter',
+      textAlign: 'center',
+      // backgroundColor: 'green',
+      marginTop: 8,
+    },
+    orgName: {
+      fontWeight: '400',
+      fontSize: 13,
+      color: '#A54646',
+      fontFamily: 'inter',
+    },
+  });
+
+  const navigateToEvent = (eventId: number) => {
+    router.navigate({
+      pathname: '/(tabs)/(explore)/event/[id]',
+      params: { id: eventId },
+    });
+  };
+
+  return (
+    <>
+      {/* Experimental EventCard */}
+      <Text style={styles.sectionTitle}>FOLLOWING</Text>
+      {followedEvents.length === 0 ? (
+        <Text style={styles.emptyText}>You are not following any events yet.</Text>
+      ) : (
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
+          {followedEvents.map((item) => (
+            <Pressable style={styles.eventCard} key={item.event_id} onPress={() => navigateToEvent(item.event_id)}>
+              <Image
+                style={styles.eventImage}
+                source={item.event_img ? { uri: item.event_img } : defaultEventImage}
+                resizeMode="cover"
+              />
+              <Text style={styles.eventName}>{item.event_name}</Text>
+            </Pressable>
+          ))}
+        </View>
+      )}
+    </>
+  );
 };
 
-export default Following;
+export default React.memo(Following);

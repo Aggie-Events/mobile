@@ -59,7 +59,6 @@ export default function ExplorePage() {
       webClientId: '19658597217-q87pq51i57uhml4bs9r5q0itbb81imi7.apps.googleusercontent.com', // TODO: update this
       offlineAccess: true,
     });
-    console.log("called")
     configureExplore();
   }, []);
 
@@ -94,7 +93,7 @@ export default function ExplorePage() {
           { activeTab === 'Featured' ? (
             <Featured events={events} />
           ) : (
-            <Following />
+            <Following followedEvents={events} />
           )}
         </ScrollView>
         <View style = {{ height: tabBarHeight + 10 }} />
