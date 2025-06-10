@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Pressable, FlatList, Keyboard, Image, TouchableWithoutFeedback, useWindowDimensions, ScrollView, StyleSheet } from "react-native";
+import React from 'react';
+import { View, Text, Pressable, FlatList, Image, useWindowDimensions, ScrollView, StyleSheet } from "react-native";
 import EventCard from '../../components/ui/EventCard';
 import { Ionicons } from '@expo/vector-icons';
 import { eventCardHeight } from '@/constants/constants';
@@ -8,9 +8,11 @@ import { defaultEventImage } from '@/constants/constants';
 
 interface FeaturedProps {
   events: Event[];
+  scrollRef?: React.RefObject<ScrollView>;
+  onScroll?: (event: any) => void;
 }
 
-const Featured: React.FC<FeaturedProps> = ({ events }) => {
+const Featured: React.FC<FeaturedProps> = ({ events = [], scrollRef, onScroll }) => {
   const { width, height } = useWindowDimensions();
   const sectionTitleExtraPadding = 30;
   
@@ -53,7 +55,7 @@ const Featured: React.FC<FeaturedProps> = ({ events }) => {
   });
 
   return (
-    <>
+    <ScrollView ref={scrollRef} onScroll={onScroll}>
       <Text style = {styles.sectionTitle}>
         TRENDING
       </Text>
@@ -106,7 +108,7 @@ const Featured: React.FC<FeaturedProps> = ({ events }) => {
         EXPLORE SOMETHING NEW
       </Text>
       <Text style = {{marginLeft: 25}}>:(</Text>
-    </>
+    </ScrollView>
   )
 }
 

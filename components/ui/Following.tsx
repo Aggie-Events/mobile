@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, useWindowDimensions, Pressable } from 'react-native';
+import { View, Text, Image, StyleSheet, useWindowDimensions, Pressable, ScrollView } from 'react-native';
 import { Event } from '@/config/dbtypes';
 import { eventCardHeight } from '@/constants/constants';
 import { defaultEventImage } from '@/constants/constants';
@@ -7,9 +7,11 @@ import { router } from 'expo-router';
 
 interface FollowingProps {
   followedEvents?: Event[];
+  scrollRef?: React.RefObject<ScrollView>;
+  onScroll?: (event: any) => void;
 }
 
-const Following: React.FC<FollowingProps> = ({ followedEvents = [] }) => {
+const Following: React.FC<FollowingProps> = ({ followedEvents = [], scrollRef, onScroll }) => {
   const { width } = useWindowDimensions();
   const eventCardMultiplier = 1.1;
 
@@ -80,7 +82,7 @@ const Following: React.FC<FollowingProps> = ({ followedEvents = [] }) => {
   };
 
   return (
-    <>
+    <ScrollView ref={scrollRef} onScroll={onScroll}>
       {/* Experimental EventCard */}
       <Text style={styles.sectionTitle}>FOLLOWING</Text>
       {followedEvents.length === 0 ? (
@@ -99,7 +101,7 @@ const Following: React.FC<FollowingProps> = ({ followedEvents = [] }) => {
           ))}
         </View>
       )}
-    </>
+    </ScrollView>
   );
 };
 

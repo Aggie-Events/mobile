@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, Text, Pressable, Keyboard, TouchableWithoutFeedback, useWindowDimensions, ScrollView } from "react-native";
 import { fetchEvents } from '@/api/event';
 import { Event } from '@/config/dbtypes';
@@ -19,6 +19,19 @@ export default function ExplorePage() {
   const [events, setEvents] = useState<Event[]>([]);
   const {width, height} = useWindowDimensions();
   const { setUser } = useAuth();
+
+  const featuredRef = useRef<ScrollView>(null);
+  const followingRef = useRef<ScrollView>(null);
+  const featuredScrollY = useRef(0);
+  const followingScrollY = useRef(0);
+
+  const onFeaturedScroll = useCallback((event: any) => {
+    featuredScrollY.current = event.nativeEvent.contentOffset.y;
+  }, []);
+
+  const onFollowingScroll = useCallback((event: any) => {
+    followingScrollY.current = event.nativeEvent.contentOffset.y;
+  }, []);
 
   const fetchEventsFromAPI = async () => {
     try {
@@ -52,6 +65,15 @@ export default function ExplorePage() {
     await fetchEventsFromAPI();
     await getUserInfo();
   }
+
+  useEffect(() => {
+    if (activeTab === 'Featured') {
+      featuredRef.current?.scrollTo({ y: featuredScrollY.current, animated: false });
+    }
+    else {
+      followingRef.current?.scrollTo({ y: followingScrollY.current, animated: false });
+    }
+  }, [activeTab]);
 
   useEffect(() => {
     GoogleSignin.configure({
@@ -89,13 +111,14 @@ export default function ExplorePage() {
             ))}
           </View>
         </TouchableWithoutFeedback>
-        <ScrollView>
-          { activeTab === 'Featured' ? (
-            <Featured events={events} />
-          ) : (
-            <Following followedEvents={events} />
-          )}
-        </ScrollView>
+
+        {/* Render the active tab content */}
+        { activeTab === 'Featured' ? (
+          <Featured events={events} scrollRef={featuredRef} onScroll={onFeaturedScroll} />
+        ) : (
+          <Following followedEvents={events} scrollRef={followingRef} onScroll={onFollowingScroll} />
+        )}
+
         <View style = {{ height: tabBarHeight + 10 }} />
       </View>
     </>
