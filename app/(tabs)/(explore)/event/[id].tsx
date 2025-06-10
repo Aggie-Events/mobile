@@ -1,5 +1,5 @@
 import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { fetchEventById } from '@/api/event';
 import { EventPageInformation } from '@/config/query-types';
@@ -7,6 +7,9 @@ import { defaultEventImage, eventCardHeight } from '@/constants/constants';
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { tabBarHeight } from '@/constants/constants';
+import { saveEventForUser } from '@/api/event';
+import { useAuth } from '@/components/auth/AuthProvider';
+import Toast from 'react-native-toast-message';
 
 const imageMultiplier = 1.7;
 
@@ -124,17 +127,49 @@ const styles = StyleSheet.create({
 export default function EventPage() {
   const { id } = useLocalSearchParams();
   const [event, setEvent] = useState<EventPageInformation | null>(null);
+  const { user } = useAuth();
+
+  const followEvent = async () => {
+    if (!event) return;
+    if (!user) {
+      Toast.show({
+        type: "error",
+        text1: "You must be logged in to follow events."
+      });
+      return;
+    }
+    if (user.user_name === event.contributor_name) {
+      Toast.show({
+        type: "error",
+        text1: "You cannot follow your own event."
+      });
+      return;
+    }
+
+    try {
+      const savedEvent = await saveEventForUser(event.event_id);
+      if (savedEvent) {
+        Toast.show({
+          type: "success",
+          text1: "Event followed successfully!"
+        });
+        router.back();
+      }
+    } catch (error) {
+      console.error('Error following event:', error);
+    }
+  };
+
+  const loadEvent = async () => {
+    try {
+      const eventData = await fetchEventById(Number(id));
+      setEvent(eventData);
+    } catch (error) {
+      console.error('Error fetching event:', error);
+    }
+  };
 
   useEffect(() => {
-    const loadEvent = async () => {
-      try {
-        const eventData = await fetchEventById(Number(id));
-        setEvent(eventData);
-      } catch (error) {
-        console.error('Error fetching event:', error);
-      }
-    };
-
     loadEvent();
   }, [id]);
 
@@ -193,7 +228,7 @@ export default function EventPage() {
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', marginBottom: 6 }}>
               <View style={styles.statRow}>
                 <Text style={styles.statIcon}>🔖</Text>
-                <Text style={styles.statValue}>{event.event_saves ?? 0} Saves</Text>
+                <Text style={styles.statValue}>{event.event_saves ?? 0} {event.event_saves === 1 ? 'Follow' : 'Follows'}</Text>
               </View>
               <View style={[styles.statRow, { marginLeft: 18 }]}>
                 <Ionicons name="people" size={18} color="red" style={{ marginRight: 4 }} />
@@ -241,9 +276,9 @@ export default function EventPage() {
           <TouchableOpacity
             style={styles.saveButton}
             activeOpacity={0.85}
-            // onPress={handleSaveEvent} // Logic not implemented
+            onPress={followEvent}
           >
-            <Text style={styles.saveButtonText}>Save Event</Text>
+            <Text style={styles.saveButtonText}>Follow Event</Text>
           </TouchableOpacity>
         </View>
         <View style = {{ height: tabBarHeight }} />

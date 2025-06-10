@@ -154,18 +154,35 @@ export const createEvent = async (event: CreateEventData) => {
   }
 };
 
-// export const getEventTags = async (event_id: number): Promise<string[]> => {
-//     try {
-//         const IDs = await fetchUtil(`${process.env.NEXT_PUBLIC_API_URL}/events/${event_id}/tags`, {
-//             method: 'GET',
-//         }); // NOTE: currently working on making the event tags populate with the actual db data
+export const saveEventForUser = async (eventId: number) => {
+  try {
+    const response = await fetchUtil(
+      `${API_URL}/events/${eventId}/save`,
+      {
+        method: "POST",
+      },
+    );
 
-//         const response = await fetchUtil(`${process.env.NEXT_PUBLIC_API_URL}/tags`, {
-//             method: 'GET',
-//             body: JSON.stringify({ query }),
-//         });
-//         return response.json() ?? [];
-//     } catch (error) {
-//         throw new Error('Error getting event tags' + error);
-//     }
-// };
+    const data = await response.json();
+    return data ?? null;
+  } catch (error: Error | any) {
+    let toastMsg = "";
+    let toastMsg2 = "";
+    if (error.message.includes("Unauthorized")) {
+      toastMsg = "Unauthorized: Please log in to save an event";
+    }
+    else {
+      toastMsg = error.message;
+    }
+    if (toastMsg === "") {
+      toastMsg = "Error saving event. Please try again later.";
+      toastMsg2 = "Did you already follow this event?";
+    }
+    Toast.show({
+      type: "error",
+      text1: toastMsg,
+      text2: toastMsg2 ? toastMsg2 : undefined
+    });
+    throw new Error("Error saving event for user: " + error);
+  }
+}
