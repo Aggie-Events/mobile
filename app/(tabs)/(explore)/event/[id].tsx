@@ -1,13 +1,13 @@
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useEffect, useState } from 'react';
 import { fetchEventById } from '@/api/event';
 import { EventPageInformation } from '@/config/query-types';
 import { defaultEventImage, eventCardHeight } from '@/constants/constants';
-import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { tabBarHeight } from '@/constants/constants';
-import { saveEventForUser } from '@/api/event';
+import { fetchFollowedEvents } from '@/api/user';
+import { followEventForUser, unfollowEventForUser } from '@/api/event';
 import { useAuth } from '@/components/auth/AuthProvider';
 import Toast from 'react-native-toast-message';
 
@@ -128,6 +128,7 @@ export default function EventPage() {
   const { id } = useLocalSearchParams();
   const [event, setEvent] = useState<EventPageInformation | null>(null);
   const { user } = useAuth();
+  const [eventIsFollowed, setEventIsFollowed] = useState<boolean>(false);
 
   const followEvent = async () => {
     if (!event) return;
@@ -147,7 +148,7 @@ export default function EventPage() {
     }
 
     try {
-      const savedEvent = await saveEventForUser(event.event_id);
+      const savedEvent = await followEventForUser(event.event_id);
       if (savedEvent) {
         Toast.show({
           type: "success",
@@ -160,12 +161,54 @@ export default function EventPage() {
     }
   };
 
+  const unfollowEvent = async () => {
+    if (!event) return;
+    if (!user) {
+      Toast.show({
+        type: "error",
+        text1: "You must be logged in to unfollow events."
+      });
+      return;
+    }
+    if (user.user_name === event.contributor_name) {
+      Toast.show({
+        type: "error",
+        text1: "You cannot unfollow your own event."
+      });
+      return;
+    }
+    try {
+      const savedEvent = await unfollowEventForUser(event.event_id);
+      if (savedEvent) {
+        Toast.show({
+          type: "success",
+          text1: "Event unfollowed successfully!"
+        });
+        router.back();
+      }
+    } catch (error) {
+      console.error('Error unfollowing event:', error);
+    }
+  };
+
   const loadEvent = async () => {
+    // Load Event
     try {
       const eventData = await fetchEventById(Number(id));
       setEvent(eventData);
     } catch (error) {
       console.error('Error fetching event:', error);
+    }
+
+    // Check if event is followed
+    if (user) {
+      try {
+        const followedEvents = await fetchFollowedEvents();
+        const isFollowed = followedEvents.some((e) => e.event_id === Number(id));
+        setEventIsFollowed(isFollowed);
+      } catch (error) {
+        console.error('Error fetching followed events:', error);
+      }
     }
   };
 
@@ -272,14 +315,22 @@ export default function EventPage() {
             </Text>
           </View>
 
-          {/* Save Button */}
-          <TouchableOpacity
-            style={styles.saveButton}
-            activeOpacity={0.85}
-            onPress={followEvent}
-          >
-            <Text style={styles.saveButtonText}>Follow Event</Text>
-          </TouchableOpacity>
+          {/* Follow/Unfollow Button */}
+          {user && user.user_name !== event.contributor_name ? (
+            <TouchableOpacity
+              style={styles.saveButton}
+              activeOpacity={0.85}
+              onPress={eventIsFollowed ? unfollowEvent : followEvent}
+            >
+              <Text style={styles.saveButtonText}>
+                {eventIsFollowed ? 'Unfollow Event' : 'Follow Event'}
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <Text style={{ color: '#A54646', fontSize: 16, textAlign: 'center', marginTop: 10 }}>
+              {user ? 'You cannot follow/unfollow your own event.' : 'You must be logged in to follow/unfollow events.'}
+            </Text>
+          )}
         </View>
         <View style = {{ height: tabBarHeight }} />
       </View>

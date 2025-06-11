@@ -154,7 +154,7 @@ export const createEvent = async (event: CreateEventData) => {
   }
 };
 
-export const saveEventForUser = async (eventId: number) => {
+export const followEventForUser = async (eventId: number) => {
   try {
     const response = await fetchUtil(
       `${API_URL}/events/${eventId}/save`,
@@ -169,13 +169,13 @@ export const saveEventForUser = async (eventId: number) => {
     let toastMsg = "";
     let toastMsg2 = "";
     if (error.message.includes("Unauthorized")) {
-      toastMsg = "Unauthorized: Please log in to save an event";
+      toastMsg = "Unauthorized: Please log in to follow an event";
     }
     else {
       toastMsg = error.message;
     }
     if (toastMsg === "") {
-      toastMsg = "Error saving event. Please try again later.";
+      toastMsg = "Error following event. Please try again later.";
       toastMsg2 = "Did you already follow this event?";
     }
     Toast.show({
@@ -183,6 +183,36 @@ export const saveEventForUser = async (eventId: number) => {
       text1: toastMsg,
       text2: toastMsg2 ? toastMsg2 : undefined
     });
-    throw new Error("Error saving event for user: " + error);
+    throw new Error("Error following event for user: " + error);
+  }
+}
+
+export const unfollowEventForUser = async (eventId: number) => {
+  try {
+    const response = await fetchUtil(
+      `${API_URL}/events/${eventId}/save`,
+      {
+        method: "DELETE",
+      },
+    );
+
+    const data = await response.json();
+    return data ?? null;
+  } catch (error: Error | any) {
+    let toastMsg = "";
+    if (error.message.includes("Unauthorized")) {
+      toastMsg = "Unauthorized: Please log in to unfollow an event";
+    }
+    else {
+      toastMsg = error.message;
+    }
+    if (toastMsg === "") {
+      toastMsg = "Error unfollowing event. Please try again later.";
+    }
+    Toast.show({
+      type: "error",
+      text1: toastMsg
+    });
+    throw new Error("Error unfollowing event for user: " + error);
   }
 }

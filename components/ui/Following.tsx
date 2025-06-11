@@ -1,28 +1,46 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, useWindowDimensions, Pressable, ScrollView } from 'react-native';
-import { Event } from '@/config/dbtypes';
+import { EventPageInformation } from '@/config/query-types';
 import { eventCardHeight } from '@/constants/constants';
 import { defaultEventImage } from '@/constants/constants';
 import { router } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { useAuth } from '@/components/auth/AuthProvider';
 
 interface FollowingProps {
-  followedEvents?: Event[];
+  followedEvents?: EventPageInformation[];
   scrollRef?: React.RefObject<ScrollView>;
   onScroll?: (event: any) => void;
+  onRefresh: () => void;
 }
 
-const Following: React.FC<FollowingProps> = ({ followedEvents = [], scrollRef, onScroll }) => {
+const Following: React.FC<FollowingProps> = ({ followedEvents = [], scrollRef, onScroll, onRefresh }) => {
   const { width } = useWindowDimensions();
   const eventCardMultiplier = 1.1;
+  const { user } = useAuth();
 
   const styles = StyleSheet.create({
+    sectionTitleRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginLeft: 25,
+      marginVertical: 15,
+      justifyContent: 'space-between',
+      marginRight: 25,
+    },
     sectionTitle: {
       color: '#500000',
       fontWeight: '600',
       fontSize: 17,
-      marginLeft: 25,
-      marginVertical: 15,
       fontFamily: 'inter',
+    },
+    refreshButton: {
+      marginLeft: 10,
+      padding: 6,
+      borderRadius: 20,
+      backgroundColor: '#F3F3F3',
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     emptyText: {
       color: '#A54646',
@@ -31,6 +49,7 @@ const Following: React.FC<FollowingProps> = ({ followedEvents = [], scrollRef, o
       marginTop: 40,
       fontFamily: 'inter',
       fontWeight: '500',
+      paddingHorizontal: 60,
     },
     eventCard: {
       alignItems: 'center',
@@ -63,7 +82,6 @@ const Following: React.FC<FollowingProps> = ({ followedEvents = [], scrollRef, o
       color: '#500000',
       fontFamily: 'inter',
       textAlign: 'center',
-      // backgroundColor: 'green',
       marginTop: 8,
     },
     orgName: {
@@ -82,13 +100,22 @@ const Following: React.FC<FollowingProps> = ({ followedEvents = [], scrollRef, o
   };
 
   return (
-    <ScrollView ref={scrollRef} onScroll={onScroll}>
-      {/* Experimental EventCard */}
-      <Text style={styles.sectionTitle}>FOLLOWING</Text>
+    <ScrollView ref={scrollRef} onScroll={onScroll} scrollEventThrottle={16}>
+      {/* Section title row with refresh */}
+      <View style={styles.sectionTitleRow}>
+        <Text style={styles.sectionTitle}>FOLLOWING</Text>
+        <Pressable
+          style={styles.refreshButton}
+          onPress={onRefresh}
+          android_ripple={{ color: '#e0e0e0', borderless: true }}
+        >
+          <Ionicons name="refresh" size={20} color="#500000" />
+        </Pressable>
+      </View>
       {followedEvents.length === 0 ? (
-        <Text style={styles.emptyText}>You are not following any events yet.</Text>
+        <Text style={styles.emptyText}>{user ? 'You are not following any events yet.' : 'You are logged out.'}</Text>
       ) : (
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 14 }}>
           {followedEvents.map((item) => (
             <Pressable style={styles.eventCard} key={item.event_id} onPress={() => navigateToEvent(item.event_id)}>
               <Image

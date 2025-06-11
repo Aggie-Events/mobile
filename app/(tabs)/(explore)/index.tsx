@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, Text, Pressable, Keyboard, TouchableWithoutFeedback, useWindowDimensions, ScrollView } from "react-native";
 import { fetchEvents } from '@/api/event';
+import { fetchFollowedEvents } from '@/api/user';
 import { Event } from '@/config/dbtypes';
+import { EventPageInformation } from '@/config/query-types';
 import { tabBarHeight } from '@/constants/constants';
 import Header from '@/components/ui/Header';
 import { Ionicons } from "@expo/vector-icons"
@@ -17,6 +19,7 @@ type Tab = 'Featured' | 'Following';
 export default function ExplorePage() {
   const [activeTab, setActiveTab] = useState<Tab>('Featured');
   const [events, setEvents] = useState<Event[]>([]);
+  const [followedEvents, setFollowedEvents] = useState<EventPageInformation[]>([]);
   const {width, height} = useWindowDimensions();
   const { setUser } = useAuth();
 
@@ -33,15 +36,7 @@ export default function ExplorePage() {
     followingScrollY.current = event.nativeEvent.contentOffset.y;
   }, []);
 
-  const fetchEventsFromAPI = async () => {
-    try {
-      const result = await fetchEvents();
-      setEvents(result);
-    } catch (error) {
-      console.error("Error calling fetchEvents:", error);
-    }
-  }
-
+  
   const getUserInfo = async () => {
     try {
       const user = await getUser();
@@ -60,10 +55,30 @@ export default function ExplorePage() {
       });
     }
   }
+  
+  const fetchEventsFromAPI = async () => {
+    try {
+      const result = await fetchEvents();
+      setEvents(result);
+    } catch (error) {
+      console.error("Error calling fetchEvents:", error);
+    }
+  }
+
+  const fetchFollowedEventsFromAPI = async () => {
+    try {
+      const result = await fetchFollowedEvents();
+      setFollowedEvents(result);
+    } catch (error) {
+      console.error("Error calling fetchFollowedEvents:", error);
+      setFollowedEvents([]);
+    }
+  }
 
   const configureExplore = async () => {
-    await fetchEventsFromAPI();
     await getUserInfo();
+    await fetchEventsFromAPI();
+    await fetchFollowedEventsFromAPI();
   }
 
   useEffect(() => {
@@ -116,7 +131,7 @@ export default function ExplorePage() {
         { activeTab === 'Featured' ? (
           <Featured events={events} scrollRef={featuredRef} onScroll={onFeaturedScroll} />
         ) : (
-          <Following followedEvents={events} scrollRef={followingRef} onScroll={onFollowingScroll} />
+          <Following followedEvents={followedEvents} scrollRef={followingRef} onScroll={onFollowingScroll} onRefresh={fetchFollowedEventsFromAPI} />
         )}
 
         <View style = {{ height: tabBarHeight + 10 }} />

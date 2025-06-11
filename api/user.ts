@@ -2,6 +2,7 @@ import Toast from "react-native-toast-message";
 import { fetchUtil } from "@/api/fetch";
 import { API_URL } from "@/config/api-url";
 import { User } from "@/config/dbtypes";
+import { EventPageInformation } from "@/config/query-types";
 
 export const addUser = async (username: string, email: string) => {
     try {
@@ -121,5 +122,28 @@ export const updateUsername = async (newUsername: string): Promise<void> => {
             text1: "Error setting username. Please try again later."
         });
         throw new Error("Error updating username: " + error);
+    }
+}
+
+export const fetchFollowedEvents = async (): Promise<EventPageInformation[]> => {
+    try {
+        const response = await fetchUtil(
+            `${API_URL}/users/saved`,
+            {
+                method: "GET",
+            },
+        );
+        const data: EventPageInformation[] = await response.json();
+        return data ?? [];
+    } catch (error: Error | any) {
+        let errorMessage = "Error fetching followed events. Please try again later.";
+        if (error.message.includes("Unauthorized")) {
+            errorMessage = "Unauthorized: Please log in to view followed events";
+        }
+        Toast.show({
+            type: "error",
+            text1: errorMessage
+        });
+        throw new Error("Error fetching followed events" + error);
     }
 }
