@@ -31,9 +31,8 @@ export const fetchUtil = async (
   }
 
   if (response.status === 401 && throwErrOnUnauthorized) {
-    const errorText = response.text();
-    console.error("Unauthorized:", errorText);
-    Toast.show({text1: "Unauthorized", type: "error"});
+    const errorText = await response.text();
+    console.log("Unauthorized:", errorText); // Log the error for debugging
     throw new Error("Unauthorized resource");
   }
 

@@ -13,6 +13,7 @@ import { getUser } from '@/auth/auth-router';
 import Toast from 'react-native-toast-message';
 import Featured from '@/components/ui/Featured';
 import Following from '@/components/ui/Following';
+import { useFocusEffect } from 'expo-router';
 
 type Tab = 'Featured' | 'Following';
 
@@ -49,10 +50,6 @@ export default function ExplorePage() {
     }
     catch (error) {
       console.error("Error setting up user credentials:", error);
-      Toast.show({
-        type: 'error',
-        text1: 'Failed to get user credentials. Please try again later.'
-      });
     }
   }
   
@@ -69,16 +66,20 @@ export default function ExplorePage() {
     try {
       const result = await fetchFollowedEvents();
       setFollowedEvents(result);
-    } catch (error) {
-      console.error("Error calling fetchFollowedEvents:", error);
+    } catch (error: any) {
+      if (error.message !== 'Unauthorized resource') { // No need to show error if user is not logged in
+        Toast.show({
+          type: "error",
+          text1: error.message || "Error fetching followed events. Please try again later.",
+        });
+      }
       setFollowedEvents([]);
     }
-  }
+  };
 
   const configureExplore = async () => {
     await getUserInfo();
     await fetchEventsFromAPI();
-    await fetchFollowedEventsFromAPI();
   }
 
   useEffect(() => {
@@ -98,6 +99,17 @@ export default function ExplorePage() {
     });
     configureExplore();
   }, []);
+
+  // Not the greatest way to refresh followed events, but it works 
+  // (refreshes followed events every time user navigates to the Explore tab)
+  // TODO: Only refresh followed events when the user follows/unfollows an event
+  useFocusEffect(
+    useCallback(() => {
+      fetchFollowedEventsFromAPI();
+
+      return () => {};
+    }, [])
+  );
 
   return (
     <>
@@ -131,7 +143,7 @@ export default function ExplorePage() {
         { activeTab === 'Featured' ? (
           <Featured events={events} scrollRef={featuredRef} onScroll={onFeaturedScroll} />
         ) : (
-          <Following followedEvents={followedEvents} scrollRef={followingRef} onScroll={onFollowingScroll} onRefresh={fetchFollowedEventsFromAPI} />
+          <Following followedEvents={followedEvents} scrollRef={followingRef} onScroll={onFollowingScroll} />
         )}
 
         <View style = {{ height: tabBarHeight + 10 }} />

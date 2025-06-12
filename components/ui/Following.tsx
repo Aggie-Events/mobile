@@ -11,28 +11,21 @@ interface FollowingProps {
   followedEvents?: EventPageInformation[];
   scrollRef?: React.RefObject<ScrollView>;
   onScroll?: (event: any) => void;
-  onRefresh: () => void;
 }
 
-const Following: React.FC<FollowingProps> = ({ followedEvents = [], scrollRef, onScroll, onRefresh }) => {
+const Following: React.FC<FollowingProps> = ({ followedEvents = [], scrollRef, onScroll }) => {
   const { width } = useWindowDimensions();
   const eventCardMultiplier = 1.1;
   const { user } = useAuth();
 
   const styles = StyleSheet.create({
-    sectionTitleRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginLeft: 25,
-      marginVertical: 15,
-      justifyContent: 'space-between',
-      marginRight: 25,
-    },
     sectionTitle: {
       color: '#500000',
       fontWeight: '600',
       fontSize: 17,
       fontFamily: 'inter',
+      marginLeft: 25,
+      marginVertical: 15,
     },
     refreshButton: {
       marginLeft: 10,
@@ -101,19 +94,11 @@ const Following: React.FC<FollowingProps> = ({ followedEvents = [], scrollRef, o
 
   return (
     <ScrollView ref={scrollRef} onScroll={onScroll} scrollEventThrottle={16}>
-      {/* Section title row with refresh */}
-      <View style={styles.sectionTitleRow}>
-        <Text style={styles.sectionTitle}>FOLLOWING</Text>
-        <Pressable
-          style={styles.refreshButton}
-          onPress={onRefresh}
-          android_ripple={{ color: '#e0e0e0', borderless: true }}
-        >
-          <Ionicons name="refresh" size={20} color="#500000" />
-        </Pressable>
-      </View>
+
+      <Text style={styles.sectionTitle}>FOLLOWING</Text>
+
       {followedEvents.length === 0 ? (
-        <Text style={styles.emptyText}>{user ? 'You are not following any events yet.' : 'You are logged out.'}</Text>
+        <Text style={styles.emptyText}>{user ? 'No events followed!' : 'You are not signed in. Please log in to see your followed events!'}</Text>
       ) : (
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 14 }}>
           {followedEvents.map((item) => (

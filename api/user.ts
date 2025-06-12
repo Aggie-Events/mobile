@@ -136,14 +136,6 @@ export const fetchFollowedEvents = async (): Promise<EventPageInformation[]> => 
         const data: EventPageInformation[] = await response.json();
         return data ?? [];
     } catch (error: Error | any) {
-        let errorMessage = "Error fetching followed events. Please try again later.";
-        if (error.message.includes("Unauthorized")) {
-            errorMessage = "Unauthorized: Please log in to view followed events";
-        }
-        Toast.show({
-            type: "error",
-            text1: errorMessage
-        });
-        throw new Error("Error fetching followed events" + error);
+        throw error;
     }
 }
