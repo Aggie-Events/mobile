@@ -87,7 +87,7 @@ const Following: React.FC<FollowingProps> = ({ followedEvents = [], scrollRef, o
 
   const navigateToEvent = (eventId: number) => {
     router.navigate({
-      pathname: '/(tabs)/(explore)/event/[id]',
+      pathname: '/event/[id]',
       params: { id: eventId },
     });
   };

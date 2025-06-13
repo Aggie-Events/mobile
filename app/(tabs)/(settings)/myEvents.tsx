@@ -57,7 +57,7 @@ const MyEventsScreen = () => {
         {user?.user_name ? (
           <View style = {styles.eventsContent}>
             {events.map((event) => (
-              <EventCard id={String(event.event_id)} event={event} multiplier={1.27} marginBottom={16} />
+              <EventCard key = {String(event.event_id)} id={String(event.event_id)} event={event} multiplier={1.27} marginBottom={16} />
             ))}
           </View>
         ) : (

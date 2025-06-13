@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, Image, Pressable, useWindowDimensions } from 'react-native';
-import { Link } from 'expo-router';
 import { Event } from '@/config/dbtypes';
 import { EventPageInformation } from '@/config/query-types';
 import { eventCardHeight } from '@/constants/constants';
@@ -24,7 +23,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, id, multiplier = 1.1, marg
   };
 
   const goToEventDetails = () => {
-    router.push(`/(tabs)/(explore)/event/${event.event_id}`);
+    router.push(`/event/${id}`);
   }
 
   return (
