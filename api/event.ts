@@ -216,3 +216,22 @@ export const unfollowEventForUser = async (eventId: number) => {
     throw new Error("Error unfollowing event for user: " + error);
   }
 }
+
+export const fetchUserEvents = async (user_name: string): Promise<EventPageInformation[]> => {
+  try {
+    const response = await fetchUtil(
+      `${API_URL}/events/user/${user_name}`,
+      {
+        method: "GET",
+      },
+    );
+    const data = await response.json();
+    return data ?? [];
+  } catch (error) {
+    Toast.show({
+      type: "error",
+      text1: "Error fetching user events. Please try again later."
+    });
+    throw new Error("Error fetching user events: " + error);
+  }
+}
