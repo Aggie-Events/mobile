@@ -302,6 +302,25 @@ export default function SettingsPage() {
           />
         </SettingsSection>
 
+        {user && (
+          <SettingsSection title="Activity">
+            <SettingsItem
+              icon="person.2.fill"
+              title="My Events"
+              description="View and manage your events"
+              type="button"
+              onPress={() => router.push('/myEvents')}
+            />
+            <SettingsItem
+              icon="building.2.fill"
+              title="My Organizations"
+              description="View and manage your organizations"
+              type="button"
+              onPress={() => router.push('/myOrgs')}
+            />
+          </SettingsSection>
+        )}
+
         <SettingsSection title="Preferences">
           <SettingsItem
             icon="bell"

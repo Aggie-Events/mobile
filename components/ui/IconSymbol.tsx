@@ -18,6 +18,8 @@ const MAPPING = {
   // --- Add these for settings ---
   "globe": "public", // Sign In with Google
   "rectangle.portrait.and.arrow.right": "logout", // Sign Out
+  "person.2.fill": "groups", // My Events (multiple people)
+  "building.2.fill": "business", // My Organizations (building)
   "bell": "notifications-none", // Notifications
   "moon": "dark-mode", // Dark Mode
   "envelope": "mail-outline", // Email Updates
