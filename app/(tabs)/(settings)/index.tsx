@@ -14,7 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { User } from "@/config/dbtypes";
 import { useAuth } from '@/components/auth/AuthProvider';
 import { checkIfUsernameExists, updateUsername } from '@/api/user';
-import { defaultEventImage } from '@/constants/constants';
+import { defaultImage } from '@/constants/constants';
 
 interface SettingsSectionProps {
   title: string;
@@ -283,7 +283,7 @@ export default function SettingsPage() {
       <ScrollView style={styles.container} ref={scrollViewRef}>
         <View style={styles.header}>
           <View style={styles.profileSection}>
-            <Image style={styles.avatar} source={user?.user_img ? {uri: user.user_img} : defaultEventImage} />
+            <Image style={styles.avatar} source={user?.user_img ? {uri: user.user_img} : defaultImage} />
             <View style={styles.profileInfo}>
               <Text style={styles.profileName}>{user?.user_displayname ?? "Display Name"}</Text>
               <Text style={styles.profileEmail}>{user?.user_email ?? "email@email.com"}</Text>

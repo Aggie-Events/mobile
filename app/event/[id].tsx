@@ -3,7 +3,7 @@ import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet } from 'rea
 import { router, useLocalSearchParams } from 'expo-router';
 import { fetchEventById } from '@/api/event';
 import { EventPageInformation } from '@/config/query-types';
-import { defaultEventImage, eventCardHeight } from '@/constants/constants';
+import { defaultImage, eventCardHeight } from '@/constants/constants';
 import { Ionicons } from '@expo/vector-icons';
 import { tabBarHeight } from '@/constants/constants';
 import { fetchFollowedEvents } from '@/api/user';
@@ -227,7 +227,7 @@ export default function EventPage() {
   return (
     <ScrollView>
       <Image
-        source={event.event_img ? { uri: event.event_img } : defaultEventImage}
+        source={event.event_img ? { uri: event.event_img } : defaultImage}
         style={styles.imageContainer}
         resizeMode="cover"
       />

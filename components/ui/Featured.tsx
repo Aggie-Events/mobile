@@ -4,7 +4,7 @@ import EventCard from '../../components/ui/EventCard';
 import { Ionicons } from '@expo/vector-icons';
 import { eventCardHeight } from '@/constants/constants';
 import { Event } from '@/config/dbtypes';
-import { defaultEventImage } from '@/constants/constants';
+import { defaultImage } from '@/constants/constants';
 
 interface FeaturedProps {
   events: Event[];
@@ -79,7 +79,7 @@ const Featured: React.FC<FeaturedProps> = ({ events = [], scrollRef, onScroll })
           <View style = {{ flexDirection: 'column', paddingHorizontal: 5, marginBottom: 10 }} key={index}>
             <Image 
               style = {{ width: eventCardHeight * 1.2, height: eventCardHeight * 1.2, backgroundColor: '#500000', borderRadius: 8 }}
-              source = {item.event_img ? { uri: item.event_img } : defaultEventImage}  
+              source = {item.event_img ? { uri: item.event_img } : defaultImage}  
               resizeMode = "cover"
             />
             <Text style = {{fontWeight: 'bold', textAlign: 'center'}}>

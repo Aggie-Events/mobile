@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, useWindowDimensions, Pressable, ScrollView } from 'react-native';
 import { EventPageInformation } from '@/config/query-types';
 import { eventCardHeight } from '@/constants/constants';
-import { defaultEventImage } from '@/constants/constants';
+import { defaultImage } from '@/constants/constants';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/components/auth/AuthProvider';
@@ -105,7 +105,7 @@ const Following: React.FC<FollowingProps> = ({ followedEvents = [], scrollRef, o
             <Pressable style={styles.eventCard} key={item.event_id} onPress={() => navigateToEvent(item.event_id)}>
               <Image
                 style={styles.eventImage}
-                source={item.event_img ? { uri: item.event_img } : defaultEventImage}
+                source={item.event_img ? { uri: item.event_img } : defaultImage}
                 resizeMode="cover"
               />
               <Text style={styles.eventName}>{item.event_name}</Text>

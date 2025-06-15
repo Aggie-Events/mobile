@@ -3,7 +3,7 @@ import { View, Text, Image, Pressable, useWindowDimensions } from 'react-native'
 import { Event } from '@/config/dbtypes';
 import { EventPageInformation } from '@/config/query-types';
 import { eventCardHeight } from '@/constants/constants';
-import { defaultEventImage } from '@/constants/constants';
+import { defaultImage } from '@/constants/constants';
 import { useRouter } from 'expo-router';
 
 interface EventCardProps {
@@ -29,7 +29,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, id, multiplier = 1.1, marg
   return (
     <Pressable style = {{ width: eventCardHeight * multiplier, marginLeft: 16, marginBottom }} onPress={onPress ?? goToEventDetails}>
       <Image
-        source={event.event_img ? { uri: event.event_img } : defaultEventImage}
+        source={event.event_img ? { uri: event.event_img } : defaultImage}
         style = {{ width: eventCardHeight * multiplier, height: eventCardHeight * multiplier, backgroundColor: '#500000', borderRadius: 8 }}
         resizeMode="cover"
       />

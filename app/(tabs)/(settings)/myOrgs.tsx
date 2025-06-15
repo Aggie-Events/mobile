@@ -4,6 +4,8 @@ import { useFocusEffect } from 'expo-router';
 import { Organization } from '@/config/dbtypes';
 import { fetchOrganizations, fetchUserOrganizations } from '@/api/orgs';
 import { useAuth } from '@/components/auth/AuthProvider';
+import OrgCard from '@/components/ui/OrgCard';
+import { defaultImage } from '@/constants/constants';
 
 const MyOrgsScreen = () => {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
@@ -15,7 +17,8 @@ const MyOrgsScreen = () => {
       return;
     }
     try {
-      const orgs = await fetchUserOrganizations(user.user_name);
+      // const orgs = await fetchUserOrganizations(user.user_name);
+      const orgs = await fetchOrganizations(); // Uncomment this line if you want to fetch all organizations instead
       setOrganizations(orgs);
     } catch (error) {
       console.error("Error fetching organizations:", error);
@@ -32,7 +35,7 @@ const MyOrgsScreen = () => {
     <>
       {user?.user_name ? (
         organizations.length > 0 ? organizations.map((org) => (
-          <Text key={String(org.org_id)}>{org.org_name}</Text>
+          <OrgCard key={String(org.org_id)} organization={org} />
         )) : (
           <Text className='text-center text-gray-500 mt-10'>
             You have not created any organizations yet!
