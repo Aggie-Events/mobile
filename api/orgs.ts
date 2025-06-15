@@ -56,3 +56,41 @@ export const deleteOrganization = async () => {
     throw new Error("Error deleting Organization: " + error);
   }
 };
+
+export const fetchUserOrganizations = async (username: string): Promise<Organization[]> => {
+  try {
+    const response = await fetchUtil(
+      `${API_URL}/orgs/user/${username}`,
+      {
+        method: "GET",
+      },
+    );
+    const data = await response.json();
+    return data ?? [];
+  } catch (error) {
+    Toast.show({
+      type: "error",
+      text1: "Error fetching User Organizations",
+    });
+    throw new Error("Error fetching User Organizations: " + error);
+  }
+}
+
+export const fetchOrganizationByParam = async (param: string | number): Promise<Organization | null> => {
+  try {
+    const response = await fetchUtil(
+      `${API_URL}/orgs/${param}`,
+      {
+        method: "GET",
+      },
+    );
+    const data = await response.json();
+    return data ?? null;
+  } catch (error) {
+    Toast.show({
+      type: "error",
+      text1: "Error fetching Organization",
+    });
+    throw new Error("Error fetching Organization: " + error);
+  }
+};

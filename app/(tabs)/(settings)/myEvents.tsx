@@ -56,9 +56,13 @@ const MyEventsScreen = () => {
 
         {user?.user_name ? (
           <View style = {styles.eventsContent}>
-            {events.map((event) => (
+            {events.length > 0 ? events.map((event) => (
               <EventCard key = {String(event.event_id)} id={String(event.event_id)} event={event} multiplier={1.27} marginBottom={16} />
-            ))}
+            )) : (
+              <Text className='text-center text-gray-500 mt-10'>
+                You have not created any events!
+              </Text>
+            )}
           </View>
         ) : (
           <Text className='text-center text-gray-500 mt-10'>

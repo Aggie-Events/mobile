@@ -98,7 +98,7 @@ const Following: React.FC<FollowingProps> = ({ followedEvents = [], scrollRef, o
       <Text style={styles.sectionTitle}>FOLLOWING</Text>
 
       {followedEvents.length === 0 ? (
-        <Text style={styles.emptyText}>{user ? 'No events followed!' : 'You are not signed in. Please log in to see your followed events!'}</Text>
+        <Text className='text-center text-gray-500 mt-3'>{user ? 'No events followed!' : 'You are not signed in. Please log in to see your followed events!'}</Text>
       ) : (
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 14 }}>
           {followedEvents.map((item) => (
