@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import { Text } from 'react-native'
+import { View, Text, ScrollView } from 'react-native'
 import { useFocusEffect } from 'expo-router';
 import { Organization } from '@/config/dbtypes';
 import { fetchOrganizations, fetchUserOrganizations } from '@/api/orgs';
 import { useAuth } from '@/components/auth/AuthProvider';
 import OrgCard from '@/components/ui/OrgCard';
-import { defaultImage } from '@/constants/constants';
+import { tabBarHeight } from '@/constants/constants';
 
 const MyOrgsScreen = () => {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
@@ -17,8 +17,8 @@ const MyOrgsScreen = () => {
       return;
     }
     try {
-      // const orgs = await fetchUserOrganizations(user.user_name);
-      const orgs = await fetchOrganizations(); // Uncomment this line if you want to fetch all organizations instead
+      const orgs = await fetchUserOrganizations(user.user_name);
+      // const orgs = await fetchOrganizations(); // Uncomment this line if you have no created orgs
       setOrganizations(orgs);
     } catch (error) {
       console.error("Error fetching organizations:", error);
@@ -32,7 +32,7 @@ const MyOrgsScreen = () => {
   );
 
   return (
-    <>
+    <ScrollView className='p-4 bg-gray-50'>
       {user?.user_name ? (
         organizations.length > 0 ? organizations.map((org) => (
           <OrgCard key={String(org.org_id)} organization={org} />
@@ -46,7 +46,8 @@ const MyOrgsScreen = () => {
           {user ? "Please enter your username to see your organizations." : "Please log in to see your organizations."}
         </Text>
       )}
-    </>
+      <View style={{ height: tabBarHeight + 10 }} />
+    </ScrollView>
   )
 }
 
