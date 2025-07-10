@@ -24,11 +24,11 @@ In the output, you'll find options to open the app in a
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
-## The Project Board!! (muy importante)
+## The Project Board!!
 
 Go to this github repository on github.com. Along the top bar there's a tab called projects. Click it and look around. This is where you will find tasks. Each tasks has a set of requirements. Once met, one of the PMs will review your changes and they will be merged into main (we will take care of this so don't worry about it).
 
 
 ## Branches
 
-If you are implementing a new feature, create a branch off of main (or if you consider your feature a sub-feature you can branch off of whatever branch you want). Make sure to checkout (JADON put link here) that branch and only commit and push to that branch until your feature or bug fix is finished.
+If you are implementing a new feature, create a branch off of main (or if you consider your feature a sub-feature you can branch off of whatever branch you want). Make sure to checkout that branch and only commit and push to that branch until your feature or bug fix is finished.
